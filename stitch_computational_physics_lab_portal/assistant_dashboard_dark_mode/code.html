@@ -1,0 +1,271 @@
+<!DOCTYPE html><html class="dark" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PhysixLab - Assistant Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@700;800;900&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#f4b6c1",
+                        "primary-fixed-dim": "#afc8f0",
+                        "on-tertiary-container": "#589364",
+                        "on-primary-fixed": "#001c3a",
+                        "surface": "#f9f9f9",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "surface-tint": "#476083",
+                        "tertiary-fixed-dim": "#96d5a0",
+                        "secondary-fixed": "#ffd9df",
+                        "background": "#f9f9f9",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline": "#74777f",
+                        "inverse-primary": "#afc8f0",
+                        "tertiary-fixed": "#b2f2bb",
+                        "on-error": "#ffffff",
+                        "secondary": "#81515a",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#663a43",
+                        "secondary-container": "#fdbec9",
+                        "on-secondary-container": "#7a4a54",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1a1c1c",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary-fixed-variant": "#145129",
+                        "on-primary-fixed-variant": "#2f486a",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#330f19",
+                        "primary-container": "#001f3f",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#00210b",
+                        "surface-bright": "#f9f9f9",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#43474e",
+                        "primary": "#000613",
+                        "surface-container": "#eeeeee",
+                        "primary-fixed": "#d4e3ff",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-primary-container": "#6f88ad",
+                        "inverse-surface": "#2f3131",
+                        "surface-container-low": "#f3f3f4",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#000802",
+                        "outline-variant": "#c4c6cf",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-dim": "#dadada",
+                        "tertiary-container": "#00250d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "display": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #001F3F; color: #ffffff; }
+        .neo-border { border: 3px solid #000000; }
+        .neo-shadow { box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); }
+        .neo-shadow-lg { box-shadow: 8px 8px 0px 0px rgba(0,0,0,1); }
+        .neo-hover:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); }
+        .neo-active:active { transform: translate(2px, 2px); box-shadow: none; }
+        .neo-card { background-color: #ffffff; color: #1a1c1c; border-radius: 1rem; border: 3px solid #000000; box-shadow: 8px 8px 0px 0px rgba(0,0,0,1); }
+        
+        .pastel-pink { background-color: #fdbec9; }
+        .pastel-mint { background-color: #b2f2bb; }
+        .pastel-yellow { background-color: #fce4b3; } /* Added custom for yellow requirement */
+        
+        /* Material symbols specific fill rule if needed */
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="font-body min-h-screen flex flex-col md:flex-row">
+<!-- Mobile Top Navigation -->
+<header class="md:hidden bg-primary-container text-on-primary font-headline text-headline-md font-extrabold w-full top-0 sticky border-b-4 border-primary dark:border-primary-fixed-dim shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex justify-between items-center px-6 py-4 z-50">
+<div class="flex items-center gap-2 font-headline text-headline-md font-black text-primary dark:text-on-primary tracking-tighter">
+<span class="material-symbols-outlined" data-icon="science">science</span>
+            PhysixLab
+        </div>
+<div class="flex gap-4">
+<button class="hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all active:translate-y-0.5 active:translate-x-0.5 active:shadow-none p-2 neo-border rounded-lg bg-surface">
+<span class="material-symbols-outlined text-on-surface" data-icon="settings">settings</span>
+</button>
+<button class="hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all active:translate-y-0.5 active:translate-x-0.5 active:shadow-none p-2 neo-border rounded-lg bg-surface">
+<span class="material-symbols-outlined text-on-surface" data-icon="notifications">notifications</span>
+</button>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full neo-border object-cover" data-alt="A detailed profile avatar of a laboratory assistant wearing safety goggles and a lab coat. Bright, flat kawaii neobrutalism art style with bold black outlines and pastel background." src="https://lh3.googleusercontent.com/aida/AEtjO1XKxhLfX5pAX0nH0liKs6vNUnFHRl1Le-MAT73nhwTEP03PKLKgoxi0xFrljjGHHXkXSpgY8-l1umuCPH81ESCiyY73hezzwiM43T7485jsImjCugB8PG8xbQhy1Apj_BioTVVj0QDRloRWPtxsIff56rBT4xiSUa5oNJRRe-dzkzhrUdO-q88qOeGsILi4CNn99QD5v6gPN8kUtpdfhMN0VpDPBzupK6EsZelvc3ODXq70HKt0G-NnvIrH">
+</div>
+</header>
+<!-- Desktop Side Navigation -->
+<nav class="hidden md:flex flex-col h-screen w-72 left-0 sticky bg-surface dark:bg-primary-container border-r-4 border-primary dark:border-primary-fixed-dim shadow-[8px_0px_0px_0px_rgba(0,0,0,1)] py-8 gap-4 z-40">
+<div class="px-6 mb-4">
+<div class="flex items-center gap-3 mb-2 font-headline text-headline-lg font-black text-primary dark:text-primary-fixed">
+<span class="material-symbols-outlined text-4xl" data-icon="science">science</span>
+                PhysixLab Pro
+            </div>
+<div class="text-on-surface dark:text-on-primary-fixed-variant font-label font-bold uppercase tracking-wider text-sm">Simulation Suite</div>
+</div>
+<button class="mx-4 bg-tertiary-fixed text-on-tertiary-fixed font-label text-label-bold uppercase tracking-wider neo-border neo-shadow-lg p-3 rounded-lg hover:bg-tertiary-fixed hover:text-on-tertiary-fixed transition-transform hover:scale-105 active:scale-95 duration-100 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+            New Simulation
+        </button>
+<div class="flex flex-col gap-2 mt-6 flex-grow px-2">
+<!-- Active Tab: Dashboard -->
+<a class="bg-secondary-container text-on-secondary-container border-2 border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg m-2 flex items-center gap-3 p-3 font-label text-label-bold uppercase tracking-wider hover:-translate-y-0.5 hover:-translate-x-0.5 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="text-on-surface dark:text-on-primary-fixed-variant p-4 flex items-center gap-3 font-label text-label-bold uppercase tracking-wider hover:bg-tertiary-fixed hover:text-on-tertiary-fixed transition-transform hover:scale-105 rounded-lg active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="science">science</span>
+                Practicum
+            </a>
+<a class="text-on-surface dark:text-on-primary-fixed-variant p-4 flex items-center gap-3 font-label text-label-bold uppercase tracking-wider hover:bg-tertiary-fixed hover:text-on-tertiary-fixed transition-transform hover:scale-105 rounded-lg active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="grade">grade</span>
+                Grading
+            </a>
+<a class="text-on-surface dark:text-on-primary-fixed-variant p-4 flex items-center gap-3 font-label text-label-bold uppercase tracking-wider hover:bg-tertiary-fixed hover:text-on-tertiary-fixed transition-transform hover:scale-105 rounded-lg active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+                Schedule
+            </a>
+</div>
+<div class="mt-auto px-2 border-t-2 border-primary dark:border-primary-fixed-dim pt-4 mx-4">
+<a class="text-on-surface dark:text-on-primary-fixed-variant p-4 flex items-center gap-3 font-label text-label-bold uppercase tracking-wider hover:bg-tertiary-fixed hover:text-on-tertiary-fixed transition-transform hover:scale-105 rounded-lg active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Help
+            </a>
+<a class="text-on-surface dark:text-on-primary-fixed-variant p-4 flex items-center gap-3 font-label text-label-bold uppercase tracking-wider hover:bg-tertiary-fixed hover:text-on-tertiary-fixed transition-transform hover:scale-105 rounded-lg active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 p-6 md:p-12 max-w-7xl mx-auto w-full">
+<!-- Greetings Section -->
+<header class="relative mb-12 flex flex-col justify-center min-h-[250px] bg-primary-container p-8 lg:p-12 rounded-2xl border-4 border-black neo-shadow-lg overflow-hidden">
+<img alt="" class="absolute right-0 top-1/2 -translate-y-1/2 h-[200%] w-auto object-cover opacity-30 pointer-events-none" src="https://lh3.googleusercontent.com/aida/AEtjO1UhHRbtiOT32fHgcfj85dgifFaA3BfohBmu5yDp2zFsVNxWoGc8CfMx_FYSuuvdtg71L7mK7aPaoPnbD7hzgzu7Vbj3cDwMbH_sH2_v2dNecnYDOGXZsUsw35j1KCETgKFNpmPHTeOE6NdgQsinO9WFIpqZNwFpxuUZ7MRjBHwAcObpvrY0E6jRET-ABlCk84AN-9tEBAaoTNCDZTIRFv2yT0eMswHI0pntxbfvOil6Xx-lR4oFXkpDPWU">
+<div class="relative z-10 flex-1 flex flex-col gap-4">
+<div>
+<h1 class="font-headline text-4xl lg:text-5xl text-on-primary font-black">Good Morning, Dr. Assistant!</h1>
+<p class="font-body text-xl text-primary-fixed-dim mt-2">Ready to analyze some vectors today?</p>
+</div>
+</div>
+</header>
+<!-- Main Grid Layout -->
+<div class="mb-12">
+    <button class="w-full md:w-auto flex items-center justify-center gap-3 px-8 py-6 bg-tertiary-fixed text-on-tertiary-fixed font-headline text-2xl font-black uppercase tracking-tighter border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all duration-100">
+        <span class="material-symbols-outlined text-4xl" data-icon="play_circle">play_circle</span>
+        Start a Session
+    </button>
+</div><div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+<!-- Left Column: Pending Actions & Tasks (Span 2) -->
+<div class="lg:col-span-2 space-y-12">
+<section>
+<div class="flex justify-between items-end mb-6 border-b-[3px] border-on-primary pb-2">
+<h2 class="font-headline text-headline-lg text-on-primary">Pending Grading</h2>
+<button class="font-label text-sm text-secondary-fixed-dim hover:text-secondary-fixed underline">View All</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Grading Card 1 -->
+<div class="neo-card p-6 flex flex-col relative overflow-hidden group min-h-[250px]">
+<div class="absolute -right-10 -top-10 w-32 h-32 pastel-pink rounded-full opacity-50 neo-border transform transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start relative z-10 mb-4">
+<span class="bg-surface-variant text-on-surface font-label text-xs py-1 px-3 rounded-full neo-border uppercase font-bold">Kinematics 101</span>
+<span class="material-symbols-outlined text-secondary" data-icon="error">error</span>
+</div>
+<h3 class="font-headline text-headline-md text-on-surface mb-2 relative z-10">Projectile Motion Lab</h3>
+<p class="font-body text-body-md text-on-surface-variant mb-6 relative z-10">5 submissions flagged for unusually high theoretical error margins. Manual review required.</p>
+<button class="mt-auto bg-primary text-on-primary font-label text-label-bold py-3 px-4 rounded-lg neo-border neo-shadow hover:bg-inverse-surface neo-hover neo-active transition-all flex items-center justify-center gap-2 z-10">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                                Review Data
+                            </button>
+</div>
+<!-- Grading Card 2 -->
+<div class="neo-card p-6 flex flex-col relative overflow-hidden group min-h-[250px]">
+<div class="absolute -right-10 -top-10 w-32 h-32 pastel-yellow rounded-full opacity-50 neo-border transform transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start relative z-10 mb-4">
+<span class="bg-surface-variant text-on-surface font-label text-xs py-1 px-3 rounded-full neo-border uppercase font-bold">Thermo 202</span>
+<span class="material-symbols-outlined text-surface-tint" data-icon="warning">warning</span>
+</div>
+<h3 class="font-headline text-headline-md text-on-surface mb-2 relative z-10">Entropy Simulation</h3>
+<p class="font-body text-body-md text-on-surface-variant mb-6 relative z-10">12 pending standard grades. Automation script completed initial pass.</p>
+<button class="mt-auto bg-surface text-on-surface font-label text-label-bold py-3 px-4 rounded-lg neo-border neo-shadow hover:bg-surface-variant neo-hover neo-active transition-all flex items-center justify-center gap-2 z-10">
+<span class="material-symbols-outlined" data-icon="done_all">done_all</span>
+                                Approve Batch
+                            </button>
+</div>
+</div>
+</section>
+<section>
+<div class="flex justify-between items-end mb-4 border-b-[3px] border-on-primary pb-2">
+</div>
+<div class="neo-card p-0 overflow-hidden bg-background">
+</div>
+</section>
+</div>
+<!-- Right Column: Schedule & Environment (Span 1) -->
+<div class="space-y-12">
+<section>
+<div class="flex justify-between items-end mb-6 border-b-[3px] border-on-primary pb-2">
+<h2 class="font-headline text-headline-lg text-on-primary">Lab Schedule</h2>
+</div>
+<div class="neo-card p-6 space-y-6 bg-surface">
+<!-- Schedule Item 1 -->
+<div class="flex gap-4 p-3 rounded-lg border-2 border-black hover:bg-tertiary-fixed transition-colors cursor-pointer group">
+<div class="flex flex-col items-center justify-center bg-primary text-on-primary rounded neo-border p-2 min-w-[60px]">
+<span class="font-headline font-bold text-lg">10:00</span>
+<span class="font-label text-xs uppercase">AM</span>
+</div>
+<div>
+<h4 class="font-headline text-md text-on-surface group-hover:text-on-tertiary-fixed">Intro Mechanics</h4>
+<p class="font-body text-sm text-on-surface-variant">Lab Room 304A</p>
+</div>
+</div>
+<!-- Schedule Item 2 (Active) -->
+<div class="flex gap-4 p-3 rounded-lg border-2 border-black bg-secondary-container transition-colors cursor-pointer group neo-shadow">
+<div class="flex flex-col items-center justify-center bg-on-secondary-container text-secondary-container rounded neo-border p-2 min-w-[60px]">
+<span class="font-headline font-bold text-lg">01:30</span>
+<span class="font-label text-xs uppercase">PM</span>
+</div>
+<div>
+<h4 class="font-headline text-md text-on-secondary-container font-bold">Quantum Computing 1</h4>
+<p class="font-body text-sm text-on-secondary-container opacity-80">Virtual Lab - Room Alpha</p>
+</div>
+</div>
+<!-- Schedule Item 3 -->
+<div class="flex gap-4 p-3 rounded-lg border-2 border-black hover:bg-tertiary-fixed transition-colors cursor-pointer group">
+<div class="flex flex-col items-center justify-center bg-primary text-on-primary rounded neo-border p-2 min-w-[60px]">
+<span class="font-headline font-bold text-lg">03:00</span>
+<span class="font-label text-xs uppercase">PM</span>
+</div>
+<div>
+<h4 class="font-headline text-md text-on-surface group-hover:text-on-tertiary-fixed">Office Hours</h4>
+<p class="font-body text-sm text-on-surface-variant">Online Discord</p>
+</div>
+</div>
+</div>
+</section>
+<section>
+</section>
+</div>
+</div>
+</main>
+
+
+</body></html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PhysPracticum - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-tertiary-container": "#589364",
+                "on-primary-container": "#6f88ad",
+                "primary-fixed-dim": "#afc8f0",
+                "outline": "#74777f",
+                "on-surface-variant": "#43474e",
+                "surface": "#f9f9f9",
+                "on-primary-fixed": "#001c3a",
+                "on-background": "#1a1c1c",
+                "outline-variant": "#c4c6cf",
+                "surface-tint": "#476083",
+                "tertiary": "#000802",
+                "on-surface": "#1a1c1c",
+                "inverse-on-surface": "#f0f1f1",
+                "on-secondary-container": "#7a4a54",
+                "surface-container-highest": "#e2e2e2",
+                "on-tertiary": "#ffffff",
+                "tertiary-fixed": "#b2f2bb",
+                "primary": "#000613",
+                "on-primary": "#ffffff",
+                "tertiary-container": "#00250d",
+                "tertiary-fixed-dim": "#96d5a0",
+                "background": "#f9f9f9",
+                "on-tertiary-fixed": "#00210b",
+                "on-secondary": "#ffffff",
+                "on-tertiary-fixed-variant": "#145129",
+                "surface-bright": "#f9f9f9",
+                "secondary-container": "#fdbec9",
+                "secondary-fixed": "#ffd9df",
+                "inverse-primary": "#afc8f0",
+                "on-error": "#ffffff",
+                "error-container": "#ffdad6",
+                "on-primary-fixed-variant": "#2f486a",
+                "error": "#ba1a1a",
+                "surface-container-lowest": "#ffffff",
+                "surface-dim": "#dadada",
+                "primary-fixed": "#d4e3ff",
+                "secondary": "#81515a",
+                "surface-container": "#eeeeee",
+                "surface-variant": "#e2e2e2",
+                "secondary-fixed-dim": "#f4b6c1",
+                "inverse-surface": "#2f3131",
+                "on-error-container": "#93000a",
+                "surface-container-low": "#f3f3f4",
+                "on-secondary-fixed": "#330f19",
+                "surface-container-high": "#e8e8e8",
+                "primary-container": "#001f3f",
+                "on-secondary-fixed-variant": "#663a43"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+            "base": "4px",
+            "xs": "8px",
+            "sm": "16px",
+            "md": "24px",
+            "lg": "40px",
+            "xl": "64px",
+            "gutter": "24px",
+            "container-max": "1280px"
+        },
+        "fontFamily": {
+                "headline": [
+                        "Plus Jakarta Sans"
+                ],
+                "display": [
+                        "Plus Jakarta Sans"
+                ],
+                "body": [
+                        "Inter"
+                ],
+                "label": [
+                        "Space Grotesk"
+                ]
+        },
+        "fontSize": {}
+},
+    },
+  }
+</script>
+<style>
+          body {
+              background-color: #001f3f;
+              color: #ffffff;
+          }
+          
+          .bg-grid {
+              background-size: 60px 60px;
+              background-image: 
+                  linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+          }
+
+          .neo-shadow {
+              box-shadow: 4px 4px 0px 0px theme('colors.primary');
+          }
+          .neo-shadow-lg {
+              box-shadow: 8px 8px 0px 0px theme('colors.primary');
+          }
+          .neo-border {
+              border: 3px solid theme('colors.primary');
+          }
+          
+          .hover-neo:hover {
+              transform: translate(-2px, -2px);
+              box-shadow: 6px 6px 0px 0px theme('colors.primary');
+          }
+          .hover-neo:active {
+              transform: translate(2px, 2px);
+              box-shadow: 2px 2px 0px 0px theme('colors.primary');
+          }
+          
+          .dark-mode-border-shadow {
+              border-color: theme('colors.surface-bright');
+              box-shadow: 8px 8px 0px 0px theme('colors.surface-bright');
+          }
+
+          @keyframes float {
+              0% { transform: translateY(0px) rotate(0deg); }
+              50% { transform: translateY(-20px) rotate(10deg); }
+              100% { transform: translateY(0px) rotate(0deg); }
+          }
+          .floating-shape {
+              animation: float 6s ease-in-out infinite;
+          }
+          .floating-shape-delay-1 {
+              animation: float 7s ease-in-out infinite 1s;
+          }
+          .floating-shape-delay-2 {
+              animation: float 5s ease-in-out infinite 2s;
+          }
+      </style>
+</head>
+<body class="min-h-screen flex flex-col font-body antialiased selection:bg-tertiary-fixed selection:text-on-tertiary-fixed relative bg-grid">
+<!-- TopAppBar -->
+<header class="w-full top-0 z-50">
+<div class="flex justify-between items-center px-8 py-6 max-w-full mx-auto">
+<div class="flex items-center gap-2 text-3xl font-black tracking-tighter text-surface-bright uppercase font-headline drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">science</span>
+                PhysixLab
+            </div>
+<nav class="hidden lg:flex gap-8 items-center text-surface-bright font-label font-bold text-lg">
+<a class="hover:text-tertiary-fixed transition-colors drop-shadow-[1px_1px_0px_rgba(0,0,0,1)] text-white" href="#">Accueil</a>
+<a class="hover:text-tertiary-fixed transition-colors drop-shadow-[1px_1px_0px_rgba(0,0,0,1)] text-white" href="#">À propos</a>
+<a class="hover:text-tertiary-fixed transition-colors drop-shadow-[1px_1px_0px_rgba(0,0,0,1)] text-white" href="#">Actualités</a>
+<a class="hover:text-tertiary-fixed transition-colors drop-shadow-[1px_1px_0px_rgba(0,0,0,1)] text-white" href="#">Échange communautaire</a>
+<a class="hover:text-tertiary-fixed transition-colors drop-shadow-[1px_1px_0px_rgba(0,0,0,1)] text-white" href="#">Projets et opportunités</a>
+</nav>
+<button class="hidden md:flex items-center gap-2 font-label font-bold text-lg px-6 py-2.5 bg-transparent text-surface-bright rounded-full border-[3px] border-surface-bright hover:bg-surface-bright hover:text-primary transition-all drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] text-white">
+                Contact
+            </button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col items-center justify-center p-6 md:p-12 w-full relative z-10 min-h-[819px]">
+<!-- Floating Shapes Background -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none z-[-1]">
+<!-- Top Left Cone -->
+<svg class="absolute top-[10%] left-[30%] w-12 h-12 floating-shape text-tertiary-fixed" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24">
+<path d="M12 2L3 20h18L12 2z"></path>
+</svg>
+<!-- Top Center Cube -->
+<svg class="absolute top-[15%] left-[55%] w-20 h-20 floating-shape-delay-1 text-secondary-fixed-dim" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24">
+<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+<line x1="12" x2="12" y1="22.08" y2="12"></line>
+</svg>
+<!-- Top Right Cone -->
+<svg class="absolute top-[25%] right-[15%] w-16 h-16 floating-shape-delay-2 text-inverse-primary" fill="currentColor" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M12 2L3 20h18L12 2z"></path>
+</svg>
+<!-- Left Cube -->
+<svg class="absolute top-[30%] left-[8%] w-24 h-24 floating-shape-delay-2 text-secondary-container" fill="currentColor" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+<line x1="12" x2="12" y1="22.08" y2="12"></line>
+</svg>
+<!-- Bottom Left Hemisphere -->
+<svg class="absolute bottom-[25%] left-[5%] w-16 h-16 floating-shape text-tertiary-fixed-dim" fill="currentColor" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M3 12a9 9 0 1 0 18 0"></path>
+<line x1="3" x2="21" y1="12" y2="12"></line>
+</svg>
+<!-- Bottom Right Cube Small -->
+<svg class="absolute bottom-[30%] right-[15%] w-10 h-10 floating-shape-delay-1 text-surface-bright" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24">
+<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+<line x1="12" x2="12" y1="22.08" y2="12"></line>
+</svg>
+<!-- Bottom Center Cylinder -->
+<svg class="absolute bottom-[5%] left-[25%] w-24 h-24 floating-shape text-surface-bright" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24">
+<ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+<path d="M3 5v14a9 3 0 0 0 18 0V5"></path>
+</svg>
+<!-- Bottom Right Rectangular Prism -->
+<svg class="absolute bottom-[5%] right-[25%] w-28 h-28 floating-shape-delay-2 text-inverse-primary" fill="currentColor" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+<line x1="12" x2="12" y1="22.08" y2="12"></line>
+</svg>
+</div>
+<div class="flex-1 text-center w-full max-w-4xl mx-auto flex flex-col items-center justify-center -mt-10">
+<p class="font-label text-tertiary-fixed font-bold text-xl md:text-2xl mb-4 uppercase tracking-wider drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">Master Physics with a Touch of Fun</p>
+<h1 class="font-headline text-5xl md:text-6xl lg:text-7xl font-extrabold text-surface-bright tracking-tight mb-8 drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] leading-tight text-white">
+                Welcome to <br> <span class="text-tertiary-fixed">PhysPracticum</span>
+</h1>
+<p class="font-body text-surface-bright text-lg md:text-xl max-w-2xl mx-auto mb-12 drop-shadow-[1px_1px_0px_rgba(0,0,0,1)] font-medium text-white">
+                Select your portal entry below to access computational physics simulations and lab assignments.
+            </p>
+<button class="py-4 px-10 bg-tertiary-fixed text-primary font-label font-black text-2xl rounded-xl border-[4px] border-primary hover-neo transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-3" onclick="document.getElementById('loginModal').classList.remove('hidden')">
+                Login to Portal
+                <span class="material-symbols-outlined text-3xl">rocket_launch</span>
+</button>
+</div>
+<!-- Bottom Arrow Indicator -->
+<div class="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+<div class="w-14 h-14 bg-surface-bright rounded-full flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-[3px] border-primary animate-bounce">
+<span class="material-symbols-outlined text-primary text-3xl font-bold">arrow_downward</span>
+</div>
+</div>
+</main>
+<!-- Footer (Hidden in this layout based on reference, but keeping minimal version if needed, or remove to match image strictly. I will hide it to focus on hero.) -->
+<footer class="hidden w-full mt-auto bg-surface-container-highest dark:bg-primary-container border-t-[3px] border-primary dark:border-primary-fixed-dim flex flex-col md:flex-row justify-between items-center px-8 py-10 gap-6 z-10 relative">
+<div class="font-headline font-bold text-primary dark:text-primary-fixed text-xl flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">science</span>
+            PhysixLab
+        </div>
+<div class="flex flex-wrap justify-center gap-6 font-body text-body-md text-primary dark:text-primary-fixed">
+<a class="no-underline hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Documentation</a>
+<a class="no-underline hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Privacy</a>
+<a class="no-underline hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Terms</a>
+<a class="no-underline hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Research</a>
+</div>
+<div class="font-body text-body-md text-primary dark:text-primary-fixed opacity-80 text-center md:text-right">
+            © 2024 PhysixLab Computational. All physics simulated.
+        </div>
+</footer>
+<!-- Login Modal -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center hidden" id="loginModal">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-primary/80 backdrop-blur-sm" onclick="document.getElementById('loginModal').classList.add('hidden')"></div>
+<!-- Modal Content -->
+<div class="bg-surface-bright rounded-2xl p-8 max-w-md w-full mx-4 relative z-10 border-[4px] border-primary shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+<button class="absolute -top-4 -right-4 w-12 h-12 flex items-center justify-center bg-error-container text-error rounded-full border-[3px] border-primary hover-neo shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20 transition-transform" onclick="document.getElementById('loginModal').classList.add('hidden')">
+<span class="material-symbols-outlined font-black text-2xl">close</span>
+</button>
+<h2 class="font-headline text-4xl font-black text-primary mb-6 text-center">Portal Login</h2>
+<!-- Role Toggle -->
+<div class="flex p-1.5 bg-surface-variant rounded-xl border-[3px] border-primary mb-8 shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)]">
+<button class="flex-1 py-2.5 font-label font-black text-primary bg-tertiary-fixed rounded-lg border-2 border-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" id="btn-student" onclick="
+                    this.classList.add('bg-tertiary-fixed', 'border-2', 'border-primary', 'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]', 'text-primary');
+                    this.classList.remove('text-on-surface-variant', 'hover:text-primary', 'border-transparent');
+                    document.getElementById('btn-assistant').classList.remove('bg-secondary-fixed', 'border-2', 'border-primary', 'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]', 'text-primary');
+                    document.getElementById('btn-assistant').classList.add('text-on-surface-variant', 'hover:text-primary', 'border-transparent');
+                ">Student</button>
+<button class="flex-1 py-2.5 font-label font-bold text-on-surface-variant hover:text-primary border-2 border-transparent transition-all" id="btn-assistant" onclick="
+                    this.classList.add('bg-secondary-fixed', 'border-2', 'border-primary', 'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]', 'text-primary');
+                    this.classList.remove('text-on-surface-variant', 'hover:text-primary', 'border-transparent');
+                    document.getElementById('btn-student').classList.remove('bg-tertiary-fixed', 'border-2', 'border-primary', 'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]', 'text-primary');
+                    document.getElementById('btn-student').classList.add('text-on-surface-variant', 'hover:text-primary', 'border-transparent');
+                ">Assistant</button>
+</div>
+<!-- Form -->
+<form class="space-y-5">
+<div>
+<label class="block font-label font-bold text-primary mb-2 text-lg">Email Address</label>
+<input class="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder-outline transition-colors" placeholder="physicist@university.edu" type="email">
+</div>
+<div>
+<label class="block font-label font-bold text-primary mb-2 text-lg">Password</label>
+<input class="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder-outline transition-colors" placeholder="••••••••" type="password">
+</div>
+<button class="w-full py-4 mt-8 bg-primary text-on-primary font-label font-black text-2xl rounded-xl border-[3px] border-primary hover:-translate-y-1 active:translate-y-1 transition-transform shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2" type="button">
+                Let's Go!
+                <span class="material-symbols-outlined font-bold">arrow_forward</span>
+</button>
+</form>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="en" style="width: 1280px; height: 1024px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Student Workspace - PhysPracticum</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-secondary-fixed-variant": "#663a43",
+                "surface-bright": "#f9f9f9",
+                "secondary": "#81515a",
+                "surface-dim": "#dadada",
+                "on-background": "#1a1c1c",
+                "on-primary": "#ffffff",
+                "surface": "#f9f9f9",
+                "error": "#ba1a1a",
+                "primary-fixed": "#d4e3ff",
+                "inverse-surface": "#2f3131",
+                "on-primary-fixed": "#001c3a",
+                "on-secondary": "#ffffff",
+                "surface-tint": "#476083",
+                "on-tertiary-fixed": "#00210b",
+                "surface-container-high": "#e8e8e8",
+                "inverse-primary": "#afc8f0",
+                "on-surface": "#1a1c1c",
+                "outline-variant": "#c4c6cf",
+                "surface-container": "#eeeeee",
+                "on-error": "#ffffff",
+                "tertiary-container": "#00250d",
+                "secondary-fixed": "#ffd9df",
+                "surface-variant": "#e2e2e2",
+                "secondary-fixed-dim": "#f4b6c1",
+                "on-tertiary-container": "#589364",
+                "surface-container-highest": "#e2e2e2",
+                "on-primary-fixed-variant": "#2f486a",
+                "primary-fixed-dim": "#afc8f0",
+                "inverse-on-surface": "#f0f1f1",
+                "background": "#f9f9f9",
+                "tertiary-fixed-dim": "#96d5a0",
+                "on-tertiary": "#ffffff",
+                "on-secondary-container": "#7a4a54",
+                "surface-container-lowest": "#ffffff",
+                "secondary-container": "#fdbec9",
+                "tertiary-fixed": "#b2f2bb",
+                "surface-container-low": "#f3f3f4",
+                "on-tertiary-fixed-variant": "#145129",
+                "primary": "#000613",
+                "tertiary": "#000802",
+                "primary-container": "#001f3f",
+                "on-surface-variant": "#43474e",
+                "on-secondary-fixed": "#330f19",
+                "error-container": "#ffdad6",
+                "on-primary-container": "#6f88ad",
+                "outline": "#74777f",
+                "on-error-container": "#93000a"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "xl": "64px",
+                "gutter": "24px",
+                "md": "24px",
+                "sm": "16px",
+                "container-max": "1280px",
+                "base": "4px",
+                "xs": "8px",
+                "lg": "40px"
+        },
+        "fontFamily": {
+                "headline-md": [
+                        "Plus Jakarta Sans"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "code-sm": [
+                        "Space Grotesk"
+                ],
+                "headline-lg": [
+                        "Plus Jakarta Sans"
+                ],
+                "label-bold": [
+                        "Space Grotesk"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-xl": [
+                        "Plus Jakarta Sans"
+                ]
+        },
+        "fontSize": {
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ],
+                "code-sm": [
+                        "13px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-bold": [
+                        "14px",
+                        {
+                                "lineHeight": "1.0",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-xl": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "800"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+  /* Base custom utility for the Neobrutalist buttons */
+  .neo-btn {
+    transition: all 0.15s ease-in-out;
+  }
+  .neo-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #000000;
+  }
+  .neo-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px 0px #000000;
+  }
+</style>
+</head>
+<body class="bg-primary-container text-on-primary font-body-md h-screen w-full flex overflow-hidden dark">
+<!-- SideNavBar Shared Component -->
+<nav class="flex flex-col w-64 h-screen border-r-4 border-black pt-6 pb-4 bg-primary dark:bg-slate-950 sticky left-0 shrink-0 shadow-[4px_0px_0px_0px_rgba(0,0,0,1)] z-50">
+<div class="px-6 mb-8">
+<h2 class="text-xl font-black text-white dark:text-white font-['Plus_Jakarta_Sans']">Physics Lab</h2>
+<p class="text-xs text-on-primary-container dark:text-slate-400 font-bold mt-1 uppercase tracking-wider">Computational Track</p>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-[#98FFD9] text-black border-2 border-black rounded-lg py-3 font-['Plus_Jakarta_Sans'] font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 transition-transform active:scale-95 duration-100 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+        New Session
+      </button>
+</div>
+<ul class="flex-1 px-2 font-['Plus_Jakarta_Sans'] font-bold text-sm">
+<li class="">
+<a class="text-slate-300 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+          Dashboard
+        </a>
+</li>
+<li class="">
+<a class="bg-[#98FFD9] text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-lg m-2 p-3 flex items-center gap-3 active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">code</span>
+          Practicum
+        </a>
+</li>
+<li class="">
+<a class="text-slate-300 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">grade</span>
+          Grading
+        </a>
+</li>
+<li class="">
+<a class="text-slate-300 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+          Schedule
+        </a>
+</li>
+<li class="">
+<a class="text-slate-300 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+          Resources
+        </a>
+</li>
+</ul>
+<ul class="mt-auto px-2 border-t-2 border-black pt-4 font-['Plus_Jakarta_Sans'] font-bold text-sm">
+<li class="">
+<a class="text-slate-300 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">help</span>
+          Help
+        </a>
+</li>
+<li class="">
+<a class="text-slate-300 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">logout</span>
+          Logout
+        </a>
+</li>
+</ul>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-1 flex flex-col h-full bg-primary-container overflow-hidden">
+<!-- Workspace Header -->
+<header class="border-b-[3px] border-black px-gutter py-sm flex justify-between items-center bg-inverse-surface shrink-0 z-40 relative shadow-[0px_4px_0px_0px_rgba(0,0,0,1)]">
+<div class="flex items-center gap-md">
+<h1 class="font-headline-md text-white">Practicum Workspace</h1>
+<div class="flex items-center gap-2 bg-on-surface-variant border-[3px] border-black rounded-full px-sm py-base shadow-[2px_2px_0px_0px_#000]">
+<div class="w-3 h-3 rounded-full bg-outline-variant border-2 border-black"></div>
+<span class="font-label-bold text-white tracking-tight">Offline</span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="neo-btn flex items-center gap-2 bg-inverse-surface border-[3px] border-black text-outline px-md py-xs rounded-DEFAULT font-label-bold uppercase opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined text-lg">save</span>
+          Save
+        </button>
+<button class="neo-btn flex items-center gap-2 bg-inverse-surface border-[3px] border-black text-outline px-md py-xs rounded-DEFAULT font-label-bold uppercase opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined text-lg">upload</span>
+          Submit
+        </button>
+<button class="neo-btn flex items-center gap-2 bg-inverse-surface border-[3px] border-black text-outline px-md py-xs rounded-DEFAULT font-label-bold uppercase opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+          Run All
+        </button>
+</div>
+</header>
+<!-- Split View Container -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Left Panel: Instructions -->
+<aside class="w-[35%] border-r-[3px] border-black bg-primary-container overflow-y-auto z-30"><div class="p-gutter flex flex-col gap-6">
+<div class="flex items-center gap-2 border-b-[3px] border-black pb-4 text-white">
+<span class="material-symbols-outlined text-white">list_alt</span>
+<h2 class="font-headline-md text-white">Module List</h2>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Module 101: Completed -->
+<div class="border-[3px] border-black rounded-xl bg-tertiary shadow-[4px_4px_0px_0px_#000] p-4 flex items-center justify-between text-tertiary-fixed">
+<div class="flex flex-col">
+<span class="text-xs font-black uppercase tracking-wider opacity-70 text-tertiary-fixed-dim">Module 101</span>
+<span class="font-bold">Mechanics</span>
+</div>
+<div class="bg-tertiary-fixed border-2 border-black rounded-full p-1 flex items-center justify-center text-black">
+<span class="material-symbols-outlined text-sm font-black">check</span>
+</div>
+</div>
+<!-- Module 102: In Progress -->
+<div class="border-[3px] border-black rounded-xl bg-[#98FFD9] text-black shadow-[4px_4px_0px_0px_#000] p-4 flex items-center justify-between relative overflow-hidden">
+<div class="flex flex-col">
+<span class="text-xs font-black uppercase tracking-wider opacity-70">Module 102</span>
+<span class="font-bold">Kinematics</span>
+</div>
+<span class="text-[10px] font-black uppercase bg-black text-white px-2 py-0.5 rounded-full">Active</span>
+</div>
+<!-- Module 103: Locked -->
+<div class="border-[3px] border-black rounded-xl bg-on-surface-variant shadow-[4px_4px_0px_0px_#000] p-4 flex items-center justify-between opacity-60 text-white">
+<div class="flex flex-col">
+<span class="text-xs font-black uppercase tracking-wider opacity-70">Module 103</span>
+<span class="font-bold">Dynamics</span>
+</div>
+<span class="material-symbols-outlined text-sm">lock</span>
+</div>
+<!-- Module 104: Locked -->
+<div class="border-[3px] border-black rounded-xl bg-on-surface-variant shadow-[4px_4px_0px_0px_#000] p-4 flex items-center justify-between opacity-60 text-white">
+<div class="flex flex-col">
+<span class="text-xs font-black uppercase tracking-wider opacity-70">Module 104</span>
+<span class="font-bold">Thermodynamics</span>
+</div>
+<span class="material-symbols-outlined text-sm">lock</span>
+</div>
+<!-- Module 105: Locked -->
+<div class="border-[3px] border-black rounded-xl bg-on-surface-variant shadow-[4px_4px_0px_0px_#000] p-4 flex items-center justify-between opacity-60 text-white">
+<div class="flex flex-col">
+<span class="text-xs font-black uppercase tracking-wider opacity-70">Module 105</span>
+<span class="font-bold">Electromagnetism</span>
+</div>
+<span class="material-symbols-outlined text-sm">lock</span>
+</div>
+<!-- Module 106: Locked -->
+<div class="border-[3px] border-black rounded-xl bg-on-surface-variant shadow-[4px_4px_0px_0px_#000] p-4 flex items-center justify-between opacity-60 text-white">
+<div class="flex flex-col">
+<span class="text-xs font-black uppercase tracking-wider opacity-70">Module 106</span>
+<span class="font-bold">Quantum Basics</span>
+</div>
+<span class="material-symbols-outlined text-sm">lock</span>
+</div>
+</div>
+</div></aside>
+<!-- Right Panel: Empty State area -->
+<section class="w-[65%] overflow-y-auto bg-primary p-gutter pb-xl flex flex-col items-center justify-center">
+<div class="max-w-2xl w-full flex flex-col gap-8">
+<!-- Empty State Card -->
+<div class="border-[4px] border-black rounded-2xl bg-secondary-fixed shadow-[12px_12px_0px_0px_#000] p-12 text-center transform rotate-1 hover:rotate-0 transition-transform duration-300 text-black">
+<div class="inline-block bg-white border-[3px] border-black rounded-full p-6 mb-6 shadow-[4px_4px_0px_0px_#000]">
+<span class="material-symbols-outlined text-6xl text-secondary" style="font-variation-settings: 'FILL' 1;">snooze</span>
+</div>
+<h2 class="font-headline-xl text-black mb-4">No Active Session</h2>
+<p class="font-body-lg text-on-surface-variant">It looks like you're taking a break! Your notebook environment is currently asleep.</p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<!-- Upcoming Session Info -->
+<div class="border-[3px] border-black rounded-xl bg-inverse-surface shadow-[8px_8px_0px_0px_#000] p-6 group hover:-translate-y-1 transition-transform">
+<div class="flex items-center gap-2 mb-4 border-b-[2px] border-black pb-2 text-white">
+<span class="material-symbols-outlined text-primary-fixed-dim">event</span>
+<h3 class="font-headline-md text-white text-xl">Upcoming Session</h3>
+</div>
+<div class="space-y-3 font-body-md text-outline-variant">
+<p class=""><strong class="font-label-bold uppercase text-primary-fixed-dim mr-2">Module:</strong> Kinematics 102</p>
+<p class=""><strong class="font-label-bold uppercase text-primary-fixed-dim mr-2">Date:</strong> Tomorrow, 14:00</p>
+</div>
+</div>
+<!-- Quick Prep Info -->
+<div class="border-[3px] border-black rounded-xl bg-inverse-surface shadow-[8px_8px_0px_0px_#000] p-6 group hover:-translate-y-1 transition-transform">
+<div class="flex items-center gap-2 mb-4 border-b-[2px] border-black pb-2 text-white">
+<span class="material-symbols-outlined text-tertiary-fixed">rocket_launch</span>
+<h3 class="font-headline-md text-white text-xl">Quick Prep</h3>
+</div>
+<div class="flex flex-col gap-4">
+<a class="text-tertiary-fixed hover:underline font-label-bold flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm">library_books</span> Read Documentation
+        </a>
+<button class="neo-btn bg-tertiary-fixed border-[3px] border-black text-black px-4 py-2 rounded shadow-[4px_4px_0px_0px_#000] font-label-bold uppercase flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">download</span>
+          Download Dataset
+        </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<div aria-hidden="true" data-snapdom-sandbox="true" id="snapdom-sandbox" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

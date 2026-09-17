@@ -1,0 +1,256 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Assistant Control Panel - PhysPracticum</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"secondary-container": "#fdbec9", "on-surface-variant": "#43474e", "outline-variant": "#c4c6cf", "primary-container": "#001f3f", "surface-container-highest": "#e2e2e2", "surface-container-lowest": "#ffffff", "surface-bright": "#f9f9f9", "surface-variant": "#e2e2e2", outline: "#74777f", "primary-fixed": "#d4e3ff", "secondary-fixed-dim": "#f4b6c1", background: "#f9f9f9", error: "#ba1a1a", "primary-fixed-dim": "#afc8f0", "error-container": "#ffdad6", "inverse-surface": "#2f3131", "surface-dim": "#dadada", "on-error": "#ffffff", "on-tertiary": "#ffffff", primary: "#000613", "on-primary": "#ffffff", "tertiary-fixed": "#b2f2bb", "on-primary-fixed": "#001c3a", "surface-container-high": "#e8e8e8", surface: "#f9f9f9", "on-surface": "#1a1c1c", "on-error-container": "#93000a", "on-primary-fixed-variant": "#2f486a", "tertiary-fixed-dim": "#96d5a0", "surface-container": "#eeeeee", "on-secondary": "#ffffff", "on-tertiary-fixed": "#00210b", "inverse-on-surface": "#f0f1f1", "on-primary-container": "#6f88ad", "surface-tint": "#476083", "on-background": "#1a1c1c", "on-secondary-fixed-variant": "#663a43", "on-tertiary-container": "#589364", "surface-container-low": "#f3f3f4", tertiary: "#000802", "tertiary-container": "#00250d", "secondary-fixed": "#ffd9df", secondary: "#81515a", "inverse-primary": "#afc8f0", "on-secondary-container": "#7a4a54", "on-secondary-fixed": "#330f19", "on-tertiary-fixed-variant": "#145129"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {xl: "64px", gutter: "24px", md: "24px", sm: "16px", "container-max": "1280px", base: "4px", xs: "8px", lg: "40px"}, fontFamily: {"headline-md": ["Plus Jakarta Sans"], "body-md": ["Inter"], "code-sm": ["Space Grotesk"], "headline-lg": ["Plus Jakarta Sans"], "label-bold": ["Space Grotesk"], "body-lg": ["Inter"], "headline-xl": ["Plus Jakarta Sans"], headline: ["Plus Jakarta Sans"], display: ["Plus Jakarta Sans"], body: ["Inter"], label: ["Space Grotesk"]}, fontSize: {"headline-md": ["24px", {lineHeight: "1.3", fontWeight: "700"}], "body-md": ["16px", {lineHeight: "1.5", fontWeight: "400"}], "code-sm": ["13px", {lineHeight: "1.4", fontWeight: "500"}], "headline-lg": ["32px", {lineHeight: "1.2", fontWeight: "700"}], "label-bold": ["14px", {lineHeight: "1.0", fontWeight: "700"}], "body-lg": ["18px", {lineHeight: "1.6", fontWeight: "400"}], "headline-xl": ["48px", {lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "800"}]}}}};</script>
+<style>
+        .neo-brutal-btn {
+            border: 3px solid black;
+            box-shadow: 4px 4px 0px 0px black;
+            transition: all 0.1s ease;
+        }
+        .neo-brutal-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px black;
+        }
+        .neo-brutal-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px black;
+        }
+        .neo-brutal-card {
+            border: 3px solid black;
+            border-radius: 16px;
+            box-shadow: 8px 8px 0px 0px black;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen flex overflow-hidden">
+<!-- SideNavBar (Shared Component JSON) -->
+<nav class="flex flex-col w-64 h-screen border-r-4 border-black pt-6 pb-4 bg-surface-container-lowest sticky left-0 z-40">
+<div class="px-6 mb-8 flex flex-col items-center gap-4">
+<div class="w-16 h-16 rounded-full border-3 border-black overflow-hidden flex-shrink-0 bg-secondary-container">
+<img alt="Practicum Logo" class="w-full h-full object-cover" data-alt="A stylized geometric atom symbol painted in vibrant neobrutalist pastel pink on a stark white background with thick black outlines, suggesting computational physics. The lighting is flat and graphic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB1BkgGagviLETaC8Z9rEeLSFuwpnhRYCwpIww0PjiQuqlUSgcxTuKjm7GJKTnIWRD2vchwmDdg0DrhnyTkHxMyZdog6YWC7Gf5cVSPxvrZZ2tbxMlziRz_jHWIF0jEpRwzgRoI3JHPP7KIuqr7ixE-jlzO8dIutLLp4JLd8xLZ8CEnZxaLYZIlyLgoTIsjtsh8SwmLvWaxZx6Irn9QsURcgwtvlOdbPDiCsJu1jL6r8HI9IeVobGcQ3L8tQVxiNK_QPyEuc-EXPgG">
+</div>
+<div class="text-center">
+<h1 class="text-xl font-black text-slate-950">Physics Lab</h1>
+<p class="font-code-sm text-code-sm text-outline">Computational Track</p>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="neo-brutal-btn w-full bg-tertiary-fixed text-primary py-3 rounded-lg font-label-bold text-label-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined icon-fill">add</span>
+                New Session
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto px-2">
+<a class="bg-[#98FFD9] text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-lg m-2 p-3 flex items-center gap-3 font-headline-md font-bold text-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg transition-transform hover:translate-x-1 active:scale-95 duration-100 font-headline-md font-bold text-sm" href="#">
+<span class="material-symbols-outlined">code</span>
+                Notebooks
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg transition-transform hover:translate-x-1 active:scale-95 duration-100 font-headline-md font-bold text-sm" href="#">
+<span class="material-symbols-outlined">grade</span>
+                Grading
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg transition-transform hover:translate-x-1 active:scale-95 duration-100 font-headline-md font-bold text-sm" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Schedule
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg transition-transform hover:translate-x-1 active:scale-95 duration-100 font-headline-md font-bold text-sm" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+                Resources
+            </a>
+</div>
+<div class="px-2 mt-auto border-t-3 border-black pt-4">
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg transition-transform hover:translate-x-1 font-headline-md font-bold text-sm" href="#">
+<span class="material-symbols-outlined">help</span>
+                Help
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg transition-transform hover:translate-x-1 font-headline-md font-bold text-sm" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+<!-- TopAppBar (Shared Component JSON) -->
+<header class="bg-surface-container-lowest flex justify-between items-center w-full px-6 py-4 border-b-4 border-black sticky top-0 z-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<div class="flex items-center gap-6">
+<span class="text-2xl font-black text-slate-950 uppercase tracking-tight">PhysPracticum</span>
+<nav class="hidden md:flex gap-4">
+<a class="text-slate-600 hover:text-black font-['Plus_Jakarta_Sans'] font-bold hover:bg-slate-100 transition-all px-3 py-2 rounded" href="#">Modules</a>
+<a class="text-slate-600 hover:text-black font-['Plus_Jakarta_Sans'] font-bold hover:bg-slate-100 transition-all px-3 py-2 rounded" href="#">Simulations</a>
+<a class="text-slate-600 hover:text-black font-['Plus_Jakarta_Sans'] font-bold hover:bg-slate-100 transition-all px-3 py-2 rounded" href="#">Documentation</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex border-3 border-black rounded-full px-4 py-1.5 bg-surface-bright shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] items-center gap-2">
+<input class="border-none bg-transparent focus:ring-0 text-sm font-body-md w-48" placeholder="Search..." type="text">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<button class="w-10 h-10 rounded-full border-3 border-black flex items-center justify-center bg-secondary-fixed hover:bg-secondary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full border-3 border-black flex items-center justify-center bg-primary-fixed hover:bg-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full border-3 border-black overflow-hidden bg-tertiary-fixed">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="A brightly lit portrait of a student researcher wearing safety glasses, set against a solid stark white background. High contrast lighting with sharp shadows, characteristic of neo-brutalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDswcW_6Et5g9mzva6F4w9jOWrG9h1eNiWbRMB-O2Qy6Vw46u7Xsh4m-fgmjzkZmMVfu9VyE5nrhd7PinACKWr0w-Nq-FFVG86GwzkFviRagpIuVYcIzU2Ejqr22ZHUqK4KgmaN0mk6yMCRGRgzoFMaLmMuYHqK4r1SQcLSe0JwGYPJqkRjC-NcYp_SUp1NDq5_YYk-3JaYOfmwxCY2K_XHkoscu2NL38HhHnuXx934LD2nt3YgRpS6u2JR5OZiaDD0ldXGZ7K45mB7">
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 overflow-y-auto p-gutter">
+<!-- Header -->
+<div class="mb-gutter flex justify-between items-end">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-2">Assistant Control Panel</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Session: Kinematics 101 - Cohort Alpha</p>
+</div>
+<div class="flex gap-sm">
+<span class="px-3 py-1 bg-tertiary-fixed border-2 border-black rounded-full font-code-sm text-code-sm text-on-tertiary-fixed font-bold shadow-[2px_2px_0px_0px_black]">Live</span>
+<span class="px-3 py-1 bg-secondary-fixed border-2 border-black rounded-full font-code-sm text-code-sm text-on-secondary-fixed font-bold shadow-[2px_2px_0px_0px_black]">Rec</span>
+</div>
+</div>
+<!-- Bento Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Session Status (Real-time) -->
+<div class="col-span-12 md:col-span-8 neo-brutal-card bg-surface-container-lowest p-md flex flex-col justify-between">
+<div class="flex justify-between items-center border-b-3 border-black pb-sm mb-sm">
+<h3 class="font-headline-lg text-headline-lg text-primary">Session Status</h3>
+<div class="flex gap-2">
+<span class="w-3 h-3 rounded-full bg-tertiary-fixed border-2 border-black animate-pulse"></span>
+<span class="font-label-bold text-label-bold">Syncing</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-md mt-sm">
+<!-- Stat 1 -->
+<div class="bg-primary-container text-on-primary border-3 border-black rounded-lg p-sm shadow-[4px_4px_0px_0px_#000]">
+<p class="font-code-sm text-code-sm text-primary-fixed mb-1 uppercase tracking-wider">Active Students</p>
+<div class="flex items-end gap-2">
+<span class="font-headline-xl text-headline-xl leading-none">24</span>
+<span class="font-body-md text-body-md pb-1">/ 30</span>
+</div>
+</div>
+<!-- Stat 2 -->
+<div class="bg-secondary-container text-on-secondary-container border-3 border-black rounded-lg p-sm shadow-[4px_4px_0px_0px_#000]">
+<p class="font-code-sm text-code-sm text-secondary mb-1 uppercase tracking-wider">Elapsed Time</p>
+<div class="flex items-end gap-2">
+<span class="font-headline-xl text-headline-xl leading-none">42:15</span>
+</div>
+</div>
+<!-- Stat 3 -->
+<div class="bg-[#FFF59D] text-black border-3 border-black rounded-lg p-sm shadow-[4px_4px_0px_0px_#000]">
+<p class="font-code-sm text-code-sm text-slate-700 mb-1 uppercase tracking-wider">Completion Rate</p>
+<div class="flex items-end gap-2">
+<span class="font-headline-xl text-headline-xl leading-none">65%</span>
+</div>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="mt-md">
+<div class="flex justify-between mb-2">
+<span class="font-label-bold text-label-bold">Overall Module Progress</span>
+<span class="font-code-sm text-code-sm">Mod 3 of 5</span>
+</div>
+<div class="h-6 border-3 border-black bg-surface-container rounded-full overflow-hidden flex">
+<div class="w-[65%] bg-tertiary-fixed border-r-3 border-black h-full"></div>
+</div>
+</div>
+</div>
+<!-- Primary Controls -->
+<div class="col-span-12 md:col-span-4 neo-brutal-card bg-primary-container p-md flex flex-col gap-sm">
+<h3 class="font-headline-md text-headline-md text-on-primary border-b-3 border-primary-fixed pb-2 mb-2">Command Center</h3>
+<button class="neo-brutal-btn w-full bg-tertiary-fixed text-primary py-4 rounded-lg font-headline-md text-headline-md flex justify-center items-center gap-3">
+<span class="material-symbols-outlined icon-fill text-3xl">play_arrow</span>
+                        Start Session
+                    </button>
+<div class="grid grid-cols-2 gap-sm">
+<button class="neo-brutal-btn bg-[#FFF59D] text-primary py-3 rounded-lg font-label-bold text-label-bold flex justify-center items-center gap-2">
+<span class="material-symbols-outlined icon-fill">pause</span>
+                            Pause
+                        </button>
+<button class="neo-brutal-btn bg-primary-fixed text-primary py-3 rounded-lg font-label-bold text-label-bold flex justify-center items-center gap-2">
+<span class="material-symbols-outlined icon-fill">refresh</span>
+                            Resume
+                        </button>
+</div>
+<button class="neo-brutal-btn w-full bg-secondary-container text-on-secondary-container py-3 mt-auto rounded-lg font-label-bold text-label-bold flex justify-center items-center gap-2 border-secondary">
+<span class="material-symbols-outlined icon-fill">stop</span>
+                        End Session
+                    </button>
+</div>
+<!-- Module Navigation & Content Preview -->
+<div class="col-span-12 neo-brutal-card bg-surface-container-lowest p-md">
+<div class="flex justify-between items-center border-b-3 border-black pb-sm mb-md">
+<h3 class="font-headline-lg text-headline-lg text-primary">Module Manager</h3>
+<div class="flex gap-2">
+<button class="neo-brutal-btn bg-surface border-3 border-black p-2 rounded flex items-center justify-center">
+<span class="material-symbols-outlined">skip_previous</span>
+</button>
+<button class="neo-brutal-btn bg-surface border-3 border-black p-2 rounded flex items-center justify-center">
+<span class="material-symbols-outlined">skip_next</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Module List -->
+<div class="border-3 border-black rounded-lg bg-surface-bright overflow-hidden">
+<div class="bg-surface-variant border-b-3 border-black p-3 font-label-bold text-label-bold">Active Sequence</div>
+<ul class="divide-y-3 divide-black">
+<li class="p-3 flex items-center gap-3 bg-tertiary-fixed bg-opacity-20">
+<span class="material-symbols-outlined text-tertiary">check_circle</span>
+<span class="font-code-sm text-code-sm line-through text-outline">1. Intro to Vectors</span>
+</li>
+<li class="p-3 flex items-center gap-3 bg-tertiary-fixed border-l-8 border-l-primary">
+<span class="material-symbols-outlined text-primary animate-spin">sync</span>
+<span class="font-label-bold text-label-bold text-primary">2. Projectile Motion</span>
+</li>
+<li class="p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">lock</span>
+<span class="font-code-sm text-code-sm text-outline">3. Friction Coefficients</span>
+</li>
+<li class="p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">lock</span>
+<span class="font-code-sm text-code-sm text-outline">4. Assessment</span>
+</li>
+</ul>
+</div>
+<!-- Current Question Preview -->
+<div class="border-3 border-black rounded-lg bg-primary-container text-on-primary p-md relative overflow-hidden flex flex-col">
+<div class="absolute top-0 right-0 bg-secondary-fixed text-on-secondary-fixed font-code-sm text-code-sm px-3 py-1 border-b-3 border-l-3 border-black rounded-bl-lg font-bold">
+                                Q: 2 / 5
+                            </div>
+<h4 class="font-headline-md text-headline-md mb-4 pr-16 text-primary-fixed">Current Question</h4>
+<p class="font-body-md text-body-md mb-6">A ball is thrown at an angle of 45° with an initial velocity of 20 m/s. Calculate the maximum height reached, assuming g = 9.8 m/s².</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center gap-3 border-2 border-primary-fixed-dim rounded p-2 bg-primary">
+<span class="w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center font-label-bold text-primary text-xs border-2 border-black">A</span>
+<span class="font-code-sm text-code-sm text-on-primary">10.2 m</span>
+</div>
+<div class="flex items-center gap-3 border-2 border-tertiary-fixed rounded p-2 bg-primary">
+<span class="w-6 h-6 rounded-full bg-tertiary-fixed flex items-center justify-center font-label-bold text-primary text-xs border-2 border-black">B</span>
+<span class="font-code-sm text-code-sm text-tertiary-fixed">15.5 m (Correct)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

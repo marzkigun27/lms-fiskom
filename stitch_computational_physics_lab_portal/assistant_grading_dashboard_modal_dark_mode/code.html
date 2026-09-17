@@ -1,0 +1,486 @@
+<!DOCTYPE html><html class="dark" lang="en" style="width: 1280px; height: 1024px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Grading Dashboard - PhysPracticum</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "error": "#ba1a1a",
+                "inverse-on-surface": "#f0f1f1",
+                "tertiary": "#000802",
+                "tertiary-fixed": "#b2f2bb",
+                "outline-variant": "#c4c6cf",
+                "surface-container-highest": "#e2e2e2",
+                "on-secondary-fixed-variant": "#663a43",
+                "on-primary-fixed-variant": "#2f486a",
+                "outline": "#74777f",
+                "surface-bright": "#f9f9f9",
+                "primary-fixed": "#d4e3ff",
+                "inverse-surface": "#2f3131",
+                "primary-fixed-dim": "#afc8f0",
+                "surface": "#f9f9f9",
+                "on-tertiary": "#ffffff",
+                "secondary": "#81515a",
+                "background": "#f9f9f9",
+                "surface-container-high": "#e8e8e8",
+                "inverse-primary": "#afc8f0",
+                "primary-container": "#001f3f",
+                "error-container": "#ffdad6",
+                "surface-dim": "#dadada",
+                "on-primary": "#ffffff",
+                "on-primary-container": "#6f88ad",
+                "primary": "#000613",
+                "on-error-container": "#93000a",
+                "on-tertiary-fixed-variant": "#145129",
+                "surface-variant": "#e2e2e2",
+                "surface-container": "#eeeeee",
+                "on-surface": "#1a1c1c",
+                "on-surface-variant": "#43474e",
+                "on-secondary": "#ffffff",
+                "tertiary-fixed-dim": "#96d5a0",
+                "on-secondary-fixed": "#330f19",
+                "surface-container-low": "#f3f3f4",
+                "on-tertiary-fixed": "#00210b",
+                "on-error": "#ffffff",
+                "surface-tint": "#476083",
+                "on-tertiary-container": "#589364",
+                "secondary-container": "#fdbec9",
+                "tertiary-container": "#00250d",
+                "on-secondary-container": "#7a4a54",
+                "surface-container-lowest": "#ffffff",
+                "on-primary-fixed": "#001c3a",
+                "secondary-fixed-dim": "#f4b6c1",
+                "on-background": "#1a1c1c",
+                "secondary-fixed": "#ffd9df"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "xl": "64px",
+                "gutter": "24px",
+                "md": "24px",
+                "sm": "16px",
+                "container-max": "1280px",
+                "base": "4px",
+                "xs": "8px",
+                "lg": "40px"
+        },
+        "fontFamily": {
+                "headline": [
+                        "Plus Jakarta Sans"
+                ],
+                "display": [
+                        "Plus Jakarta Sans"
+                ],
+                "body": [
+                        "Inter"
+                ],
+                "label": [
+                        "Space Grotesk"
+                ]
+        },
+        "fontSize": {
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ],
+                "code-sm": [
+                        "13px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-bold": [
+                        "14px",
+                        {
+                                "lineHeight": "1.0",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-xl": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "800"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        /* Base styles for hard shadows and interactions based on guidelines */
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #000613;
+        }
+        .neo-shadow-lg {
+            box-shadow: 8px 8px 0px 0px #000613;
+        }
+        .neo-button-interactive {
+            transition: all 0.1s ease-in-out;
+        }
+        .neo-button-interactive:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px #000613;
+        }
+        .neo-button-interactive:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px 0px #000613;
+        }
+        
+        .dark .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #000000;
+        }
+        .dark .neo-shadow-lg {
+            box-shadow: 8px 8px 0px 0px #000000;
+        }
+        .dark .neo-button-interactive:hover {
+            box-shadow: 6px 6px 0px 0px #000000;
+        }
+        .dark .neo-button-interactive:active {
+            box-shadow: 0px 0px 0px 0px #000000;
+        }
+      </style>
+</head>
+<body class="bg-background dark:bg-slate-900 text-on-background dark:text-white flex min-h-screen font-body-md text-body-md overflow-x-hidden">
+<!-- SideNavBar (Shared Component JSON) -->
+<nav class="bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-['Plus_Jakarta_Sans'] font-bold text-sm border-r-4 border-black h-screen sticky left-0 shadow-[4px_0px_0px_0px_rgba(0,0,0,1)] flex flex-col w-64 pt-6 pb-4 hidden md:flex z-40">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary-fixed border-2 border-black flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-black">science</span>
+</div>
+<div>
+<h1 class="text-xl font-black text-slate-950 dark:text-white leading-none tracking-tight">Physics Lab</h1>
+<p class="text-xs font-medium text-slate-600 dark:text-slate-400 mt-1">Computational Track</p>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-[#98FFD9] text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-lg py-3 flex justify-center items-center gap-2 hover:translate-x-1 transition-transform active:scale-95 duration-100">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+<span>New Session</span>
+</button>
+</div>
+<div class="flex-1 flex flex-col gap-1 px-2 overflow-y-auto">
+<!-- Dashboard -->
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Notebooks -->
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">code</span>
+<span>Notebooks</span>
+</a>
+<!-- Grading (ACTIVE) -->
+<a class="bg-[#98FFD9] text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-lg m-2 p-3 flex items-center gap-3 hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span>Grading</span>
+</a>
+<!-- Schedule -->
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span>Schedule</span>
+</a>
+<!-- Resources -->
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span>Resources</span>
+</a>
+</div>
+<div class="mt-auto px-2 border-t-4 border-black pt-4 flex flex-col gap-1">
+<!-- Help -->
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Help</span>
+</a>
+<!-- Logout -->
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col min-h-screen">
+<!-- Header -->
+<header class="px-gutter py-xl flex flex-col md:flex-row md:items-end justify-between gap-md border-b-[3px] border-primary dark:border-black bg-surface-container-lowest dark:bg-slate-900">
+<div>
+<div class="flex items-center gap-sm mb-base">
+<span class="px-xs py-base bg-secondary-fixed text-on-secondary-fixed border-[2px] border-primary dark:border-black rounded-full font-label-bold text-label-bold tracking-wide uppercase">Term 2</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">Due: Oct 24</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-primary dark:text-white mb-2">Grading Dashboard</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant dark:text-slate-300 max-w-2xl">Review module submissions, assign rubric scores, and track cohort progress across computational assignments.</p>
+</div>
+<button class="neo-button-interactive neo-shadow flex items-center gap-xs bg-primary-fixed text-on-primary-fixed border-[3px] border-primary dark:border-black rounded-lg px-md py-sm font-label-bold text-label-bold">
+<span class="material-symbols-outlined">download</span>
+                Export to CSV
+            </button>
+</header>
+<!-- Content Area -->
+<div class="p-gutter flex-1 bg-surface-container-low dark:bg-slate-800">
+<!-- Controls / Filters -->
+<div class="flex flex-col md:flex-row gap-sm mb-md items-start md:items-center justify-between">
+<div class="flex flex-wrap gap-sm">
+<!-- Module Filter -->
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest dark:bg-slate-900 border-[3px] border-primary dark:border-black rounded-lg pl-sm pr-lg py-xs font-label-bold text-label-bold text-primary dark:text-white focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#fdbec9] neo-shadow transition-shadow">
+<option>All Modules</option>
+<option>Kinematics Sim</option>
+<option>Thermodynamics</option>
+<option>Wave Functions</option>
+</select>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 pointer-events-none text-primary dark:text-white">expand_more</span>
+</div>
+<!-- Group Filter -->
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest dark:bg-slate-900 border-[3px] border-primary dark:border-black rounded-lg pl-sm pr-lg py-xs font-label-bold text-label-bold text-primary dark:text-white focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#fdbec9] neo-shadow transition-shadow">
+<option>All Cohorts</option>
+<option>Section A</option>
+<option>Section B</option>
+</select>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 pointer-events-none text-primary dark:text-white">expand_more</span>
+</div>
+</div>
+<!-- Search -->
+<div class="relative w-full md:w-64">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant dark:text-slate-400">search</span>
+<input class="w-full bg-surface-container-lowest dark:bg-slate-900 border-[3px] border-primary dark:border-black rounded-lg pl-xl pr-sm py-xs font-body-md text-body-md text-primary dark:text-white placeholder:text-outline dark:placeholder:text-slate-500 focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#b2f2bb] neo-shadow transition-shadow" placeholder="Search student ID..." type="text">
+</div>
+</div>
+<!-- Grading Table Card (Neobrutalist Bento-ish Table) -->
+<div class="bg-surface-container-lowest dark:bg-slate-900 border-[3px] border-primary dark:border-black rounded-xl neo-shadow-lg overflow-hidden flex flex-col">
+<!-- Table Header -->
+<div class="grid grid-cols-12 gap-sm p-md border-b-[3px] border-primary dark:border-black bg-surface-container-highest dark:bg-slate-800 items-center">
+<div class="col-span-3 font-headline-md text-headline-md text-primary dark:text-white">Student</div>
+<div class="col-span-3 font-headline-md text-headline-md text-primary dark:text-white">Module Focus</div>
+<div class="col-span-2 font-headline-md text-headline-md text-primary dark:text-white">Status</div>
+<div class="col-span-2 font-headline-md text-headline-md text-primary dark:text-white">Rubric Score</div>
+<div class="col-span-2 text-right font-headline-md text-headline-md text-primary dark:text-white">Action</div>
+</div>
+<!-- Table Body -->
+<div class="flex flex-col">
+<!-- Row 1: Graded -->
+<div class="grid grid-cols-12 gap-sm p-md border-b-[3px] border-primary dark:border-black items-center hover:bg-surface-bright dark:hover:bg-slate-800 transition-colors">
+<div class="col-span-3 flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full border-[2px] border-primary dark:border-black bg-secondary-container flex items-center justify-center font-headline-md text-headline-md text-primary shrink-0">
+                                EC
+                            </div>
+<div>
+<p class="font-label-bold text-label-bold text-primary dark:text-white">Elena Carter</p>
+<p class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">ID: 84729</p>
+</div>
+</div>
+<div class="col-span-3">
+<span class="inline-flex items-center px-xs py-base bg-surface-container-highest dark:bg-slate-700 border-[2px] border-primary dark:border-black rounded-lg font-code-sm text-code-sm text-primary dark:text-white">
+                                Kinematics Sim
+                            </span>
+</div>
+<div class="col-span-2">
+<div class="inline-flex items-center gap-xs px-sm py-base bg-tertiary-fixed border-[2px] border-primary dark:border-black rounded-full font-label-bold text-label-bold text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+                                Graded
+                            </div>
+</div>
+<div class="col-span-2 flex items-center gap-xs">
+<input class="w-16 text-center bg-surface-container-lowest dark:bg-slate-900 border-[2px] border-primary dark:border-black rounded px-xs py-base font-code-sm text-code-sm dark:text-white focus:outline-none focus:border-primary focus:shadow-[2px_2px_0px_0px_#b2f2bb]" type="number" value="95">
+<span class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">/ 100</span>
+</div>
+<div class="col-span-2 text-right">
+<button class="neo-button-interactive bg-surface-container-lowest dark:bg-slate-800 border-[2px] border-primary dark:border-black px-sm py-xs rounded font-label-bold text-label-bold text-primary dark:text-white shadow-[2px_2px_0px_0px_#000613] dark:shadow-[2px_2px_0px_0px_#000000]">
+                                Edit
+                            </button>
+</div>
+</div>
+<!-- Row 2: Pending -->
+<div class="grid grid-cols-12 gap-sm p-md border-b-[3px] border-primary dark:border-black items-center hover:bg-surface-bright dark:hover:bg-slate-800 transition-colors">
+<div class="col-span-3 flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full border-[2px] border-primary dark:border-black bg-primary-fixed flex items-center justify-center font-headline-md text-headline-md text-primary shrink-0">
+                                JL
+                            </div>
+<div>
+<p class="font-label-bold text-label-bold text-primary dark:text-white">James Lin</p>
+<p class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">ID: 84730</p>
+</div>
+</div>
+<div class="col-span-3">
+<span class="inline-flex items-center px-xs py-base bg-surface-container-highest dark:bg-slate-700 border-[2px] border-primary dark:border-black rounded-lg font-code-sm text-code-sm text-primary dark:text-white">
+                                Thermodynamics
+                            </span>
+</div>
+<div class="col-span-2">
+<div class="inline-flex items-center gap-xs px-sm py-base bg-primary-fixed border-[2px] border-primary dark:border-black rounded-full font-label-bold text-label-bold text-on-primary-fixed">
+<span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+                                Pending
+                            </div>
+</div>
+<div class="col-span-2 flex items-center gap-xs">
+<input class="w-16 text-center bg-surface-container-lowest dark:bg-slate-900 border-[2px] border-primary dark:border-black rounded px-xs py-base font-code-sm text-code-sm dark:text-white focus:outline-none focus:border-primary focus:shadow-[2px_2px_0px_0px_#b2f2bb]" placeholder="--" type="number">
+<span class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">/ 100</span>
+</div>
+<div class="col-span-2 text-right">
+<button class="neo-button-interactive bg-primary text-on-primary border-[2px] border-primary dark:border-black px-sm py-xs rounded font-label-bold text-label-bold shadow-[2px_2px_0px_0px_#000613] dark:shadow-[2px_2px_0px_0px_#000000]">
+                                Grade
+                            </button>
+</div>
+</div>
+<!-- Row 3: Missing -->
+<div class="grid grid-cols-12 gap-sm p-md border-b-[3px] border-primary dark:border-black items-center hover:bg-surface-bright dark:hover:bg-slate-800 transition-colors bg-[#fff0f3] dark:bg-slate-900/50">
+<div class="col-span-3 flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full border-[2px] border-primary dark:border-black bg-surface-container-highest dark:bg-slate-700 flex items-center justify-center font-headline-md text-headline-md text-primary dark:text-white shrink-0">
+                                AR
+                            </div>
+<div>
+<p class="font-label-bold text-label-bold text-primary dark:text-white">Aisha Rahman</p>
+<p class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">ID: 84735</p>
+</div>
+</div>
+<div class="col-span-3">
+<span class="inline-flex items-center px-xs py-base bg-surface-container-highest dark:bg-slate-700 border-[2px] border-primary dark:border-black rounded-lg font-code-sm text-code-sm text-primary dark:text-white">
+                                Wave Functions
+                            </span>
+</div>
+<div class="col-span-2">
+<div class="inline-flex items-center gap-xs px-sm py-base bg-secondary-fixed border-[2px] border-primary dark:border-black rounded-full font-label-bold text-label-bold text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[18px]">sentiment_dissatisfied</span>
+                                Missing
+                            </div>
+</div>
+<div class="col-span-2 flex items-center gap-xs opacity-50 pointer-events-none">
+<input class="w-16 text-center bg-surface-dim dark:bg-slate-800 border-[2px] border-primary dark:border-black rounded px-xs py-base font-code-sm text-code-sm dark:text-white" disabled="" placeholder="0" type="number">
+<span class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">/ 100</span>
+</div>
+<div class="col-span-2 text-right">
+<button class="neo-button-interactive bg-surface-container-lowest dark:bg-slate-800 border-[2px] border-primary dark:border-black px-sm py-xs rounded font-label-bold text-label-bold text-primary dark:text-white shadow-[2px_2px_0px_0px_#000613] dark:shadow-[2px_2px_0px_0px_#000000]">
+                                Nudge
+                            </button>
+</div>
+</div>
+<!-- Row 4: Pending -->
+<div class="grid grid-cols-12 gap-sm p-md items-center hover:bg-surface-bright dark:hover:bg-slate-800 transition-colors">
+<div class="col-span-3 flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full border-[2px] border-primary dark:border-black bg-primary-fixed flex items-center justify-center font-headline-md text-headline-md text-primary shrink-0">
+                                MK
+                            </div>
+<div>
+<p class="font-label-bold text-label-bold text-primary dark:text-white">Marcus King</p>
+<p class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">ID: 84742</p>
+</div>
+</div>
+<div class="col-span-3">
+<span class="inline-flex items-center px-xs py-base bg-surface-container-highest dark:bg-slate-700 border-[2px] border-primary dark:border-black rounded-lg font-code-sm text-code-sm text-primary dark:text-white">
+                                Kinematics Sim
+                            </span>
+</div>
+<div class="col-span-2">
+<div class="inline-flex items-center gap-xs px-sm py-base bg-primary-fixed border-[2px] border-primary dark:border-black rounded-full font-label-bold text-label-bold text-on-primary-fixed">
+<span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+                                Pending
+                            </div>
+</div>
+<div class="col-span-2 flex items-center gap-xs">
+<input class="w-16 text-center bg-surface-container-lowest dark:bg-slate-900 border-[2px] border-primary dark:border-black rounded px-xs py-base font-code-sm text-code-sm dark:text-white focus:outline-none focus:border-primary focus:shadow-[2px_2px_0px_0px_#b2f2bb]" placeholder="--" type="number">
+<span class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">/ 100</span>
+</div>
+<div class="col-span-2 text-right">
+<button class="neo-button-interactive bg-primary text-on-primary border-[2px] border-primary dark:border-black px-sm py-xs rounded font-label-bold text-label-bold shadow-[2px_2px_0px_0px_#000613] dark:shadow-[2px_2px_0px_0px_#000000]">
+                                Grade
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination / Footer Info -->
+<div class="mt-md flex justify-between items-center">
+<p class="font-code-sm text-code-sm text-on-surface-variant dark:text-slate-400">Showing 1 to 4 of 48 entries</p>
+<div class="flex gap-2">
+<button class="neo-button-interactive bg-surface-container-lowest dark:bg-slate-800 border-[3px] border-primary dark:border-black p-xs rounded shadow-[2px_2px_0px_0px_#000613] dark:shadow-[2px_2px_0px_0px_#000000] disabled:opacity-50 text-primary dark:text-white" disabled="">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button class="neo-button-interactive bg-surface-container-lowest dark:bg-slate-800 border-[3px] border-primary dark:border-black p-xs rounded shadow-[2px_2px_0px_0px_#000613] dark:shadow-[2px_2px_0px_0px_#000000] text-primary dark:text-white">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed inset-0 z-50 flex items-center justify-center p-gutter" id="grade-modal">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+<!-- Modal Container -->
+<div class="relative w-full max-w-2xl bg-white border-4 border-black rounded-xl neo-shadow-lg overflow-hidden flex flex-col">
+<!-- Modal Header -->
+<div class="p-md border-b-4 border-black bg-secondary-fixed flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-primary">Grade Submission</h3>
+<button class="material-symbols-outlined text-primary hover:rotate-90 transition-transform">close</button>
+</div>
+<!-- Modal Body -->
+<div class="p-md flex flex-col gap-md bg-white">
+<div class="flex flex-col gap-xs">
+<p class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wide">Student</p>
+<p class="font-headline-md text-headline-md text-primary">Elena Carter</p>
+</div>
+<div class="flex flex-col gap-xs">
+<p class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wide">Module</p>
+<p class="font-body-lg text-body-lg text-primary">Signal Conditioning</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-bold text-label-bold text-primary">Score (out of 100)</label>
+<input class="w-full bg-slate-900 border-[3px] border-black text-white rounded-lg px-sm py-xs font-body-md text-body-md focus:outline-none focus:shadow-[4px_4px_0px_0px_#b2f2bb] transition-shadow" placeholder="0-100" type="number">
+</div>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-bold text-label-bold text-primary">Feedback/Comments</label>
+<textarea class="w-full bg-slate-900 border-[3px] border-black text-white rounded-lg px-sm py-xs font-body-md text-body-md focus:outline-none focus:shadow-[4px_4px_0px_0px_#fdbec9] transition-shadow placeholder:text-slate-400" placeholder="Enter detailed feedback for the student..." rows="4"></textarea>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="p-md border-t-4 border-black bg-surface-container-low flex justify-end gap-sm">
+<button class="neo-button-interactive bg-white border-[3px] border-black px-md py-sm rounded-lg font-label-bold text-label-bold text-primary shadow-[4px_4px_0px_0px_#000613]">
+                Cancel
+            </button>
+<button class="neo-button-interactive bg-[#98FFD9] border-[3px] border-black px-md py-sm rounded-lg font-label-bold text-label-bold text-primary shadow-[4px_4px_0px_0px_#000613]">
+                Submit Grade
+            </button>
+</div>
+</div>
+</div><div aria-hidden="true" data-snapdom-sandbox="true" id="snapdom-sandbox" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

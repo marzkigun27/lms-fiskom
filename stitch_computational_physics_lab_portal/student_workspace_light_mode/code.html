@@ -1,0 +1,336 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Student Workspace - PhysPracticum</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-primary-fixed-variant": "#2f486a",
+                "secondary-fixed-dim": "#f4b6c1",
+                "on-primary-fixed": "#001c3a",
+                "secondary-fixed": "#ffd9df",
+                "on-tertiary-container": "#589364",
+                "secondary-container": "#fdbec9",
+                "secondary": "#81515a",
+                "surface-dim": "#dadada",
+                "inverse-on-surface": "#f0f1f1",
+                "surface-container-high": "#e8e8e8",
+                "surface-container-low": "#f3f3f4",
+                "surface-bright": "#f9f9f9",
+                "on-error-container": "#93000a",
+                "on-tertiary": "#ffffff",
+                "on-error": "#ffffff",
+                "primary-fixed": "#d4e3ff",
+                "on-tertiary-fixed": "#00210b",
+                "tertiary-fixed": "#b2f2bb",
+                "background": "#f9f9f9",
+                "on-background": "#1a1c1c",
+                "primary-container": "#001f3f",
+                "on-tertiary-fixed-variant": "#145129",
+                "surface-variant": "#e2e2e2",
+                "surface-tint": "#476083",
+                "error": "#ba1a1a",
+                "inverse-primary": "#afc8f0",
+                "error-container": "#ffdad6",
+                "surface-container": "#eeeeee",
+                "on-surface-variant": "#43474e",
+                "primary": "#000613",
+                "on-secondary-fixed": "#330f19",
+                "tertiary-fixed-dim": "#96d5a0",
+                "on-surface": "#1a1c1c",
+                "inverse-surface": "#2f3131",
+                "tertiary-container": "#00250d",
+                "on-secondary": "#ffffff",
+                "surface": "#f9f9f9",
+                "on-secondary-fixed-variant": "#663a43",
+                "on-secondary-container": "#7a4a54",
+                "on-primary": "#ffffff",
+                "on-primary-container": "#6f88ad",
+                "outline-variant": "#c4c6cf",
+                "outline": "#74777f",
+                "primary-fixed-dim": "#afc8f0",
+                "surface-container-lowest": "#ffffff",
+                "tertiary": "#000802",
+                "surface-container-highest": "#e2e2e2"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "xl": "64px",
+                "gutter": "24px",
+                "md": "24px",
+                "sm": "16px",
+                "container-max": "1280px",
+                "base": "4px",
+                "xs": "8px",
+                "lg": "40px"
+        },
+        "fontFamily": {
+                "headline-md": [
+                        "Plus Jakarta Sans"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "code-sm": [
+                        "Space Grotesk"
+                ],
+                "headline-lg": [
+                        "Plus Jakarta Sans"
+                ],
+                "label-bold": [
+                        "Space Grotesk"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-xl": [
+                        "Plus Jakarta Sans"
+                ]
+        },
+        "fontSize": {
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ],
+                "code-sm": [
+                        "13px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-bold": [
+                        "14px",
+                        {
+                                "lineHeight": "1.0",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-xl": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "800"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+  /* Base custom utility for the Neobrutalist buttons */
+  .neo-btn {
+    transition: all 0.15s ease-in-out;
+  }
+  .neo-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #000000;
+  }
+  .neo-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px 0px #000000;
+  }
+</style>
+<style>
+  section.overflow-y-auto::-webkit-scrollbar {
+    width: 16px;
+    display: block;
+  }
+  section.overflow-y-auto::-webkit-scrollbar-track {
+    background: #f9f9f9;
+    border-left: 3px solid black;
+  }
+  section.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #b2f2bb;
+    border: 3px solid black;
+    box-shadow: 2px 2px 0px 0px #000000;
+  }
+  section.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #96d5a0;
+  }
+</style></head>
+<body class="text-on-surface font-body-md h-screen w-full flex overflow-hidden bg-background">
+<!-- SideNavBar Shared Component -->
+<nav class="flex flex-col w-64 h-screen border-r-[4px] border-black pt-6 pb-4 bg-surface sticky left-0 shrink-0 z-50">
+<div class="px-6 mb-8">
+<h2 class="text-xl font-black text-primary-container font-['Plus_Jakarta_Sans']">Physics Lab</h2>
+<p class="text-xs text-primary-container font-bold mt-1 uppercase tracking-wider">Computational Track</p>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-tertiary-fixed text-black border-[3px] border-black rounded-lg py-3 font-['Plus_Jakarta_Sans'] font-bold text-sm shadow-[4px_4px_0px_0px_#000000] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000000] transition-all active:translate-y-0 active:shadow-[0px_0px_0px_0px_#000000] duration-100 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">add</span>
+        New Session
+      </button>
+</div>
+<ul class="flex-1 px-2 font-['Plus_Jakarta_Sans'] font-bold text-sm">
+<li class="">
+<a class="text-primary-container p-3 m-2 flex items-center gap-3 hover:bg-secondary-container hover:text-black hover:border-[3px] hover:border-black rounded-lg hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#000000] transition-all active:translate-y-0 active:shadow-[0px_0px_0px_0px_#000000] duration-100 border-[3px] border-transparent" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+          Dashboard
+        </a>
+</li>
+<li class="">
+<a class="bg-tertiary-fixed text-black border-[3px] border-black shadow-[4px_4px_0px_0px_#000000] rounded-lg m-2 p-3 flex items-center gap-3 transition-all active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#000000] duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">code</span>Practicum</a>
+</li>
+<li class="">
+<a class="text-primary-container p-3 m-2 flex items-center gap-3 hover:bg-secondary-container hover:text-black hover:border-[3px] hover:border-black rounded-lg hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#000000] transition-all active:translate-y-0 active:shadow-[0px_0px_0px_0px_#000000] duration-100 border-[3px] border-transparent" href="#">
+<span class="material-symbols-outlined">grade</span>
+          Grading
+        </a>
+</li>
+<li class="">
+<a class="text-primary-container p-3 m-2 flex items-center gap-3 hover:bg-secondary-container hover:text-black hover:border-[3px] hover:border-black rounded-lg hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#000000] transition-all active:translate-y-0 active:shadow-[0px_0px_0px_0px_#000000] duration-100 border-[3px] border-transparent" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+          Schedule
+        </a>
+</li>
+<li class="">
+<a class="text-primary-container p-3 m-2 flex items-center gap-3 hover:bg-secondary-container hover:text-black hover:border-[3px] hover:border-black rounded-lg hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#000000] transition-all active:translate-y-0 active:shadow-[0px_0px_0px_0px_#000000] duration-100 border-[3px] border-transparent" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+          Resources
+        </a>
+</li>
+</ul>
+<ul class="mt-auto px-2 border-t-[4px] border-black pt-4 font-['Plus_Jakarta_Sans'] font-bold text-sm">
+<li class="">
+<a class="text-primary-container p-3 m-2 flex items-center gap-3 hover:bg-secondary-container hover:text-black hover:border-[3px] hover:border-black rounded-lg hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#000000] transition-all active:translate-y-0 active:shadow-[0px_0px_0px_0px_#000000] duration-100 border-[3px] border-transparent" href="#">
+<span class="material-symbols-outlined">help</span>
+          Help
+        </a>
+</li>
+<li class="">
+<a class="text-primary-container p-3 m-2 flex items-center gap-3 hover:bg-secondary-container hover:text-black hover:border-[3px] hover:border-black rounded-lg hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#000000] transition-all active:translate-y-0 active:shadow-[0px_0px_0px_0px_#000000] duration-100 border-[3px] border-transparent" href="#">
+<span class="material-symbols-outlined">logout</span>
+          Logout
+        </a>
+</li>
+</ul>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-1 flex flex-col h-full bg-background overflow-hidden">
+<!-- Workspace Header -->
+<header class="border-b-[4px] border-black px-gutter py-sm flex justify-between items-center bg-surface shrink-0 z-40 relative">
+<div class="flex items-center gap-md">
+<h1 class="font-headline-md text-primary-container">Current Module: Signal Conditioning</h1>
+<div class="flex items-center gap-2 bg-tertiary-fixed border-[3px] border-black rounded-full px-sm py-base shadow-[4px_4px_0px_0px_#000000]">
+<div class="w-3 h-3 rounded-full bg-tertiary-container border-2 border-black"></div>
+<span class="font-label-bold text-black tracking-tight">Session Active</span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="neo-btn flex items-center gap-2 bg-primary-fixed border-[3px] border-black text-black px-md py-xs rounded-DEFAULT shadow-[4px_4px_0px_0px_#000000] font-label-bold uppercase">
+<span class="material-symbols-outlined text-lg">save</span>
+          Save
+        </button>
+<button class="neo-btn flex items-center gap-2 bg-secondary-container border-[3px] border-black text-black px-md py-xs rounded-DEFAULT shadow-[4px_4px_0px_0px_#000000] font-label-bold uppercase">
+<span class="material-symbols-outlined text-lg">upload</span>
+          Submit
+        </button>
+<button class="neo-btn flex items-center gap-2 bg-black border-[3px] border-black text-white px-md py-xs rounded-DEFAULT shadow-[4px_4px_0px_0px_#000000] font-label-bold uppercase hover:bg-gray-800">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: &quot;FILL&quot; 1;">play_arrow</span>
+          Run All
+        </button>
+</div>
+</header>
+<!-- Split View Container -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Left Panel: Instructions -->
+<!-- Right Panel: Notebook area -->
+<section class="overflow-y-auto bg-background p-gutter pb-xl flex flex-col gap-xl w-full" style="scrollbar-width: auto; scrollbar-color: rgb(178, 242, 187) rgb(249, 249, 249); --webkit-scrollbar-width: 16px;"><div class="p-gutter flex flex-col gap-md border-b-[4px] border-black mb-xl">
+<div class="border-b-[4px] border-black pb-sm mb-sm">
+<h2 class="font-headline-lg text-primary-container">Task 1: Noise Reduction</h2>
+</div>
+<div class="font-body-md text-primary-container space-y-4">
+<p class="">In this module, you will analyze a raw sensor signal containing high-frequency Gaussian noise. Your objective is to apply a smoothing filter to extract the fundamental frequency.</p>
+<div class="bg-white border-[4px] border-black rounded-lg p-sm shadow-[8px_8px_0px_0px_#000000]">
+<h3 class="font-label-bold text-primary-container mb-2 uppercase border-b-2 border-black pb-1 inline-block">Parameters</h3>
+<ul class="space-y-3 mt-2 text-primary-container">
+<li class="flex items-center gap-3">
+<span class="inline-block bg-primary-fixed border-[3px] border-black rounded-full px-3 py-1 font-code-sm font-bold shadow-[3px_3px_0px_0px_#000000] text-black">freq</span>
+<span class="font-bold">Fundamental Frequency: 5 Hz</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="inline-block bg-secondary-container border-[3px] border-black rounded-full px-3 py-1 font-code-sm font-bold shadow-[3px_3px_0px_0px_#000000] text-black">sigma</span>
+<span class="font-bold">Noise Standard Deviation: 0.5</span>
+</li>
+</ul>
+</div>
+<p class=""><strong>Step 1:</strong> Plot both the clean theoretical signal and the generated noisy signal on the same axis for visual comparison.</p>
+<p class=""><strong>Step 2:</strong> Implement a moving average filter. Describe its effect on signal phase in the answer block below.</p>
+</div><div class="border-[4px] border-black rounded-xl bg-white shadow-[12px_12px_0px_0px_#000000] overflow-hidden group focus-within:ring-4 focus-within:ring-primary-container focus-within:ring-offset-2 transition-shadow mb-xl"><div class="bg-surface border-b-[4px] border-black p-sm flex justify-between items-center"><div class="flex items-center gap-sm font-label-bold text-primary-container"><span class="text-primary-container">In [1]:</span><span class="bg-primary-container border-[3px] border-black text-white px-3 py-1 rounded-full shadow-[3px_3px_0px_0px_#000000]">Python 3</span></div><div class="flex gap-2"><button class="w-10 h-10 flex items-center justify-center border-[3px] border-black bg-white text-primary-container rounded shadow-[3px_3px_0px_0px_#000000] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#000000] active:translate-y-0 active:shadow-none transition-all" title="Run Cell"><span class="material-symbols-outlined text-xl" style="font-variation-settings: &quot;FILL&quot; 1;">play_arrow</span></button></div></div><div class="p-md font-code-sm text-primary-container bg-surface-bright"><pre><code class="language-python"><span class="text-blue-700 font-bold">import</span> numpy <span class="text-blue-700 font-bold">as</span> np
+<span class="text-blue-700 font-bold">import</span> matplotlib.pyplot <span class="text-blue-700 font-bold">as</span> plt
+
+<span class="text-green-700 italic"># Generate foundational signals</span>
+t = np.linspace(0, 1, 500)
+clean_signal = np.sin(2 * np.pi * 5 * t)
+noise = np.random.normal(0, 0.5, 500)
+noisy_signal = clean_signal + noise
+
+<span class="text-green-700 italic"># Visualize</span>
+plt.figure(figsize=(10, 4))
+plt.plot(t, noisy_signal, color=<span class="text-red-700">'#fdbec9'</span>, label=<span class="text-red-700">'Noisy Sensor Data'</span>)
+plt.plot(t, clean_signal, color=<span class="text-red-700">'#afc8f0'</span>, linewidth=3, label=<span class="text-red-700">'Theoretical Baseline'</span>)
+plt.legend()
+plt.grid(True, linestyle=<span class="text-red-700">'--'</span>, alpha=0.7)
+plt.show()</code></pre></div></div><div class="border-[4px] border-black rounded-xl bg-white shadow-[12px_12px_0px_0px_#000000] overflow-hidden mb-xl"><div class="bg-surface border-b-[4px] border-black p-sm flex items-center gap-sm font-label-bold text-primary-container"><span class="text-secondary">Out [1]:</span><span class="text-xs text-gray-500">Rendered 2.1s ago</span></div><div class="p-md bg-white flex justify-center items-center"><img alt="Data Plot" class="w-full h-auto max-h-[400px] object-cover border-[4px] border-black rounded shadow-[6px_6px_0px_0px_#000]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIqA7MF71xwQ88I75iCt0eP0efYJ9UMdBWyPE2pGfQaXfezM15AoolfXF0KRpOEarAtLx23LT9TkTdb9CgjahMzrjOcdCaZliLvuGXGmzfGOrBaKvHIwYnP-WGFxNA33fRNv3CdqGGrRna2_3fwzLslgOg2o1Ww05LNv0skG_F6K-CQviTz95wN3sgtxvIgC2lEQzeAb3upZ5nmUNLF72EUiUBmZf2qD9xolaQTT_vT0LdgkExxTOuWkozyzJ4eyhzFaAVA6fDyTXQ"></div></div>
+</div>
+<!-- Python Code Cell -->
+<!-- Output Cell -->
+<!-- Markdown / Answer Cell -->
+<div class="border-[4px] border-black rounded-xl bg-tertiary-fixed shadow-[12px_12px_0px_0px_#000000] overflow-hidden group focus-within:-translate-y-1 focus-within:shadow-[16px_16px_0px_0px_#000000] transition-all">
+<div class="bg-tertiary-fixed border-b-[4px] border-black p-sm flex justify-between items-center">
+<div class="flex items-center gap-sm font-label-bold text-black">
+<span class="material-symbols-outlined">edit_document</span>
+              Student Response
+            </div>
+</div>
+<div class="p-0 bg-white h-full relative">
+<textarea class="w-full h-48 p-md font-body-md text-primary-container border-none resize-y focus:ring-0 bg-transparent placeholder-gray-500" placeholder="Type your analysis regarding the phase shift here... Use markdown formatting if needed."></textarea>
+<div class="absolute bottom-4 right-4">
+<button class="neo-btn bg-tertiary-fixed border-[3px] border-black text-black px-4 py-2 rounded shadow-[4px_4px_0px_0px_#000000] font-label-bold text-sm">Save Draft</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

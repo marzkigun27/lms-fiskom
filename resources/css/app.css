@@ -1,0 +1,323 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import "@fontsource/plus-jakarta-sans";
+@import "@fontsource/space-grotesk";
+@import "@fontsource/inter";
+@import "material-symbols/outlined.css";
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-headline: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-heading: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-label: 'Space Grotesk', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 8px);
+
+    /* Neobrutalism UI Palette */
+    --color-surface: var(--surface);
+    --color-surface-dim: var(--surface-dim);
+    --color-surface-bright: var(--surface-bright);
+    --color-surface-container-lowest: var(--surface-container-lowest);
+    --color-surface-container-low: var(--surface-container-low);
+    --color-surface-container: var(--surface-container);
+    --color-surface-container-high: var(--surface-container-high);
+    --color-surface-container-highest: var(--surface-container-highest);
+    --color-on-surface: var(--on-surface);
+    --color-on-surface-variant: var(--on-surface-variant);
+    --color-inverse-surface: var(--inverse-surface);
+    --color-inverse-on-surface: var(--inverse-on-surface);
+    --color-outline: var(--outline);
+    --color-outline-variant: var(--outline-variant);
+    --color-surface-tint: var(--surface-tint);
+
+    --color-primary: var(--primary);
+    --color-on-primary: var(--on-primary);
+    --color-primary-container: var(--primary-container);
+    --color-on-primary-container: var(--on-primary-container);
+    --color-inverse-primary: var(--inverse-primary);
+
+    --color-secondary: var(--secondary);
+    --color-on-secondary: var(--on-secondary);
+    --color-secondary-container: var(--secondary-container);
+    --color-on-secondary-container: var(--on-secondary-container);
+
+    --color-tertiary: var(--tertiary);
+    --color-on-tertiary: var(--on-tertiary);
+    --color-tertiary-container: var(--tertiary-container);
+    --color-on-tertiary-container: var(--on-tertiary-container);
+
+    --color-error: var(--error);
+    --color-on-error: var(--on-error);
+    --color-error-container: var(--error-container);
+    --color-on-error-container: var(--on-error-container);
+
+    --color-primary-fixed: var(--primary-fixed);
+    --color-primary-fixed-dim: var(--primary-fixed-dim);
+    --color-on-primary-fixed: var(--on-primary-fixed);
+    --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
+
+    --color-secondary-fixed: var(--secondary-fixed);
+    --color-secondary-fixed-dim: var(--secondary-fixed-dim);
+    --color-on-secondary-fixed: var(--on-secondary-fixed);
+    --color-on-secondary-fixed-variant: var(--on-secondary-fixed-variant);
+
+    --color-tertiary-fixed: var(--tertiary-fixed);
+    --color-tertiary-fixed-dim: var(--tertiary-fixed-dim);
+    --color-on-tertiary-fixed: var(--on-tertiary-fixed);
+    --color-on-tertiary-fixed-variant: var(--on-tertiary-fixed-variant);
+
+    --color-background: var(--background);
+    --color-on-background: var(--on-background);
+}
+
+:root {
+    --surface: #fff0f3;
+    --surface-dim: #f4d0d7;
+    --surface-bright: #ffffff;
+    --surface-container-lowest: #ffffff;
+    --surface-container-low: #fff4f6;
+    --surface-container: #fde8ec;
+    --surface-container-high: #fbdbe2;
+    --surface-container-highest: #f8cfd8;
+    --on-surface: #1a0c10;
+    --on-surface-variant: #422b31;
+    --inverse-surface: #2f3131;
+    --inverse-on-surface: #fff0f3;
+    --outline: #61444b;
+    --outline-variant: #b8939c;
+    --surface-tint: #81515a;
+
+    --primary: #81515a;
+    --on-primary: #ffffff;
+    --primary-container: #fdbec9;
+    --on-primary-container: #330f19;
+    --inverse-primary: #f4b6c1;
+
+    --secondary: #81515a;
+    --on-secondary: #ffffff;
+    --secondary-container: #fdbec9;
+    --on-secondary-container: #330f19;
+
+    --tertiary: #000802;
+    --on-tertiary: #ffffff;
+    --tertiary-container: #1b5e20;
+    --on-tertiary-container: #ffffff;
+
+    --error: #ba1a1a;
+    --on-error: #ffffff;
+    --error-container: #ffdad6;
+    --on-error-container: #680007;
+
+    --primary-fixed: #ffd9df;
+    --primary-fixed-dim: #f4b6c1;
+    --on-primary-fixed: #330f19;
+    --on-primary-fixed-variant: #5c2030;
+
+    --secondary-fixed: #ffd9df;
+    --secondary-fixed-dim: #f4b6c1;
+    --on-secondary-fixed: #330f19;
+    --on-secondary-fixed-variant: #5c2030;
+
+    --tertiary-fixed: #b2f2bb;
+    --tertiary-fixed-dim: #96d5a0;
+    --on-tertiary-fixed: #003815;
+    --on-tertiary-fixed-variant: #145129;
+
+    --background: #fff0f3;
+    --on-background: #1a0c10;
+    --radius: 1rem;
+}
+
+.dark {
+    --surface: #001f3f;
+    --surface-dim: #00152b;
+    --surface-bright: #002b5c;
+    --surface-container-lowest: #000c1a;
+    --surface-container-low: #00152b;
+    --surface-container: #002244;
+    --surface-container-high: #003366;
+    --surface-container-highest: #004488;
+    --on-surface: #ffffff;
+    --on-surface-variant: #d4e3ff;
+    --inverse-surface: #e2e2e2;
+    --inverse-on-surface: #001f3f;
+    --outline: #6f88ad;
+    --outline-variant: #2f486a;
+    --surface-tint: #afc8f0;
+
+    --primary: #ffffff;
+    --on-primary: #000613;
+    --primary-container: #001f3f;
+    --on-primary-container: #d4e3ff;
+    --inverse-primary: #000613;
+
+    --secondary: #ffdad6;
+    --on-secondary: #330f19;
+    --secondary-container: #663a43;
+    --on-secondary-container: #ffd9df;
+
+    --tertiary: #96d5a0;
+    --on-tertiary: #00210b;
+    --tertiary-container: #145129;
+    --on-tertiary-container: #b2f2bb;
+
+    --error: #ffdad6;
+    --on-error: #93000a;
+    --error-container: #93000a;
+    --on-error-container: #ffdad6;
+
+    --background: #001f3f;
+    /* Deep blue background for dark mode */
+    --on-background: #ffffff;
+}
+
+@layer base {
+    body {
+        @apply bg-background text-on-surface font-body antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-headline tracking-tight;
+    }
+}
+
+@utility neo-shadow {
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    transition: all 0.15s ease-in-out;
+}
+
+.dark .neo-shadow {
+    box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 1);
+}
+
+@utility neo-shadow-lg {
+    box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+    transition: all 0.15s ease-in-out;
+}
+
+.dark .neo-shadow-lg {
+    box-shadow: 8px 8px 0px 0px rgba(255, 255, 255, 1);
+}
+
+@utility neo-border {
+    border: 3px solid rgba(0, 0, 0, 1);
+}
+
+.dark .neo-border {
+    border: 3px solid rgba(255, 255, 255, 1);
+}
+
+@utility hover-neo {
+    @apply transition-transform;
+}
+
+.hover-neo:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+}
+
+.hover-neo:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+}
+
+.dark .hover-neo:hover {
+    box-shadow: 6px 6px 0px 0px rgba(255, 255, 255, 1);
+}
+
+.dark .hover-neo:active {
+    box-shadow: 2px 2px 0px 0px rgba(255, 255, 255, 1);
+}
+
+/* Hide scrollbar */
+@utility hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+@utility neo-shadow-sm {
+    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+    transition: all 0.15s ease-in-out;
+}
+
+.dark .neo-shadow-sm {
+    box-shadow: 2px 2px 0px 0px rgba(255, 255, 255, 1);
+}
+
+@utility neo-shadow-md {
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+    transition: all 0.15s ease-in-out;
+}
+
+.dark .neo-shadow-md {
+    box-shadow: 6px 6px 0px 0px rgba(255, 255, 255, 1);
+}
+
+@utility neo-shadow-xl {
+    box-shadow: 12px 12px 0px 0px rgba(0, 0, 0, 1);
+    transition: all 0.15s ease-in-out;
+}
+
+.dark .neo-shadow-xl {
+    box-shadow: 12px 12px 0px 0px rgba(255, 255, 255, 1);
+}
+
+/* Custom Toastify Positioning & Styling */
+.toastify {
+    font-family: var(--font-sans), sans-serif;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    border: 2px solid #000000;
+    max-width: 420px;
+    z-index: 99999;
+}
+
+.dark .toastify {
+    box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 1);
+    border: 2px solid #ffffff;
+}
+
+.toastify.toastify-top {
+    top: 20px !important;
+}
+
+.toastify-right {
+    right: 20px !important;
+}
+
+.toast-close {
+    opacity: 0.75;
+    padding: 0 4px;
+    margin-left: 8px;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: opacity 0.15s ease;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}

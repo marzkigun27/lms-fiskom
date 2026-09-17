@@ -1,0 +1,473 @@
+<!DOCTYPE html><html lang="en" style="width: 1280px; height: 1024px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PhysPracticum - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-container": "#fdbec9",
+                      "on-surface-variant": "#43474e",
+                      "outline-variant": "#c4c6cf",
+                      "primary-container": "#001f3f",
+                      "surface-container-highest": "#e2e2e2",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-bright": "#f9f9f9",
+                      "surface-variant": "#e2e2e2",
+                      "outline": "#74777f",
+                      "primary-fixed": "#d4e3ff",
+                      "secondary-fixed-dim": "#f4b6c1",
+                      "background": "#f9f9f9",
+                      "error": "#ba1a1a",
+                      "primary-fixed-dim": "#afc8f0",
+                      "error-container": "#ffdad6",
+                      "inverse-surface": "#2f3131",
+                      "surface-dim": "#dadada",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "primary": "#000613",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#b2f2bb",
+                      "on-primary-fixed": "#001c3a",
+                      "surface-container-high": "#e8e8e8",
+                      "surface": "#f9f9f9",
+                      "on-surface": "#1a1c1c",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#2f486a",
+                      "tertiary-fixed-dim": "#96d5a0",
+                      "surface-container": "#eeeeee",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#00210b",
+                      "inverse-on-surface": "#f0f1f1",
+                      "on-primary-container": "#6f88ad",
+                      "surface-tint": "#476083",
+                      "on-background": "#1a1c1c",
+                      "on-secondary-fixed-variant": "#663a43",
+                      "on-tertiary-container": "#589364",
+                      "surface-container-low": "#f3f3f4",
+                      "tertiary": "#000802",
+                      "tertiary-container": "#00250d",
+                      "secondary-fixed": "#ffd9df",
+                      "secondary": "#81515a",
+                      "inverse-primary": "#afc8f0",
+                      "on-secondary-container": "#7a4a54",
+                      "on-secondary-fixed": "#330f19",
+                      "on-tertiary-fixed-variant": "#145129"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "64px",
+                      "gutter": "24px",
+                      "md": "24px",
+                      "sm": "16px",
+                      "container-max": "1280px",
+                      "base": "4px",
+                      "xs": "8px",
+                      "lg": "40px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "code-sm": [
+                              "Space Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-bold": [
+                              "Space Grotesk"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-xl": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "code-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-primary-container text-white font-body-md text-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col w-64 h-screen border-r-4 border-black pt-6 pb-4 bg-primary-container text-white font-['Plus_Jakarta_Sans'] font-bold text-sm shadow-[4px_0px_0px_0px_rgba(0,0,0,1)] sticky left-0 z-40">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full border-2 border-black bg-secondary-container flex items-center justify-center overflow-hidden">
+<img alt="Practicum Logo" data-alt="A stylized avatar icon representing a playful science laboratory. The avatar features bright pastel colors with a solid black neobrutalist border, fitting perfectly into an expertly playful physics dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeKmewqJ9U-DQAJ8_nBG91dy3-xJ0_wiLEIHaKb-GQCYnP0VM7C6_586PsW122mk58eihcmb5CIRw4Vm3SrUdZufvsnbKPwv6c2lljPGQdEYsveA9yDqQzfVRxyhTbvOF6bq02awXJmbMPIt9C8jRzy_zcFMFuE3lOHXXJmEFhLnZqWuVsWb4KV1NcwkBfNjW3wDPNj7_dLdnh5nQNMGucw0drGAwm3gneaUOTnzRA2EunRA7FiVZEPJ9wpdn8JgvXfkmpyYEVzI82">
+</div>
+<div>
+<h1 class="text-xl font-black text-white font-headline-md text-headline-md">Physics Lab</h1>
+<p class="font-body-md text-code-sm text-slate-300">Computational Track</p>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-primary text-on-primary border-[3px] border-black rounded-lg py-3 px-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-none transition-all font-label-bold text-label-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                New Session
+            </button>
+</div>
+<ul class="flex-1 px-2 space-y-2">
+<li>
+<a class="bg-[#98FFD9] text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-lg m-2 p-3 flex items-center gap-3 active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">code</span>
+                    Notebooks
+                </a>
+</li>
+<li>
+<a class="text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">grade</span>
+                    Grading
+                </a>
+</li>
+<li>
+<a class="text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                    Schedule
+                </a>
+</li>
+<li>
+<a class="text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+                    Resources
+                </a>
+</li>
+</ul>
+<div class="px-2 mt-auto border-t-2 border-black pt-4 mx-4">
+<a class="text-slate-300 p-3 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">help</span>
+                Help
+            </a>
+<a class="text-slate-300 p-3 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100 mt-2" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-screen overflow-hidden bg-primary-container">
+<!-- TopAppBar (Mobile & Web) -->
+<header class="bg-primary-container border-b-4 border-black sticky top-0 z-30 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex justify-between items-center w-full px-6 py-4">
+<div class="flex items-center gap-4">
+<!-- Mobile menu button -->
+<button class="md:hidden text-white p-2 border-2 border-transparent hover:border-black rounded-lg transition-all">
+<span class="material-symbols-outlined text-3xl">menu</span>
+</button>
+<div class="text-2xl font-black text-white uppercase tracking-tight font-headline-md text-headline-md hidden md:block">
+                    PhysPracticum
+                </div>
+</div>
+<div class="hidden md:flex gap-6 items-center">
+<nav class="flex gap-4">
+<a class="text-slate-300 hover:text-white font-['Plus_Jakarta_Sans'] font-bold text-sm hover:bg-primary-fixed-variant transition-all p-2 rounded-lg" href="#">Modules</a>
+<a class="text-slate-300 hover:text-white font-['Plus_Jakarta_Sans'] font-bold text-sm hover:bg-primary-fixed-variant transition-all p-2 rounded-lg" href="#">Simulations</a>
+<a class="text-slate-300 hover:text-white font-['Plus_Jakarta_Sans'] font-bold text-sm hover:bg-primary-fixed-variant transition-all p-2 rounded-lg" href="#">Documentation</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search bar would go here if not suppressed by layout -->
+<button class="w-10 h-10 bg-white text-black border-2 border-black rounded-lg flex items-center justify-center hover:bg-secondary-fixed shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-none transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 bg-white text-black border-2 border-black rounded-lg flex items-center justify-center hover:bg-primary-fixed shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-none transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-black overflow-hidden shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ml-2">
+<img alt="User avatar" data-alt="A portrait photograph of a student acting as a user avatar. The image should be bright and energetic, fitting the expertly playful neobrutalist aesthetic, with solid flat background colors complementing pastel UI themes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwAn8H1ucJ5OJZ7DEi8ZhSm51Iaf_UjXwiKB7MoYR4wzASL3yO-i51bO0NGhEkMDhMLjh6g-fPNvDojKTyfXlnyMBLggBAjWrsP5Ggtw65j_MXiromnOyuGVy97lYDpASMJfwlsC1pdR2W41EzmPfEHH3QCsBqXVi_MyXy6ep-YaaglzwW6piPBopiRjGk4LTVEH7hdEE3_5OPylYohpu-NEFvWzWa4gQH2Qyw0H1j2kG2S-GYYa8tuAY6-t6IVD_hkdFW8M6-9bxj">
+</div>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<div class="flex-1 overflow-y-auto p-gutter custom-scrollbar">
+<div class="max-w-container-max mx-auto space-y-gutter pb-xl">
+<!-- Welcome Section (Bento Top) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Welcome Card (Spans 2 cols) -->
+<div class="lg:col-span-2 bg-tertiary-fixed text-black border-[3px] border-black rounded-xl p-md shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
+<!-- Decorative shapes -->
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-white border-4 border-black rounded-full opacity-50 pointer-events-none"></div>
+<div class="absolute bottom-10 right-20 w-16 h-16 bg-secondary-container border-4 border-black rotate-12 opacity-80 pointer-events-none"></div>
+<div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-sm">
+<div>
+<div class="inline-flex items-center gap-2 bg-white border-2 border-black rounded-full px-3 py-1 mb-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+<span class="w-3 h-3 rounded-full bg-tertiary-container"></span>
+<span class="font-label-bold text-label-bold text-sm text-black">Status: Excellent</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl mb-2 text-black">Welcome back, Alex!</h2>
+<p class="font-body-lg text-body-lg text-slate-800 max-w-lg">
+                                    You're making great progress in Kinematics. Ready to dive into today's simulations?
+                                </p>
+</div>
+<div class="mt-4 md:mt-0 flex-shrink-0">
+<a class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary border-[3px] border-black rounded-lg py-3 px-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-none transition-all font-label-bold text-label-bold text-lg" href="#">
+<span class="material-symbols-outlined">play_arrow</span>
+                                    Current Session
+                                </a>
+</div>
+</div>
+</div>
+<!-- Overall Performance Card -->
+<div class="bg-primary border-[3px] border-black rounded-xl p-md shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col justify-between">
+<div class="flex justify-between items-center mb-4 border-b-3 border-black pb-4">
+<h3 class="font-headline-md text-headline-md text-white">Performance</h3>
+<span class="material-symbols-outlined text-3xl text-secondary-container" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+</div>
+<div class="flex items-end gap-4 mb-6">
+<span class="text-6xl font-black font-headline-xl tracking-tighter text-white">92</span>
+<span class="font-label-bold text-label-bold text-slate-300 mb-2">%</span>
+</div>
+<div>
+<div class="flex justify-between text-sm font-label-bold text-label-bold mb-2 text-white">
+<span>Module Completion</span>
+<span>7/10</span>
+</div>
+<div class="w-full h-6 bg-white border-2 border-black rounded-full overflow-hidden p-0.5">
+<div class="h-full bg-secondary-fixed border-r-2 border-black rounded-full w-[70%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Bento Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-gutter">
+<!-- Modules Grid (Spans 2 cols) -->
+<div class="xl:col-span-2 space-y-sm">
+<h3 class="font-headline-lg text-headline-lg mb-4 flex items-center gap-2 text-white">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">science</span>
+                            Practicum Modules
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+<!-- Module Card 1 -->
+<div class="bg-primary border-[3px] border-black rounded-xl p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed text-black border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:bg-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">speed</span>
+</div>
+<span class="bg-tertiary-fixed text-black border-2 border-black rounded-full px-2 py-1 text-xs font-label-bold text-label-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">A-</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-2 text-white">Kinematics Lab</h4>
+<p class="font-body-md text-code-sm text-slate-300 mb-4">Velocity, acceleration, and projectile motion simulations.</p>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-label-bold text-label-bold text-white">
+<span>Progress</span>
+<span>100%</span>
+</div>
+<div class="w-full h-4 bg-white border-2 border-black rounded-full overflow-hidden p-0.5">
+<div class="h-full bg-tertiary-fixed-dim border-r-2 border-black rounded-full w-full"></div>
+</div>
+</div>
+</div>
+<!-- Module Card 2 -->
+<div class="bg-primary border-[3px] border-black rounded-xl p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group relative overflow-hidden">
+<!-- Active Indicator -->
+<div class="absolute top-0 right-0 w-0 h-0 border-t-[40px] border-r-[40px] border-t-secondary-container border-r-transparent"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-secondary-fixed text-black border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:bg-secondary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">waves</span>
+</div>
+<span class="bg-white text-black border-2 border-black rounded-full px-2 py-1 text-xs font-label-bold text-label-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">In Progress</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-2 text-white">Wave Mechanics</h4>
+<p class="font-body-md text-code-sm text-slate-300 mb-4">Oscillators, resonance, and interference patterns.</p>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-label-bold text-label-bold text-white">
+<span>Progress</span>
+<span>45%</span>
+</div>
+<div class="w-full h-4 bg-white border-2 border-black rounded-full overflow-hidden p-0.5">
+<div class="h-full bg-secondary-container border-r-2 border-black rounded-full w-[45%]"></div>
+</div>
+</div>
+</div>
+<!-- Module Card 3 -->
+<div class="bg-primary border-[3px] border-black rounded-xl p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group opacity-75">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-surface-variant text-black border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<span class="bg-slate-700 text-white border-2 border-black rounded-full px-2 py-1 text-xs font-label-bold text-label-bold">Locked</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-2 text-white">Electromagnetism</h4>
+<p class="font-body-md text-code-sm text-slate-300 mb-4">Fields, potential, and circuit simulations.</p>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-label-bold text-label-bold text-white">
+<span>Progress</span>
+<span>0%</span>
+</div>
+<div class="w-full h-4 bg-white border-2 border-black rounded-full overflow-hidden p-0.5">
+<div class="h-full bg-surface-dim border-r-2 border-black rounded-full w-0"></div>
+</div>
+</div>
+</div>
+<!-- Module Card 4 -->
+<div class="bg-primary border-[3px] border-black rounded-xl p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group opacity-75">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-surface-variant text-black border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<span class="bg-slate-700 text-white border-2 border-black rounded-full px-2 py-1 text-xs font-label-bold text-label-bold">Locked</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-2 text-white">Quantum Optics</h4>
+<p class="font-body-md text-code-sm text-slate-300 mb-4">Photons, entanglement, and probability.</p>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-label-bold text-label-bold text-white">
+<span>Progress</span>
+<span>0%</span>
+</div>
+<div class="w-full h-4 bg-white border-2 border-black rounded-full overflow-hidden p-0.5">
+<div class="h-full bg-surface-dim border-r-2 border-black rounded-full w-0"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Area (Schedule & Data Chips) -->
+<div class="space-y-gutter">
+<!-- Schedule Card -->
+<div class="bg-primary border-[3px] border-black rounded-xl p-md shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+<h3 class="font-headline-lg text-headline-lg mb-6 border-b-3 border-black pb-4 flex items-center justify-between text-white">
+                                Upcoming
+                                <span class="material-symbols-outlined">event</span>
+</h3>
+<div class="space-y-4">
+<!-- Event Item -->
+<div class="flex gap-4 p-3 border-2 border-black rounded-lg hover:bg-primary-fixed hover:-translate-y-1 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer bg-white text-black">
+<div class="flex flex-col items-center justify-center px-3 border-r-2 border-black">
+<span class="text-xs font-label-bold text-label-bold text-slate-600">OCT</span>
+<span class="text-xl font-black font-headline-md">24</span>
+</div>
+<div>
+<h5 class="font-label-bold text-label-bold mb-1">Peer Review: Pendulums</h5>
+<p class="text-xs font-code-sm text-slate-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                                            14:00 - 15:30
+                                        </p>
+</div>
+</div>
+<!-- Event Item -->
+<div class="flex gap-4 p-3 border-2 border-black rounded-lg hover:bg-secondary-fixed hover:-translate-y-1 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer bg-white text-black">
+<div class="flex flex-col items-center justify-center px-3 border-r-2 border-black">
+<span class="text-xs font-label-bold text-label-bold text-slate-600">OCT</span>
+<span class="text-xl font-black font-headline-md">26</span>
+</div>
+<div>
+<h5 class="font-label-bold text-label-bold mb-1">Lab Submission Due</h5>
+<p class="text-xs font-code-sm text-slate-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                                            23:59 Deadline
+                                        </p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 bg-white text-black border-[2px] border-black rounded-lg py-2 px-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-surface-variant active:translate-y-1 active:translate-x-1 active:shadow-none transition-all font-label-bold text-label-bold text-sm">
+                                View Full Calendar
+                            </button>
+</div>
+<!-- Active Variables (Data Chips Demo) -->
+<div class="bg-primary border-[3px] border-black rounded-xl p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<h3 class="font-headline-md text-headline-md mb-4 border-b-3 border-black pb-2 text-white">Active Notebook Variables</h3>
+<div class="flex flex-wrap gap-2">
+<span class="bg-primary-fixed text-black border-[2px] border-black rounded-full px-3 py-1 text-xs font-code-sm font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">velocity_x</span>
+<span class="bg-secondary-fixed text-black border-[2px] border-black rounded-full px-3 py-1 text-xs font-code-sm font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">mass_obj1</span>
+<span class="bg-tertiary-fixed text-black border-[2px] border-black rounded-full px-3 py-1 text-xs font-code-sm font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">theta_initial</span>
+<span class="bg-white text-black border-[2px] border-black rounded-full px-3 py-1 text-xs font-code-sm font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">time_delta</span>
+<span class="bg-secondary-container text-black border-[2px] border-black rounded-full px-3 py-1 text-xs font-code-sm font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">amplitude_max</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Global CSS Additions for structural needs not covered by Tailwind out-of-the-box -->
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 12px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #001f3f; 
+            border-left: 2px solid #000;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #000; 
+            border-radius: 0;
+            border: 2px solid #001f3f;
+        }
+        /* Override border styles for specific structural elements to match design system requirement */
+        .border-b-3 {
+            border-bottom-width: 3px;
+        }
+    </style>
+<div aria-hidden="true" data-snapdom-sandbox="true" id="snapdom-sandbox" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

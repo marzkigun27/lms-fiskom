@@ -1,0 +1,328 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PhysPracticum - Active Session Workspace</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "surface-dim": "#dadada",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f4",
+                        "surface-container": "#eeeeee",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-surface": "#1a1c1c",
+                        "on-surface-variant": "#43474e",
+                        "inverse-surface": "#2f3131",
+                        "inverse-on-surface": "#f0f1f1",
+                        "outline": "#74777f",
+                        "outline-variant": "#c4c6cf",
+                        "surface-tint": "#476083",
+                        "primary": "#000613",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#001f3f",
+                        "on-primary-container": "#6f88ad",
+                        "inverse-primary": "#afc8f0",
+                        "secondary": "#81515a",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#fdbec9",
+                        "on-secondary-container": "#7a4a54",
+                        "tertiary": "#000802",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#00250d",
+                        "on-tertiary-container": "#589364",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#d4e3ff",
+                        "primary-fixed-dim": "#afc8f0",
+                        "on-primary-fixed": "#001c3a",
+                        "on-primary-fixed-variant": "#2f486a",
+                        "secondary-fixed": "#ffd9df",
+                        "secondary-fixed-dim": "#f4b6c1",
+                        "on-secondary-fixed": "#330f19",
+                        "on-secondary-fixed-variant": "#663a43",
+                        "tertiary-fixed": "#b2f2bb",
+                        "tertiary-fixed-dim": "#96d5a0",
+                        "on-tertiary-fixed": "#00210b",
+                        "on-tertiary-fixed-variant": "#145129",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "surface-variant": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "sm": "0.25rem",
+                        "md": "0.75rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "xs": "8px",
+                        "sm": "16px",
+                        "md": "24px",
+                        "lg": "40px",
+                        "xl": "64px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans", "sans-serif"],
+                        "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Space Grotesk", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.02em; }
+        .font-label { font-family: 'Space Grotesk', sans-serif; }
+        
+        /* Neobrutalist specific styles */
+        .neo-border { border: 3px solid black; }
+        .neo-shadow { box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); transition: all 0.1s ease; }
+        .neo-shadow:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); }
+        .neo-shadow:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px 0px rgba(0,0,0,1); }
+        
+        .neo-shadow-lg { box-shadow: 8px 8px 0px 0px rgba(0,0,0,1); transition: all 0.1s ease; }
+        .neo-shadow-lg:hover { transform: translate(-2px, -2px); box-shadow: 10px 10px 0px 0px rgba(0,0,0,1); }
+        .neo-shadow-lg:active { transform: translate(4px, 4px); box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); }
+
+        .neo-nav-active {
+            background-color: #98FFD9; /* Fallback for pastel mint */
+            background-color: theme('colors.tertiary-fixed');
+            border: 2px solid black;
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            color: black;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface h-screen flex overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<nav class="bg-surface-container-lowest text-slate-950 font-label font-bold text-sm border-r-4 border-black h-screen sticky left-0 shadow-[4px_0px_0px_0px_rgba(0,0,0,1)] flex flex-col w-64 pt-6 pb-4 z-40 hidden md:flex shrink-0">
+<!-- Header -->
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3 mb-2">
+<img class="w-10 h-10 neo-border rounded-full object-cover" data-alt="A bold, stylized cartoon graphic of a laboratory flask bubbling with colorful liquids, drawn with thick black outlines and vibrant flat colors typical of kawaii neobrutalism. The flask should look energetic and slightly chaotic, fitting a modern, playful science aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuBfuONCXpQqM-MEt1Zb3eCMJQB8Fo2f5GBodKgxGx_cqSrl3XunGGQ7UdMm4tg0P_7-vgNvbNHG0_F6AzOnUMLpOC62UvRP_GZ3dFZW2SGSRaMoLzYUfGd4jRhU7f_2zHqJcLohjXfZgVuD6YtCLolynUs_p74_RUulgXycOxj2g7lchDLjRk-uNaISC4kesksiZGGAOfJg9LuN95dajwo0hNJlB0Eh4tgh6ubNDDN4WxAnSpXbDAow">
+<span class="text-xl font-headline font-extrabold tracking-tight uppercase">Physics Lab</span>
+</div>
+<p class="text-on-surface-variant text-xs uppercase font-label">Computational Track</p>
+</div>
+<!-- CTA -->
+<div class="px-4 mb-6">
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-lg neo-border neo-shadow font-label flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+                New Session
+            </button>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto px-2">
+<!-- Active Tab (Dashboard - Intent Match for Workspace) -->
+<a class="bg-tertiary-fixed text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-lg m-2 p-3 flex items-center gap-3 active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-secondary-fixed hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">code</span>
+                Notebooks
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-secondary-fixed hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">grade</span>
+                Grading
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-secondary-fixed hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Schedule
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-secondary-fixed hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+                Resources
+            </a>
+</div>
+<!-- Footer Links -->
+<div class="mt-auto px-2 pt-4 border-t-[3px] border-black">
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-secondary-fixed hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">help</span>
+                Help
+            </a>
+<a class="text-slate-700 p-3 m-2 flex items-center gap-3 hover:bg-secondary-fixed hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+<!-- TopAppBar (Shared Component) - Mobile Only -->
+<header class="bg-surface-container-lowest text-slate-950 font-headline font-bold border-b-4 border-black sticky top-0 z-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex justify-between items-center w-full px-6 py-4 md:hidden">
+<div class="text-2xl font-black text-slate-950 uppercase tracking-tight">PhysPracticum</div>
+<nav class="hidden md:flex gap-6">
+<!-- Mobile doesn't show top row text links usually based on rules, but keeping struct if needed -->
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-slate-600 hover:text-black hover:bg-surface-container-high transition-all p-2 rounded-lg neo-border active:translate-y-1 active:translate-x-1 active:shadow-none">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-slate-600 hover:text-black hover:bg-surface-container-high transition-all p-2 rounded-lg neo-border active:translate-y-1 active:translate-x-1 active:shadow-none">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="User avatar" class="w-10 h-10 rounded-full neo-border" data-alt="A simple, stylized user avatar featuring a bright pastel yellow background with a chunky black outline. The character inside is an abstract geometric smiling face, reflecting a playful, neobrutalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYt-mqf2mzTZHg4FeBkyvEGyz64d0PVkOQHAT-53uWG3WGz-rIXIcjKvP6oN_DvRRj14h_RBMvdlCLFKeeL8skUz2dL2j8JJOYqqP0H7FfQOculSEyBAxCyrHyH9zOoHWRsee459LS6XK444n-b9OgVdZVrs77D0ojM-_2qe92QVfhQg-Rt8OLgUFgDg---jGzWzfccIZK7yiX7dGvrkXwcFNufM-FvveyWA3gRO_hW_ELsuahb8uPSQ">
+</div>
+</header>
+<!-- Workspace Layout -->
+<div class="flex-1 flex overflow-hidden p-6 gap-6">
+<!-- Module List Column (Left side of main area) -->
+<div class="w-80 flex flex-col gap-4 overflow-y-auto pr-2 pb-10 hide-scrollbar shrink-0">
+<h2 class="text-2xl font-headline font-bold mb-2">Modules</h2>
+<!-- Completed Module -->
+<div class="bg-surface-container-lowest rounded-xl p-5 neo-border neo-shadow flex flex-col gap-3 relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 font-label text-xs font-bold border-b-2 border-l-2 border-black rounded-bl-lg">
+                        COMPLETED
+                    </div>
+<div class="w-10 h-10 bg-tertiary-fixed rounded-lg neo-border flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-black">check_circle</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg leading-tight">Module 101: Basic Vectors</h3>
+<p class="text-sm text-on-surface-variant font-body mt-1">Introduction to vector mathematics and scalar fields.</p>
+</div>
+<div class="mt-2 flex gap-2">
+<span class="bg-surface-container-high text-xs font-label px-2 py-1 rounded neo-border">Grade: A</span>
+</div>
+</div>
+<!-- Active Module (102) -->
+<div class="bg-primary-fixed rounded-xl p-5 neo-border neo-shadow-lg flex flex-col gap-3 border-l-[8px] border-l-primary relative">
+<div class="absolute top-0 right-0 bg-primary text-on-primary px-3 py-1 font-label text-xs font-bold border-b-2 border-l-2 border-black rounded-bl-lg">
+                        ACTIVE
+                    </div>
+<div class="w-10 h-10 bg-white rounded-lg neo-border flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div>
+<h3 class="font-headline font-extrabold text-xl leading-tight">Module 102: Kinematics</h3>
+<p class="text-sm text-on-surface-variant font-body mt-1 font-bold">Current Assignment</p>
+</div>
+</div>
+<!-- Locked Module -->
+<div class="bg-surface-container-low rounded-xl p-5 neo-border flex flex-col gap-3 opacity-70">
+<div class="w-10 h-10 bg-surface-dim rounded-lg neo-border flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-outline">lock</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg leading-tight text-outline">Module 103: Dynamics</h3>
+<p class="text-sm text-outline font-body mt-1">Newton's laws of motion.</p>
+</div>
+</div>
+<!-- Locked Module -->
+<div class="bg-surface-container-low rounded-xl p-5 neo-border flex flex-col gap-3 opacity-70">
+<div class="w-10 h-10 bg-surface-dim rounded-lg neo-border flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-outline">lock</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg leading-tight text-outline">Module 104: Energy</h3>
+<p class="text-sm text-outline font-body mt-1">Work, kinetic, and potential energy.</p>
+</div>
+</div>
+</div>
+<!-- Active Session Details (Right side) -->
+<div class="flex-1 flex flex-col overflow-y-auto">
+<div class="bg-surface-container-lowest rounded-xl neo-border neo-shadow-lg flex-1 p-8 flex flex-col relative overflow-hidden">
+<!-- Decorative Background Element -->
+<div class="absolute -top-10 -right-10 w-48 h-48 bg-secondary-fixed rounded-full neo-border opacity-50 pointer-events-none"></div>
+<!-- Header Section -->
+<div class="mb-8 border-b-[3px] border-black pb-6">
+<div class="flex items-center gap-3 mb-4">
+<span class="bg-primary-fixed text-on-primary-fixed-variant px-3 py-1 font-label text-sm font-bold rounded-full neo-border">Assignment Active</span>
+<span class="text-on-surface-variant text-sm font-label flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> Due in 3 Days
+                            </span>
+</div>
+<h1 class="text-4xl md:text-5xl font-headline font-extrabold text-primary mb-4 leading-tight">Module 102: <br>Kinematics Simulation</h1>
+<p class="text-lg font-body text-on-surface-variant max-w-2xl">
+                            In this module, you will construct a Python-based simulation to model the trajectory of a projectile under constant acceleration. You will need to calculate displacement, velocity, and time of flight.
+                        </p>
+</div>
+<!-- Details Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 flex-1">
+<!-- Objectives Card -->
+<div class="bg-surface p-6 rounded-xl neo-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<h3 class="font-headline font-bold text-xl mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">flag</span> Objectives
+                            </h3>
+<ul class="space-y-3 font-body text-on-surface">
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">check_box_outline_blank</span>
+                                    Initialize particle state arrays (x, y, vx, vy)
+                                </li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">check_box_outline_blank</span>
+                                    Implement Euler integration for position update
+                                </li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">check_box_outline_blank</span>
+                                    Plot trajectory using Matplotlib
+                                </li>
+</ul>
+</div>
+<!-- Variables Card -->
+<div class="bg-surface p-6 rounded-xl neo-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<h3 class="font-headline font-bold text-xl mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">functions</span> Key Variables
+                            </h3>
+<div class="flex flex-wrap gap-2">
+<span class="bg-secondary-fixed text-on-secondary-fixed-variant px-3 py-1 font-label text-sm font-bold rounded-lg neo-border">v_initial = 25 m/s</span>
+<span class="bg-secondary-fixed text-on-secondary-fixed-variant px-3 py-1 font-label text-sm font-bold rounded-lg neo-border">theta = 45°</span>
+<span class="bg-primary-fixed text-on-primary-fixed-variant px-3 py-1 font-label text-sm font-bold rounded-lg neo-border">g = 9.81 m/s²</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 font-label text-sm font-bold rounded-lg neo-border">dt = 0.01 s</span>
+</div>
+</div>
+</div>
+<!-- Massive Action Button -->
+<div class="mt-auto">
+<button class="w-full bg-primary text-on-primary py-6 px-8 rounded-xl neo-border neo-shadow-lg flex items-center justify-between group hover:bg-surface-tint transition-colors">
+<div class="flex flex-col items-start">
+<span class="font-label text-primary-fixed-dim text-sm mb-1 uppercase tracking-widest">Action Required</span>
+<span class="font-headline font-extrabold text-2xl md:text-3xl">Enter Notebook Workspace</span>
+</div>
+<div class="w-16 h-16 bg-white rounded-full flex items-center justify-center neo-border group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-4xl">arrow_forward</span>
+</div>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<style>
+        /* Hide scrollbar for clean neobrutalist look but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body></html>

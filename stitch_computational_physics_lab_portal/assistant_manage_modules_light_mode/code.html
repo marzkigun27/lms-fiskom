@@ -1,0 +1,329 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Manage Modules - PhysPracticum</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#7a4a54",
+                        "on-primary-fixed": "#001c3a",
+                        "surface-bright": "#f9f9f9",
+                        "outline-variant": "#c4c6cf",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "surface": "#f9f9f9",
+                        "primary-container": "#001f3f",
+                        "primary": "#000613",
+                        "background": "#f9f9f9",
+                        "secondary-fixed": "#ffd9df",
+                        "error": "#ba1a1a",
+                        "outline": "#74777f",
+                        "on-tertiary-container": "#589364",
+                        "on-secondary-fixed": "#330f19",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#43474e",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "inverse-primary": "#afc8f0",
+                        "surface-container-low": "#f3f3f4",
+                        "primary-fixed": "#d4e3ff",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#fdbec9",
+                        "tertiary-container": "#00250d",
+                        "surface-tint": "#476083",
+                        "tertiary": "#000802",
+                        "primary-fixed-dim": "#afc8f0",
+                        "secondary": "#81515a",
+                        "secondary-fixed-dim": "#f4b6c1",
+                        "tertiary-fixed-dim": "#96d5a0",
+                        "tertiary-fixed": "#b2f2bb",
+                        "inverse-on-surface": "#f0f1f1",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#145129",
+                        "on-tertiary-fixed": "#00210b",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "on-primary-container": "#6f88ad",
+                        "surface-container-high": "#e8e8e8",
+                        "on-primary-fixed-variant": "#2f486a",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-fixed-variant": "#663a43",
+                        "surface-dim": "#dadada"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "display": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "body": [
+                            "Inter"
+                        ],
+                        "label": [
+                            "Space Grotesk"
+                        ]
+                    },
+                    "fontSize": {}
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f9f9f9;
+        }
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+        .neo-shadow-lg {
+            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+        }
+        .neo-border {
+            border: 3px solid #000613;
+        }
+        .neo-border-thick {
+            border: 4px solid #000613;
+        }
+        .neo-hover:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+        }
+        .neo-active:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+        }
+    </style>
+</head>
+<body class="font-body text-on-surface bg-background flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="flex flex-col w-64 h-screen border-r-4 border-black pt-6 pb-4 bg-white dark:bg-slate-950 text-slate-950 dark:text-white sticky left-0 shadow-[4px_0px_0px_0px_rgba(0,0,0,1)] z-40 hidden md:flex">
+<div class="px-6 mb-8 flex flex-col items-start gap-4">
+<div class="flex items-center gap-3 w-full">
+<img class="w-10 h-10 neo-border rounded bg-secondary-fixed-dim object-cover" data-alt="A stylized, minimalist computational physics logo featuring a bold geometric atom or wave form rendered in thick black lines with pastel mint and pink accents on a stark white background. High contrast, sharp edges, neobrutalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtBhIoD0eAEkUAnRL5jjWxgXWxITrJYDEXYrcKUk7a-RtjJym0wHUhDaNNXQMmtGP--EnlI4QzxvD91B35oatXQc0C7I--9ko-kzBOrIVlXO7-H_OUQsyN6EjgiYblJ32eRzm8J3o_93XepKbUcKm17ia8L5ep15LXT7IkvXpTBLoAZ7Q5weGcANKqCX0oiPwl19msmvPRU_on0Mv8a7_PE7X40FsSUPfoW4uB4lK7NkblTbUrqJXUiQ">
+<h1 class="text-xl font-black text-slate-950 dark:text-white uppercase tracking-tight">Physics Lab</h1>
+</div>
+<span class="font-label text-sm font-bold text-on-surface-variant">Computational Track</span>
+<button class="w-full bg-primary text-on-primary neo-border rounded-lg py-2 font-label font-bold neo-shadow neo-hover neo-active transition-all mt-2">New Session</button>
+</div>
+<nav class="flex-1 overflow-y-auto px-4 font-headline text-sm">
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="bg-[#98FFD9] text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-lg m-2 p-3 flex items-center gap-3 active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+                Modules
+            </a>
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="grade">grade</span>
+                Grading
+            </a>
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                Schedule
+            </a>
+<a class="text-slate-700 dark:text-slate-300 p-3 m-2 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+                Resources
+            </a>
+</nav>
+<div class="px-4 mt-auto font-headline text-sm border-t-2 border-black pt-4 mx-4">
+<a class="text-slate-700 dark:text-slate-300 p-3 my-1 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Help
+            </a>
+<a class="text-slate-700 dark:text-slate-300 p-3 my-1 flex items-center gap-3 hover:bg-[#FFD1DC] hover:text-black hover:border-2 hover:border-black rounded-lg hover:translate-x-1 transition-transform active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar (Mobile Fallback & Header) -->
+<header class="flex justify-between items-center w-full px-6 py-4 bg-white dark:bg-slate-900 border-b-4 border-black dark:border-white sticky top-0 z-30 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<div class="flex items-center gap-4 md:hidden">
+<button class="p-2 neo-border rounded bg-secondary-fixed text-primary neo-shadow neo-hover neo-active">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<span class="text-2xl font-black text-slate-950 dark:text-white uppercase tracking-tight font-headline">PhysPracticum</span>
+</div>
+<h2 class="text-2xl font-black text-slate-950 uppercase tracking-tight font-headline hidden md:block">Manage Modules</h2>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex gap-6 font-headline font-bold">
+<a class="text-black dark:text-white border-b-4 border-[#98FFD9] pb-1 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:translate-y-1 active:translate-x-1 active:shadow-none" href="#">Modules</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-black hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:translate-y-1 active:translate-x-1 active:shadow-none pb-1" href="#">Simulations</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-black hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:translate-y-1 active:translate-x-1 active:shadow-none pb-1" href="#">Documentation</a>
+</div>
+<div class="flex items-center gap-3 border-l-3 border-black pl-4">
+<button class="p-2 rounded neo-border bg-tertiary-fixed neo-shadow neo-hover neo-active text-primary">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 rounded neo-border bg-surface-bright neo-shadow neo-hover neo-active text-primary">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="User avatar" class="w-10 h-10 rounded-full neo-border object-cover cursor-pointer hover:scale-105 transition-transform" data-alt="A bold, stylized avatar portrait of a user with pastel green hair and chunky geometric glasses, drawn in a flat neobrutalist style with thick black outlines and vibrant flat colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB92T2O2jaxoI8r61BmZ_LctE1DE6R-yvV4oD8h2Mfz3D_LhBulCBZf-2Nsr89RS0K_qscdvEaQwZ4kvysgdSM8tJeH_7c1VBdLU4MueCrUG4d9CtRstmsy9McCXBL0bDjeW6QWhzUdB3tz2BT4iKJoQil95BIPXV1YtdzSNxkX2DaGaLCcald6Qz7-mY0DFL8GDklb3mZRyD5Q7oFi49zdLjwsxaLZSouUo2RZyKRSvaFmk_nht2xcoQ">
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto p-6 md:p-10">
+<div class="max-w-[1280px] mx-auto flex flex-col gap-8">
+<!-- Action Bar -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 neo-border rounded-xl neo-shadow-lg">
+<div>
+<h3 class="font-headline text-3xl font-extrabold tracking-tight">Curriculum Structure</h3>
+<p class="font-body text-on-surface-variant mt-2">Manage computational track modules and assignments.</p>
+</div>
+<button class="bg-tertiary-fixed text-primary neo-border rounded-lg py-3 px-6 font-label font-bold text-lg neo-shadow-lg neo-hover neo-active transition-all flex items-center gap-2 whitespace-nowrap">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+                        Add New Module
+                    </button>
+</div>
+<!-- Modules Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+<!-- Module 1 -->
+<div class="bg-white neo-border rounded-xl neo-shadow-lg overflow-hidden flex flex-col">
+<div class="p-6 border-b-3 border-black bg-surface-bright flex justify-between items-start">
+<div class="flex gap-4 items-start">
+<div class="w-12 h-12 rounded bg-secondary-fixed neo-border flex items-center justify-center flex-shrink-0">
+<span class="font-headline font-black text-xl">M1</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-headline text-xl font-bold">Kinematics Foundations</h4>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed neo-border font-label text-xs font-bold">Active</span>
+</div>
+<p class="font-body text-sm text-on-surface-variant">Introduction to 1D and 2D motion using Python numerical integration.</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 bg-surface neo-border rounded hover:bg-[#FFE082] transition-colors neo-shadow neo-active text-primary" title="Edit Module">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 bg-surface neo-border rounded hover:bg-error-container hover:text-error transition-colors neo-shadow neo-active text-primary" title="Delete Module">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="p-6 bg-white flex-1">
+<div class="flex justify-between items-center mb-4">
+<h5 class="font-label font-bold text-lg">Assignments (3)</h5>
+<button class="text-sm font-label font-bold bg-[#FFE082] px-3 py-1 neo-border rounded neo-shadow neo-hover neo-active flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span> Task
+                                </button>
+</div>
+<ul class="flex flex-col gap-3">
+<li class="p-3 bg-surface border-2 border-black rounded flex justify-between items-center hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="description">description</span>
+<span class="font-body font-medium text-sm">Euler Method Implementation</span>
+</div>
+<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="edit">edit</span></button>
+<button class="p-1 hover:text-error transition-colors"><span class="material-symbols-outlined text-sm" data-icon="close">close</span></button>
+</div>
+</li>
+<li class="p-3 bg-surface border-2 border-black rounded flex justify-between items-center hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="description">description</span>
+<span class="font-body font-medium text-sm">Projectile Motion Simulation</span>
+</div>
+<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="edit">edit</span></button>
+<button class="p-1 hover:text-error transition-colors"><span class="material-symbols-outlined text-sm" data-icon="close">close</span></button>
+</div>
+</li>
+<li class="p-3 bg-surface border-2 border-black rounded flex justify-between items-center hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="quiz">quiz</span>
+<span class="font-body font-medium text-sm">Kinematics Concept Check</span>
+</div>
+<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="edit">edit</span></button>
+<button class="p-1 hover:text-error transition-colors"><span class="material-symbols-outlined text-sm" data-icon="close">close</span></button>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<!-- Module 2 -->
+<div class="bg-white neo-border rounded-xl neo-shadow-lg overflow-hidden flex flex-col opacity-80 border-dashed">
+<div class="p-6 border-b-3 border-black border-dashed bg-surface-container-low flex justify-between items-start">
+<div class="flex gap-4 items-start">
+<div class="w-12 h-12 rounded bg-surface-dim border-2 border-black border-dashed flex items-center justify-center flex-shrink-0">
+<span class="font-headline font-black text-xl text-outline">M2</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-headline text-xl font-bold text-on-surface-variant">Dynamics &amp; Forces</h4>
+<span class="px-2 py-0.5 rounded-full bg-surface-variant border-2 border-black font-label text-xs font-bold text-outline">Draft</span>
+</div>
+<p class="font-body text-sm text-outline">Modeling N-body systems and complex force interactions.</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 bg-surface border-2 border-black rounded hover:bg-[#FFE082] transition-colors neo-shadow neo-active text-primary" title="Edit Module">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 bg-surface border-2 border-black rounded hover:bg-error-container hover:text-error transition-colors neo-shadow neo-active text-primary" title="Delete Module">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="p-6 bg-surface-bright flex-1 flex flex-col items-center justify-center py-12">
+<div class="w-16 h-16 rounded-full bg-[#FFE082] border-2 border-black flex items-center justify-center mb-4 neo-shadow">
+<span class="material-symbols-outlined text-3xl" data-icon="construction">construction</span>
+</div>
+<p class="font-label font-bold text-on-surface-variant mb-4">No tasks added yet.</p>
+<button class="text-sm font-label font-bold bg-white px-4 py-2 neo-border rounded neo-shadow neo-hover neo-active flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span> Create First Task
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-white dark:bg-slate-900 border-t-4 border-black z-50 flex justify-around p-3 pb-safe">
+<a class="flex flex-col items-center p-2 text-slate-600 active:text-black" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+</a>
+<a class="flex flex-col items-center p-2 text-black bg-[#98FFD9] border-2 border-black rounded-lg neo-shadow" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+</a>
+<a class="flex flex-col items-center p-2 text-slate-600 active:text-black" href="#">
+<span class="material-symbols-outlined" data-icon="grade">grade</span>
+</a>
+<a class="flex flex-col items-center p-2 text-slate-600 active:text-black" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+</a>
+</nav>
+<script>
+        // Simple interactions for demonstration
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('translate-y-1', 'translate-x-1', 'shadow-none'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('translate-y-1', 'translate-x-1', 'shadow-none'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('translate-y-1', 'translate-x-1', 'shadow-none'));
+        });
+    </script>
+</body></html>
