@@ -68,7 +68,10 @@ test('participant can upload answer file for active preliminary task period', fu
         'updated_by' => $this->assistant->id,
     ]);
 
-    $file = UploadedFile::fake()->create('bukti_hitungan.pdf', 500, 'application/pdf');
+    $file = UploadedFile::fake()->createWithContent(
+        'bukti_hitungan.png',
+        base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==')
+    );
 
     $response = $this->actingAs($this->participant)
         ->postJson(route('participant.answers.upload'), [
@@ -100,7 +103,7 @@ test('participant can upload answer file for active preliminary task period', fu
 
     expect($answer)->not->toBeNull();
     $decoded = json_decode($answer->content, true);
-    expect($decoded['original_name'])->toBe('bukti_hitungan.pdf');
+    expect($decoded['original_name'])->toBe('bukti_hitungan.png');
     expect($decoded['disk'])->toBe('public');
 
     Storage::disk('public')->assertExists($decoded['path']);
@@ -118,7 +121,17 @@ test('upload rejects unsupported file types or files exceeding size limit', func
         'updated_by' => $this->assistant->id,
     ]);
 
-    // Reject .exe or .txt
+    // Reject non-image files such as PDF and executable
+    $pdfFile = UploadedFile::fake()->create('dokumen.pdf', 100, 'application/pdf');
+    $this->actingAs($this->participant)
+        ->postJson(route('participant.answers.upload'), [
+            'file' => $pdfFile,
+            'question_id' => $this->fileQuestion->id,
+            'preliminary_task_period_id' => $period->id,
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['file']);
+
     $invalidFile = UploadedFile::fake()->create('malicious.exe', 100, 'application/x-msdownload');
     $this->actingAs($this->participant)
         ->postJson(route('participant.answers.upload'), [
@@ -130,7 +143,7 @@ test('upload rejects unsupported file types or files exceeding size limit', func
         ->assertJsonValidationErrors(['file']);
 
     // Reject file > 10MB (e.g. 11MB = 11264 KB)
-    $tooLargeFile = UploadedFile::fake()->create('huge.pdf', 12000, 'application/pdf');
+    $tooLargeFile = UploadedFile::fake()->create('huge.png', 12000, 'image/png');
     $this->actingAs($this->participant)
         ->postJson(route('participant.answers.upload'), [
             'file' => $tooLargeFile,
@@ -212,4 +225,51 @@ test('assistant can stream submission answer snapshot file', function () {
         ->get(route('assistant.grading.submission_file', ['submissionAnswer' => $submissionAnswer->id]));
 
     $response->assertOk();
+});
+
+test('participant can upload and stream answer file using r2 disk', function () {
+    Storage::fake('r2');
+    Config::set('filesystems.answers_disk', 'r2');
+
+    $period = PreliminaryTaskPeriod::create([
+        'module_id' => $this->module->id,
+        'opens_at' => Carbon::now()->subHour(),
+        'deadline_at' => Carbon::now()->addHours(2),
+        'state' => 'active',
+        'created_by' => $this->assistant->id,
+        'updated_by' => $this->assistant->id,
+    ]);
+
+    $file = UploadedFile::fake()->createWithContent(
+        'laporan_r2.jpg',
+        base64_decode('/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=')
+    );
+
+    $response = $this->actingAs($this->participant)
+        ->postJson(route('participant.answers.upload'), [
+            'file' => $file,
+            'question_id' => $this->fileQuestion->id,
+            'preliminary_task_period_id' => $period->id,
+        ]);
+
+    $response->assertOk()
+        ->assertJson([
+            'success' => true,
+        ]);
+
+    $answer = Answer::where('participant_id', $this->participant->id)
+        ->where('question_id', $this->fileQuestion->id)
+        ->first();
+
+    expect($answer)->not->toBeNull();
+    $decoded = json_decode($answer->content, true);
+    expect($decoded['disk'])->toBe('r2');
+    expect($decoded['original_name'])->toBe('laporan_r2.jpg');
+
+    Storage::disk('r2')->assertExists($decoded['path']);
+
+    $streamResponse = $this->actingAs($this->participant)
+        ->get(route('participant.answers.file', ['answer' => $answer->id]));
+
+    $streamResponse->assertOk();
 });

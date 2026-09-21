@@ -22,10 +22,14 @@ class AnswerFileController extends Controller
     public function upload(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'file' => ['required', 'file', 'mimes:pdf,png,jpg,jpeg', 'max:10240'],
+            'file' => ['required', 'file', 'image', 'mimes:png,jpg,jpeg,webp', 'max:10240'],
             'question_id' => ['required', 'integer', 'exists:questions,id'],
             'practicum_session_id' => ['nullable', 'integer', 'exists:practicum_sessions,id'],
             'preliminary_task_period_id' => ['nullable', 'integer', 'exists:preliminary_task_periods,id'],
+        ], [
+            'file.image' => 'Berkas harus berupa gambar.',
+            'file.mimes' => 'Format gambar yang diperbolehkan hanya PNG, JPG, JPEG, dan WEBP.',
+            'file.max' => 'Ukuran gambar maksimal adalah 10 MB.',
         ]);
 
         if (empty($validated['practicum_session_id']) && empty($validated['preliminary_task_period_id'])) {

@@ -55,23 +55,39 @@ export default function AnswerFileDropzone({
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setFileData(parseFileJson(initialValue));
     }, [initialValue]);
 
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setIsPreviewOpen(false);
+            }
+        };
+        if (isPreviewOpen) {
+            window.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isPreviewOpen]);
+
     const handleFileSelect = async (file: File) => {
         setErrorMessage(null);
 
-        // Validation: mime type & extension
-        const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
+        // Validation: mime type & extension (Images only)
+        const allowedExtensions = ['png', 'jpg', 'jpeg', 'webp'];
         const ext = file.name.split('.').pop()?.toLowerCase() || '';
-        const isPdf = file.type === 'application/pdf' || ext === 'pdf';
-        const isImage = file.type.startsWith('image/') || ['png', 'jpg', 'jpeg'].includes(ext);
+        const isImage = file.type.startsWith('image/') || allowedExtensions.includes(ext);
 
-        if (!isPdf && !isImage) {
-            setErrorMessage('Format berkas tidak didukung. Harap unggah PDF, PNG, atau JPG.');
+        if (!isImage) {
+            setErrorMessage('Format berkas tidak didukung. Harap unggah gambar (PNG, JPG, JPEG, WEBP).');
             return;
         }
 
@@ -187,14 +203,12 @@ export default function AnswerFileDropzone({
         onRemove?.();
     };
 
-    const isPdfFile = fileData?.mime_type === 'application/pdf' || fileData?.original_name.toLowerCase().endsWith('.pdf');
-
     return (
         <div className="w-full space-y-3">
             <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
+                accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"
                 className="hidden"
                 disabled={disabled || isUploading}
                 onChange={(e) => {
@@ -225,12 +239,18 @@ export default function AnswerFileDropzone({
             {fileData ? (
                 <div className="bg-surface-container-lowest border-[3px] border-primary rounded-xl p-4 neo-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all">
                     <div className="flex items-center gap-3 overflow-hidden">
-                        <div className={`w-12 h-12 rounded-lg border-2 border-primary flex items-center justify-center shrink-0 ${
-                            isPdfFile ? 'bg-rose-100 text-rose-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
-                            <span className="material-symbols-outlined text-2xl">
-                                {isPdfFile ? 'picture_as_pdf' : 'image'}
-                            </span>
+                        <div className="w-12 h-12 rounded-lg border-2 border-primary bg-blue-100 text-blue-800 flex items-center justify-center shrink-0 overflow-hidden">
+                            {fileData.url ? (
+                                <img
+                                    src={fileData.url}
+                                    alt={fileData.original_name}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span className="material-symbols-outlined text-2xl">
+                                    image
+                                </span>
+                            )}
                         </div>
                         <div className="min-w-0">
                             <p className="font-headline font-bold text-sm text-on-surface truncate max-w-xs md:max-w-md" title={fileData.original_name}>
@@ -251,15 +271,14 @@ export default function AnswerFileDropzone({
 
                     <div className="flex items-center gap-2 w-full md:w-auto justify-end">
                         {fileData.url && (
-                            <a
-                                href={fileData.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <button
+                                type="button"
+                                onClick={() => setIsPreviewOpen(true)}
                                 className="bg-primary text-on-primary border-[2px] border-primary px-3 py-1.5 rounded-lg font-label font-bold text-xs uppercase neo-shadow-sm hover:neo-shadow flex items-center gap-1.5 transition-all"
                             >
-                                <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                <span className="material-symbols-outlined text-sm">visibility</span>
                                 Lihat Berkas
-                            </a>
+                            </button>
                         )}
                         {!disabled && (
                             <button
@@ -330,10 +349,57 @@ export default function AnswerFileDropzone({
                                 <span className="text-primary underline">Pilih berkas</span> atau seret dan lepas di sini
                             </div>
                             <p className="font-body text-xs text-outline font-medium">
-                                Format yang didukung: PDF, PNG, JPG / JPEG (Maks. 10 MB)
+                                Format yang didukung: Gambar PNG, JPG, JPEG, WEBP (Maks. 10 MB)
                             </p>
                         </div>
                     )}
+                </div>
+            )}
+
+            {/* Modal Pop-up Pratinjau Gambar */}
+            {isPreviewOpen && fileData && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in"
+                    onClick={() => setIsPreviewOpen(false)}
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    <div
+                        className="relative max-w-4xl w-full bg-surface-container-lowest border-[3px] border-black rounded-2xl neo-shadow-lg flex flex-col max-h-[90vh] overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between px-5 py-3.5 border-b-[3px] border-black bg-surface-container">
+                            <div className="flex items-center gap-2.5 overflow-hidden">
+                                <span className="material-symbols-outlined text-primary text-xl">image</span>
+                                <h3 className="font-headline font-black text-sm text-on-surface truncate" title={fileData.original_name}>
+                                    {fileData.original_name}
+                                </h3>
+                                <span className="font-mono text-xs text-outline font-bold shrink-0">
+                                    ({formatBytes(fileData.size_bytes)})
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsPreviewOpen(false)}
+                                    className="w-8 h-8 rounded-lg border-2 border-black bg-rose-200 text-rose-900 hover:bg-rose-300 font-black flex items-center justify-center neo-shadow-sm transition-all text-sm"
+                                    title="Tutup (Esc)"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Modal Image Body */}
+                        <div className="p-4 overflow-auto flex items-center justify-center bg-black/5 min-h-[250px] max-h-[75vh]">
+                            <img
+                                src={fileData.url}
+                                alt={fileData.original_name}
+                                className="max-h-[70vh] max-w-full w-auto object-contain rounded-lg border-2 border-black/20 neo-shadow-sm"
+                            />
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
