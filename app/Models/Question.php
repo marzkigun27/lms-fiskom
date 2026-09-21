@@ -25,6 +25,28 @@ class Question extends Model
         'updated_by',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleted(function (Question $question): void {
+            if (! $question->isForceDeleting() && $question->order_number > 0) {
+                static::withoutEvents(function () use ($question): void {
+                    static::withTrashed()
+                        ->whereKey($question->id)
+                        ->update(['order_number' => -$question->id]);
+                });
+            }
+        });
+
+        static::restoring(function (Question $question): void {
+            if ($question->order_number < 0) {
+                $maxOrder = static::where('module_id', $question->module_id)
+                    ->where('session_type', $question->session_type)
+                    ->max('order_number') ?? 0;
+                $question->order_number = max(1, $maxOrder + 1);
+            }
+        });
+    }
+
     protected function casts(): array
     {
         return [

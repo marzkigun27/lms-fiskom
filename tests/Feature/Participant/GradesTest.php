@@ -170,3 +170,101 @@ it('correctly handles empty state for assistant feedback when no feedback was gi
         ->where('modules.0.assistant_feedback', null)
     );
 });
+
+it('does not display questions for upcoming module when participant has not completed any session', function () {
+    $context = createParticipantGradesContext();
+
+    // Create an upcoming module with questions
+    $upcomingModule = Module::create([
+        'semester_id' => $context['semester']->id,
+        'code' => 'MOD-02',
+        'title' => 'Modul 2 Akan Datang',
+        'order_number' => 2,
+        'status' => 'published',
+    ]);
+
+    Question::create([
+        'module_id' => $upcomingModule->id,
+        'session_type' => 'initial_task',
+        'description' => 'Soal rahasia tugas awal modul 2.',
+        'answer_type' => 'text',
+        'order_number' => 1,
+        'is_required' => true,
+        'status' => 'published',
+        'created_by' => $context['assistant']->id,
+        'updated_by' => $context['assistant']->id,
+    ]);
+
+    // Participant A visits grades page
+    $response = $this->actingAs($context['participantA'])->get(route('participant.grades'));
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('Participant/Grades')
+        ->has('modules', 2)
+        // Module 1 is completed so sessions exist
+        ->where('modules.0.id', $context['module']->id)
+        ->has('modules.0.sessions', 1)
+        // Module 2 is upcoming/uncompleted so sessions are empty and questions are NOT revealed!
+        ->where('modules.1.id', $upcomingModule->id)
+        ->where('modules.1.sessions', [])
+    );
+});
+
+it('displays completed preliminary task but hides upcoming in-lab sessions until completed', function () {
+    $context = createParticipantGradesContext();
+
+    $module2 = Module::create([
+        'semester_id' => $context['semester']->id,
+        'code' => 'MOD-03',
+        'title' => 'Modul 3 Parsial',
+        'order_number' => 3,
+        'status' => 'published',
+    ]);
+
+    $tpQuestion = Question::create([
+        'module_id' => $module2->id,
+        'session_type' => 'preliminary',
+        'description' => 'Soal TP Modul 3.',
+        'answer_type' => 'text',
+        'order_number' => 1,
+        'is_required' => true,
+        'status' => 'published',
+        'created_by' => $context['assistant']->id,
+        'updated_by' => $context['assistant']->id,
+    ]);
+
+    $taQuestion = Question::create([
+        'module_id' => $module2->id,
+        'session_type' => 'initial_task',
+        'description' => 'Soal TA Modul 3 yang belum dimulai.',
+        'answer_type' => 'text',
+        'order_number' => 1,
+        'is_required' => true,
+        'status' => 'published',
+        'created_by' => $context['assistant']->id,
+        'updated_by' => $context['assistant']->id,
+    ]);
+
+    // Participant A has submitted TP answer
+    Answer::create([
+        'question_id' => $tpQuestion->id,
+        'participant_id' => $context['participantA']->id,
+        'content' => 'Jawaban TP saya.',
+        'status' => 'submitted',
+    ]);
+
+    $response = $this->actingAs($context['participantA'])->get(route('participant.grades'));
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('Participant/Grades')
+        ->has('modules', 2)
+        ->where('modules.1.id', $module2->id)
+        // Should only have 1 session (TP) and NOT TA!
+        ->has('modules.1.sessions', 1)
+        ->where('modules.1.sessions.0.name', 'Tugas Pendahuluan (TP)')
+        ->where('modules.1.sessions.0.questions.0.question', 'Soal 1: Soal TP Modul 3.')
+        ->where('modules.1.sessions.0.questions.0.answer', 'Jawaban TP saya.')
+    );
+});

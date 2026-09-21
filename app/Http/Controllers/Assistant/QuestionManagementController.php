@@ -66,8 +66,8 @@ class QuestionManagementController extends Controller
                 'semester_id' => 'An active semester is required.',
             ]);
         }
-        $codeRule = Rule::unique('modules', 'code')->where('semester_id', $semesterId);
-        $orderRule = Rule::unique('modules', 'order_number')->where('semester_id', $semesterId);
+        $codeRule = Rule::unique('modules', 'code')->where('semester_id', $semesterId)->withoutTrashed();
+        $orderRule = Rule::unique('modules', 'order_number')->where('semester_id', $semesterId)->withoutTrashed();
         if ($module) {
             $codeRule = $codeRule->ignore($module->id);
             $orderRule = $orderRule->ignore($module->id);
@@ -91,7 +91,7 @@ class QuestionManagementController extends Controller
             'questions' => ['required', 'array', 'min:1'],
             'questions.*.id' => ['nullable', 'integer'],
             'questions.*.description' => ['required', 'string'],
-            'questions.*.answer_type' => ['required', 'in:text,code'],
+            'questions.*.answer_type' => ['required', 'in:text,code,file'],
             'questions.*.programming_language' => ['nullable', 'string', 'max:50'],
             'questions.*.session_type' => ['required', 'in:preliminary,initial_task,journal,independent_task'],
             'questions.*.order_number' => ['required', 'integer', 'min:1'],
@@ -165,7 +165,8 @@ class QuestionManagementController extends Controller
     {
         $uniqueOrder = Rule::unique('questions', 'order_number')
             ->where('module_id', $request->integer('module_id'))
-            ->where('session_type', $request->string('session_type')->value());
+            ->where('session_type', $request->string('session_type')->value())
+            ->withoutTrashed();
 
         if ($question) {
             $uniqueOrder = $uniqueOrder->ignore($question->id);
@@ -176,7 +177,7 @@ class QuestionManagementController extends Controller
                 'module_id' => ['required', 'integer', 'exists:modules,id'],
                 'session_type' => ['required', 'in:preliminary,initial_task,journal,independent_task'],
                 'description' => ['required', 'string'],
-                'answer_type' => ['required', 'in:text,code'],
+                'answer_type' => ['required', 'in:text,code,file'],
                 'programming_language' => ['nullable', 'string', 'max:50'],
                 'order_number' => ['required', 'integer', 'min:1', $uniqueOrder],
                 'is_required' => ['required', 'boolean'],

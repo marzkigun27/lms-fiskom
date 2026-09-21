@@ -2,6 +2,7 @@ import { Head, Link, useForm, router } from '@inertiajs/react';
 import React, { useState } from 'react';
 import { useConnectionStatus, useEchoPresence } from '@laravel/echo-react';
 import { submit as submitAnswer } from '@/routes/participant/workspace';
+import AnswerFileDropzone from '@/components/answer-file-dropzone';
 
 interface Question {
     id: number;
@@ -100,42 +101,82 @@ const QuestionCell = ({
                         <span className="material-symbols-outlined">
                             {question.answer_type === 'code'
                                 ? 'code'
+                                : question.answer_type === 'file'
+                                ? 'upload_file'
                                 : 'edit_document'}
                         </span>
-                        Lembar Jawaban ({question.answer_type})
+                        Lembar Jawaban ({question.answer_type === 'file' ? 'Unggah Berkas' : question.answer_type})
                     </div>
                 </div>
-                <div className="bg-surface-container-lowest relative p-0">
-                    <textarea
-                        value={data.answer_content}
-                        onChange={(e) =>
-                            setData('answer_content', e.target.value)
-                        }
-                        className={`h-48 w-full p-6 md:h-64 ${question.answer_type === 'code' ? 'bg-inverse-surface font-mono text-green-400' : 'font-body bg-surface-container-lowest text-on-surface'} resize-y border-none text-lg leading-relaxed font-medium placeholder-slate-400 focus:ring-0`}
-                        placeholder={
-                            question.answer_type === 'code'
-                                ? '// Tuliskan kode Anda di sini...'
-                                : 'Ketik jawaban Anda di sini...'
-                        }
-                    />
-                    <div className="absolute right-4 bottom-4 flex items-center gap-3">
-                        {saved && (
-                            <span className="font-label text-primary animate-pulse font-bold">
-                                Tersimpan!
+                {question.answer_type === 'file' ? (
+                    <div className="p-6 bg-surface-container-lowest">
+                        <AnswerFileDropzone
+                            questionId={question.id}
+                            practicumSessionId={sessionId}
+                            initialValue={data.answer_content}
+                            onUploadSuccess={(_fileData, rawJson) => {
+                                setData('answer_content', rawJson);
+                            }}
+                            onRemove={() => {
+                                setData('answer_content', '');
+                            }}
+                        />
+                        <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                            <span className="font-label text-xs text-outline font-medium">
+                                Berkas otomatis tersimpan saat diunggah. Klik Simpan Jawaban untuk konfirmasi.
                             </span>
-                        )}
-                        <button
-                            disabled={processing}
-                            type="submit"
-                            className="bg-tertiary-container text-on-tertiary-container border-primary neo-shadow font-label hover:neo-shadow-md flex items-center gap-2 rounded-xl border-[3px] px-6 py-2 text-base font-bold transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50"
-                        >
-                            {processing ? 'Menyimpan...' : 'Simpan Jawaban'}
-                            <span className="material-symbols-outlined text-lg">
-                                save
-                            </span>
-                        </button>
+                            <div className="flex items-center gap-3 self-end sm:self-auto">
+                                {saved && (
+                                    <span className="font-label text-primary animate-pulse font-bold text-sm">
+                                        Tersimpan!
+                                    </span>
+                                )}
+                                <button
+                                    disabled={processing || !data.answer_content}
+                                    type="submit"
+                                    className="bg-tertiary-container text-on-tertiary-container border-primary neo-shadow font-label hover:neo-shadow-md flex items-center gap-2 rounded-xl border-[3px] px-6 py-2 text-base font-bold transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50"
+                                >
+                                    {processing ? 'Menyimpan...' : 'Simpan Jawaban'}
+                                    <span className="material-symbols-outlined text-lg">
+                                        save
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="bg-surface-container-lowest relative p-0">
+                        <textarea
+                            value={data.answer_content}
+                            onChange={(e) =>
+                                setData('answer_content', e.target.value)
+                            }
+                            className={`h-48 w-full p-6 md:h-64 ${question.answer_type === 'code' ? 'bg-inverse-surface font-mono text-green-400' : 'font-body bg-surface-container-lowest text-on-surface'} resize-y border-none text-lg leading-relaxed font-medium placeholder-slate-400 focus:ring-0`}
+                            placeholder={
+                                question.answer_type === 'code'
+                                    ? '// Tuliskan kode Anda di sini...'
+                                    : 'Ketik jawaban Anda di sini...'
+                            }
+                        />
+                        <div className="absolute right-4 bottom-4 flex items-center gap-3">
+                            {saved && (
+                                <span className="font-label text-primary animate-pulse font-bold">
+                                    Tersimpan!
+                                </span>
+                            )}
+                            <button
+                                disabled={processing}
+                                type="submit"
+                                className="bg-tertiary-container text-on-tertiary-container border-primary neo-shadow font-label hover:neo-shadow-md flex items-center gap-2 rounded-xl border-[3px] px-6 py-2 text-base font-bold transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50"
+                            >
+                                {processing ? 'Menyimpan...' : 'Simpan Jawaban'}
+                                <span className="material-symbols-outlined text-lg">
+                                    save
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </form>
     );

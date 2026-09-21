@@ -1,8 +1,10 @@
 import { Head, router, useForm, usePage } from "@inertiajs/react";
 import { useMemo, useState } from "react";
+import ConfirmModal from "@/components/confirm-modal";
+import AlertModal from "@/components/alert-modal";
 type SessionType =
     "preliminary" | "initial_task" | "journal" | "independent_task";
-type AnswerType = "text" | "code";
+type AnswerType = "text" | "code" | "file";
 type Status = "draft" | "published" | "archived";
 interface Module {
     id: number;
@@ -135,6 +137,32 @@ export default function QuestionManagementIndex() {
         () => questions.filter((q) => q.module_id === selectedModule),
         [questions, selectedModule],
     );
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: React.ReactNode;
+        submessage?: React.ReactNode;
+        confirmText?: string;
+        isLoading?: boolean;
+        onConfirm: () => void;
+    }>({
+        isOpen: false,
+        title: "Konfirmasi Hapus",
+        message: "",
+        onConfirm: () => {},
+    });
+
+    const [alertModal, setAlertModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: React.ReactNode;
+        variant?: "info" | "warning" | "error";
+    }>({
+        isOpen: false,
+        title: "Perhatian",
+        message: "",
+    });
+
     const close = () => {
         setOpen(false);
         setEditing(null);
@@ -166,8 +194,27 @@ export default function QuestionManagementIndex() {
             : moduleForm.post("/asisten/soal/modules", options);
     };
     const removeModule = (id: number) => {
-        if (window.confirm("Hapus module ini?"))
-            moduleForm.delete(`/asisten/soal/modules/${id}`);
+        const mod = modules.find((m) => m.id === id);
+        setConfirmModal({
+            isOpen: true,
+            title: "Hapus Modul",
+            message: (
+                <span>
+                    Apakah Anda yakin ingin menghapus modul{" "}
+                    <span className="text-error font-black">{mod ? `${mod.code} - ${mod.title}` : `#${id}`}</span>?
+                </span>
+            ),
+            submessage: "Semua soal yang berada di dalam modul ini akan ikut terhapus secara permanen.",
+            confirmText: "Ya, Hapus Modul",
+            isLoading: false,
+            onConfirm: () => {
+                setConfirmModal((prev) => ({ ...prev, isLoading: true }));
+                moduleForm.delete(`/asisten/soal/modules/${id}`, {
+                    onSuccess: () => setConfirmModal((prev) => ({ ...prev, isOpen: false, isLoading: false })),
+                    onError: () => setConfirmModal((prev) => ({ ...prev, isLoading: false })),
+                });
+            },
+        });
     };
     const edit = (question: Question) => {
         setEditing(question);
@@ -191,8 +238,30 @@ export default function QuestionManagementIndex() {
             : form.post("/asisten/soal", options);
     };
     const remove = (id: number) => {
-        if (window.confirm("Hapus soal ini?"))
-            form.delete(`/asisten/soal/${id}`);
+        const q = questions.find((item) => item.id === id);
+        const sessionLabel = q ? labels[q.session_type] : "";
+        setConfirmModal({
+            isOpen: true,
+            title: "Hapus Soal",
+            message: (
+                <span>
+                    Apakah Anda yakin ingin menghapus{" "}
+                    <span className="text-error font-black">
+                        {q ? `Soal #${q.order_number} (${sessionLabel})` : `Soal #${id}`}
+                    </span>?
+                </span>
+            ),
+            submessage: "Tindakan ini tidak dapat dibatalkan. Soal akan dihapus secara permanen.",
+            confirmText: "Ya, Hapus Soal",
+            isLoading: false,
+            onConfirm: () => {
+                setConfirmModal((prev) => ({ ...prev, isLoading: true }));
+                form.delete(`/asisten/soal/${id}`, {
+                    onSuccess: () => setConfirmModal((prev) => ({ ...prev, isOpen: false, isLoading: false })),
+                    onError: () => setConfirmModal((prev) => ({ ...prev, isLoading: false })),
+                });
+            },
+        });
     };
     const changeModule = (moduleId: number) => {
         setSelectedModule(moduleId);
@@ -249,13 +318,23 @@ export default function QuestionManagementIndex() {
         );
 
         if (filledQuestions.length === 0) {
-            alert("Mohon isi minimal satu soal sebelum menyimpan batch.");
+            setAlertModal({
+                isOpen: true,
+                title: "Data Kosong",
+                message: "Mohon isi minimal satu soal sebelum menyimpan batch.",
+                variant: "warning",
+            });
             return;
         }
 
         const missingDesc = filledQuestions.find((q) => !q.description.trim());
         if (missingDesc) {
-            alert("Semua soal yang disimpan harus memiliki isi soal.");
+            setAlertModal({
+                isOpen: true,
+                title: "Soal Belum Lengkap",
+                message: "Semua soal yang disimpan harus memiliki isi soal.",
+                variant: "warning",
+            });
             return;
         }
 
@@ -263,9 +342,12 @@ export default function QuestionManagementIndex() {
         for (const q of filledQuestions) {
             const key = `${q.session_type}-${q.order_number}`;
             if (seenOrders.has(key)) {
-                alert(
-                    `Nomor urut ${q.order_number} pada kategori "${labels[q.session_type]}" duplikat. Harap gunakan nomor urut yang berbeda.`,
-                );
+                setAlertModal({
+                    isOpen: true,
+                    title: "Nomor Urut Duplikat",
+                    message: `Nomor urut ${q.order_number} pada kategori "${labels[q.session_type]}" duplikat. Harap gunakan nomor urut yang berbeda.`,
+                    variant: "error",
+                });
                 return;
             }
             seenOrders.add(key);
@@ -673,6 +755,9 @@ export default function QuestionManagementIndex() {
                                                     <option value="code">
                                                         Source Code
                                                     </option>
+                                                    <option value="file">
+                                                        Upload File (PDF / Gambar)
+                                                    </option>
                                                 </select>
                                                 {form.errors.answer_type && (
                                                     <p className="text-error text-xs font-bold">
@@ -964,6 +1049,9 @@ export default function QuestionManagementIndex() {
                                                                                         <option value="code">
                                                                                             Source Code
                                                                                         </option>
+                                                                                        <option value="file">
+                                                                                            Upload File (PDF / Gambar)
+                                                                                        </option>
                                                                                     </select>
                                                                                 </label>
                                                                             </div>
@@ -1085,6 +1173,8 @@ export default function QuestionManagementIndex() {
                                                                                     {q.answer_type ===
                                                                                     "code"
                                                                                         ? "Code"
+                                                                                        : q.answer_type === "file"
+                                                                                        ? "File"
                                                                                         : "Text"}
                                                                                 </span>
                                                                                 {q.is_required && (
@@ -1133,6 +1223,27 @@ export default function QuestionManagementIndex() {
                     )}
                 </div>
             </main>
+
+            {/* Custom Neo-Brutalist Confirmation Modal */}
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                submessage={confirmModal.submessage}
+                confirmText={confirmModal.confirmText}
+                isLoading={confirmModal.isLoading}
+                onConfirm={confirmModal.onConfirm}
+                onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+            />
+
+            {/* Custom Alert Modal */}
+            <AlertModal
+                isOpen={alertModal.isOpen}
+                title={alertModal.title}
+                message={alertModal.message}
+                variant={alertModal.variant}
+                onClose={() => setAlertModal((prev) => ({ ...prev, isOpen: false }))}
+            />
         </>
     );
 }

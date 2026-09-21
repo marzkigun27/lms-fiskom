@@ -1,5 +1,6 @@
 import { Head, usePage, useForm, router } from "@inertiajs/react";
 import { useState } from "react";
+import ConfirmModal from "@/components/confirm-modal";
 
 interface Enrollment {
     id: number;
@@ -33,6 +34,15 @@ export default function ParticipantManagementIndex() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedParticipant, setSelectedParticipant] =
         useState<Participant | null>(null);
+    const [confirmDelete, setConfirmDelete] = useState<{
+        isOpen: boolean;
+        participant: Participant | null;
+        isLoading: boolean;
+    }>({
+        isOpen: false,
+        participant: null,
+        isLoading: false,
+    });
 
     const {
         data,
@@ -106,13 +116,20 @@ export default function ParticipantManagementIndex() {
     };
 
     const handleDelete = (p: Participant) => {
-        if (
-            confirm(
-                `Apakah Anda yakin ingin menghapus pengguna ${p.name}? Tindakan ini tidak dapat dibatalkan.`,
-            )
-        ) {
-            destroy(`/asisten/peserta/${p.id}`);
-        }
+        setConfirmDelete({
+            isOpen: true,
+            participant: p,
+            isLoading: false,
+        });
+    };
+
+    const confirmDestroy = () => {
+        if (!confirmDelete.participant) return;
+        setConfirmDelete((prev) => ({ ...prev, isLoading: true }));
+        destroy(`/asisten/peserta/${confirmDelete.participant.id}`, {
+            onSuccess: () => setConfirmDelete({ isOpen: false, participant: null, isLoading: false }),
+            onError: () => setConfirmDelete((prev) => ({ ...prev, isLoading: false })),
+        });
     };
 
     return (
@@ -559,6 +576,23 @@ export default function ParticipantManagementIndex() {
                     </div>
                 )}{" "}
             </div>{" "}
+
+            {/* Custom Neo-Brutalist Confirmation Modal */}
+            <ConfirmModal
+                isOpen={confirmDelete.isOpen}
+                title="Hapus Pengguna"
+                message={
+                    <span>
+                        Apakah Anda yakin ingin menghapus pengguna{" "}
+                        <span className="text-error font-black">{confirmDelete.participant?.name}</span>?
+                    </span>
+                }
+                submessage="Tindakan ini tidak dapat dibatalkan. Seluruh data terkait pengguna ini akan hilang permanen."
+                confirmText="Ya, Hapus"
+                isLoading={confirmDelete.isLoading}
+                onConfirm={confirmDestroy}
+                onClose={() => setConfirmDelete({ isOpen: false, participant: null, isLoading: false })}
+            />
         </>
     );
 }

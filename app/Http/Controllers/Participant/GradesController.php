@@ -8,6 +8,8 @@ use App\Models\AssistantModuleParticipant;
 use App\Models\Feedback;
 use App\Models\Grade;
 use App\Models\Module;
+use App\Models\PracticumSchedule;
+use App\Models\PreliminaryTaskPeriod;
 use App\Models\Question;
 use App\Models\Submission;
 use Carbon\Carbon;
@@ -28,6 +30,7 @@ class GradesController extends Controller
     public function index(Request $request): Response
     {
         $participant = $request->user();
+        $participantId = $participant->id;
 
         // 1. Fetch published modules (or all if none published)
         $modules = Module::query()
@@ -35,59 +38,89 @@ class GradesController extends Controller
             ->orderBy('order_number')
             ->get();
 
+        $moduleIds = $modules->pluck('id');
+
         // 2. Fetch participant's grades strictly for this participant
         $grades = Grade::query()
             ->with('gradedBy')
-            ->where('participant_id', $participant->id)
+            ->where('participant_id', $participantId)
             ->get()
             ->keyBy('module_id');
 
         // 3. Fetch explicit assistant assignments for this participant
         $guidanceAssignments = AssistantModuleParticipant::query()
             ->with('assistant')
-            ->where('participant_id', $participant->id)
+            ->where('participant_id', $participantId)
             ->get()
             ->keyBy('module_id');
 
         // 4. Fetch target assistants from feedback submitted by participant
         $feedbacks = Feedback::query()
             ->with('targetAssistant')
-            ->where('sender_id', $participant->id)
+            ->where('sender_id', $participantId)
             ->get()
             ->keyBy('module_id');
 
-        // 5. Fetch default assistant from weekly schedule if available
-        $userWeeklySchedule = DB::table('weekly_schedule_group_member')
+        // 5. Fetch weekly schedules and classes for this participant
+        $weeklyScheduleIds = DB::table('weekly_schedule_group_member')
             ->join('weekly_schedule_groups', 'weekly_schedule_group_member.weekly_schedule_group_id', '=', 'weekly_schedule_groups.id')
-            ->where('weekly_schedule_group_member.participant_id', $participant->id)
-            ->select('weekly_schedule_groups.weekly_schedule_id')
-            ->first();
+            ->where('weekly_schedule_group_member.participant_id', $participantId)
+            ->pluck('weekly_schedule_groups.weekly_schedule_id');
+
+        $classIds = DB::table('participant_enrollments')
+            ->where('participant_id', $participantId)
+            ->where('status', 'active')
+            ->pluck('class_id');
 
         $defaultScheduleAssistant = null;
-        if ($userWeeklySchedule) {
+        if ($weeklyScheduleIds->isNotEmpty()) {
             $defaultScheduleAssistant = DB::table('weekly_schedule_assistant')
                 ->join('users', 'weekly_schedule_assistant.assistant_id', '=', 'users.id')
-                ->where('weekly_schedule_assistant.weekly_schedule_id', $userWeeklySchedule->weekly_schedule_id)
+                ->whereIn('weekly_schedule_assistant.weekly_schedule_id', $weeklyScheduleIds)
                 ->select('users.name')
                 ->first();
         }
 
         // 6. Pre-load participant's answers and submissions
         $allAnswers = Answer::query()
-            ->where('participant_id', $participant->id)
+            ->where('participant_id', $participantId)
             ->get()
             ->keyBy('question_id');
 
         $allSubmissions = Submission::query()
-            ->where('participant_id', $participant->id)
-            ->with(['practicumSession.practicumSchedule', 'submissionAnswers'])
+            ->where('participant_id', $participantId)
+            ->with(['practicumSession.practicumSchedule', 'submissionAnswers', 'preliminaryTaskPeriod'])
             ->get();
 
-        $submissionsByModule = $allSubmissions->groupBy(fn (Submission $s): ?int => $s->practicumSession?->practicumSchedule?->module_id);
+        $submissionsByModule = $allSubmissions->groupBy(fn (Submission $s): ?int => $s->practicumSession?->practicumSchedule?->module_id ?? $s->preliminaryTaskPeriod?->module_id
+        );
 
         $allQuestions = Question::query()
-            ->whereIn('module_id', $modules->pluck('id'))
+            ->whereIn('module_id', $moduleIds)
             ->orderBy('order_number')
+            ->get()
+            ->groupBy('module_id');
+
+        // Pre-load schedules with sessions for participant
+        $schedulesQuery = PracticumSchedule::query()
+            ->with('sessions')
+            ->whereIn('module_id', $moduleIds);
+
+        if ($weeklyScheduleIds->isNotEmpty() || $classIds->isNotEmpty()) {
+            $schedulesQuery->where(function ($query) use ($weeklyScheduleIds, $classIds) {
+                if ($weeklyScheduleIds->isNotEmpty()) {
+                    $query->whereIn('weekly_schedule_id', $weeklyScheduleIds);
+                }
+                if ($classIds->isNotEmpty()) {
+                    $query->orWhereIn('class_id', $classIds);
+                }
+            });
+        }
+        $schedulesByModule = $schedulesQuery->get()->groupBy('module_id');
+
+        // Pre-load preliminary task periods
+        $preliminaryPeriods = PreliminaryTaskPeriod::query()
+            ->whereIn('module_id', $moduleIds)
             ->get()
             ->groupBy('module_id');
 
@@ -99,6 +132,8 @@ class GradesController extends Controller
             $feedback = $feedbacks->get($module->id);
             $moduleSubmissions = $submissionsByModule->get($module->id, collect());
             $moduleQuestions = $allQuestions->get($module->id, collect());
+            $moduleSchedules = $schedulesByModule->get($module->id, collect());
+            $modulePreliminaryPeriods = $preliminaryPeriods->get($module->id, collect());
 
             // Build component parameter scores (TP, TA, D1-D4, I1-I2)
             $componentScores = $grade?->component_scores ?? [];
@@ -131,7 +166,11 @@ class GradesController extends Controller
                 ? Carbon::parse($completedDate)->translatedFormat('d M Y')
                 : 'Belum Selesai';
 
-            // Build session question and answers history
+            // Check if entire module is completed
+            $isModuleCompleted = ($grade !== null && ($grade->score !== null || $grade->status === 'published'))
+                || $moduleSchedules->contains(fn ($s) => $s->status === 'completed');
+
+            // Build session question and answers history strictly for completed sessions
             $sessions = [];
             foreach (self::SESSION_MAPPING as $type => $sessionLabel) {
                 $questionsForType = $moduleQuestions->where('session_type', $type);
@@ -139,9 +178,48 @@ class GradesController extends Controller
                     continue;
                 }
 
+                // Check if this specific session has been completed by participant
+                $isSessionCompleted = false;
+
+                if ($isModuleCompleted) {
+                    $isSessionCompleted = true;
+                } elseif ($type === 'preliminary') {
+                    $hasSubmittedPrelab = $moduleSubmissions->contains(function ($sub) {
+                        return $sub->preliminary_task_period_id !== null && in_array($sub->status, ['submitted', 'graded']);
+                    });
+
+                    $isPeriodClosed = $modulePreliminaryPeriods->contains(function ($period) {
+                        return $period->state === 'closed' || Carbon::now()->isAfter($period->deadline_at);
+                    });
+
+                    $hasSubmittedAnswer = $questionsForType->some(fn ($q) => $allAnswers->get($q->id)?->status === 'submitted');
+
+                    $isSessionCompleted = $hasSubmittedPrelab || $isPeriodClosed || $hasSubmittedAnswer;
+                } else {
+                    $hasSubmittedSession = $moduleSubmissions->contains(function ($sub) use ($type) {
+                        return $sub->practicumSession?->session_type === $type && in_array($sub->status, ['submitted', 'graded']);
+                    });
+
+                    $isPracticumSessionEnded = $moduleSchedules->contains(function ($sched) use ($type) {
+                        return $sched->sessions->contains(function ($sess) use ($type) {
+                            return $sess->session_type === $type && (in_array($sess->state, ['completed', 'closed']) || $sess->completed_at !== null);
+                        });
+                    });
+
+                    $hasSubmittedAnswer = $questionsForType->some(fn ($q) => $allAnswers->get($q->id)?->status === 'submitted');
+
+                    $isSessionCompleted = $hasSubmittedSession || $isPracticumSessionEnded || $hasSubmittedAnswer;
+                }
+
+                // If this session is not completed yet, DO NOT display questions beforehand!
+                if (! $isSessionCompleted) {
+                    continue;
+                }
+
                 $sessionQuestions = [];
                 foreach ($questionsForType as $q) {
-                    $ansText = $allAnswers->get($q->id)?->content;
+                    $ans = $allAnswers->get($q->id);
+                    $ansText = $ans?->content;
 
                     if (! $ansText) {
                         // Check in submission answers
@@ -150,6 +228,17 @@ class GradesController extends Controller
                             if ($subAns?->answer_content_snapshot) {
                                 $ansText = $subAns->answer_content_snapshot;
                                 break;
+                            }
+                        }
+                    }
+
+                    // If answer is uploaded file JSON without url, inject active url
+                    if ($ansText) {
+                        $decoded = json_decode($ansText, true);
+                        if (is_array($decoded) && ! empty($decoded['path']) && empty($decoded['url'])) {
+                            if ($ans) {
+                                $decoded['url'] = route('participant.answers.file', ['answer' => $ans->id]);
+                                $ansText = json_encode($decoded);
                             }
                         }
                     }
@@ -177,6 +266,7 @@ class GradesController extends Controller
                 'assistant_name' => $assistantName,
                 'assistant_feedback' => $grade?->feedback ?: null,
                 'completed_at' => $completedAt,
+                'is_completed' => $isModuleCompleted,
                 'sessions' => $sessions,
             ];
         }

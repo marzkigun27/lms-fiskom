@@ -149,10 +149,17 @@ class GradingController extends Controller
                 if (! $q) {
                     continue;
                 }
+                $ansText = $ans->content ?? '';
+                $decoded = json_decode($ansText, true);
+                if (is_array($decoded) && ! empty($decoded['path']) && empty($decoded['url'])) {
+                    $decoded['url'] = route('participant.answers.file', ['answer' => $ans->id]);
+                    $ansText = json_encode($decoded);
+                }
+
                 $key = self::SESSION_TYPE_MAP[$q->session_type] ?? 'TP';
                 $sessionAnswers[$key][] = [
                     'question_title' => $q->description ? mb_substr($q->description, 0, 60).'...' : 'Pertanyaan #'.$q->order_number,
-                    'answer_text' => $ans->content ?? '',
+                    'answer_text' => $ansText,
                 ];
             }
 
@@ -167,9 +174,16 @@ class GradingController extends Controller
                     // Avoid duplicate question titles
                     $exists = collect($sessionAnswers[$key])->contains('question_title', mb_substr($q->description, 0, 60).'...');
                     if (! $exists && $subAns->answer_content_snapshot) {
+                        $subText = $subAns->answer_content_snapshot;
+                        $decoded = json_decode($subText, true);
+                        if (is_array($decoded) && ! empty($decoded['path']) && empty($decoded['url'])) {
+                            $decoded['url'] = route('assistant.grading.submission_file', ['submissionAnswer' => $subAns->id]);
+                            $subText = json_encode($decoded);
+                        }
+
                         $sessionAnswers[$key][] = [
                             'question_title' => mb_substr($q->description, 0, 60).'...',
-                            'answer_text' => $subAns->answer_content_snapshot,
+                            'answer_text' => $subText,
                         ];
                     }
                 }

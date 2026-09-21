@@ -23,6 +23,31 @@ class Module extends Model
         'published_at',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleted(function (Module $module): void {
+            if (! $module->isForceDeleting() && $module->order_number > 0) {
+                static::withoutEvents(function () use ($module): void {
+                    static::withTrashed()
+                        ->whereKey($module->id)
+                        ->update([
+                            'order_number' => -$module->id,
+                            'code' => $module->code.'-deleted-'.$module->id,
+                        ]);
+                });
+            }
+        });
+
+        static::restoring(function (Module $module): void {
+            if ($module->order_number < 0) {
+                $maxOrder = static::where('semester_id', $module->semester_id)
+                    ->max('order_number') ?? 0;
+                $module->order_number = max(1, $maxOrder + 1);
+                $module->code = preg_replace('/-deleted-\d+$/', '', $module->code);
+            }
+        });
+    }
+
     protected function casts(): array
     {
         return ['published_at' => 'datetime'];

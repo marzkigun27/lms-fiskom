@@ -1,12 +1,13 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
+import AnswerFileDropzone from '@/components/answer-file-dropzone';
 
 interface QuestionItem {
     id: number;
     title: string | null;
     description: string;
     instructions: string | null;
-    answer_type: 'text' | 'code';
+    answer_type: 'text' | 'code' | 'file';
     programming_language: string | null;
     order_number: number;
     is_required: boolean;
@@ -221,6 +222,10 @@ export default function ParticipantPreLabShow({
                                             <span className="text-xs font-mono font-bold uppercase px-2.5 py-0.5 bg-tertiary-fixed text-black rounded-md border border-black">
                                                 Code ({q.programming_language || 'General'})
                                             </span>
+                                        ) : q.answer_type === 'file' ? (
+                                            <span className="text-xs font-label font-bold uppercase px-2.5 py-0.5 bg-primary-fixed text-on-primary-fixed rounded-md border border-black">
+                                                Upload Berkas
+                                            </span>
                                         ) : (
                                             <span className="text-xs font-label font-bold uppercase px-2.5 py-0.5 bg-surface-variant text-outline rounded-md border border-black/20">
                                                 Uraian Teks
@@ -252,6 +257,15 @@ export default function ParticipantPreLabShow({
                                                 onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                                                 placeholder="// Tuliskan solusi kode Anda di sini..."
                                                 className="w-full font-mono text-sm p-4 bg-surface-container border-[3px] border-black rounded-xl focus:outline-none focus:border-tertiary-fixed disabled:opacity-75 disabled:cursor-not-allowed leading-relaxed"
+                                            />
+                                        ) : q.answer_type === 'file' ? (
+                                            <AnswerFileDropzone
+                                                questionId={q.id}
+                                                preliminaryTaskPeriodId={period.id}
+                                                initialValue={data.answers[q.id]}
+                                                disabled={is_readonly}
+                                                onUploadSuccess={(_fileData, rawJson) => handleAnswerChange(q.id, rawJson)}
+                                                onRemove={() => handleAnswerChange(q.id, '')}
                                             />
                                         ) : (
                                             <textarea

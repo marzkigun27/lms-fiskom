@@ -1,5 +1,6 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import ConfirmModal from '@/components/confirm-modal';
 
 
 
@@ -29,6 +30,7 @@ export default function QuestionIndex() {
     
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+    const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
     const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm({
         module_id: currentModuleId || (modules.length > 0 ? modules[0].id : ''),
@@ -75,9 +77,14 @@ export default function QuestionIndex() {
     };
 
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this question?')) {
-            destroy(`/asisten/soal/${id}`);
-        }
+        setConfirmDeleteId(id);
+    };
+
+    const confirmDestroy = () => {
+        if (!confirmDeleteId) return;
+        destroy(`/asisten/soal/${confirmDeleteId}`, {
+            onSuccess: () => setConfirmDeleteId(null),
+        });
     };
 
     return (
@@ -138,6 +145,7 @@ export default function QuestionIndex() {
                                                 <option value="code">Code (Python)</option>
                                                 <option value="multiple_choice">Multiple Choice</option>
                                                 <option value="essay">Essay</option>
+                                                <option value="file">Upload File</option>
                                             </select>
                                         </div>
                                         <div>
@@ -241,6 +249,7 @@ export default function QuestionIndex() {
                                                 <option value="code">Code (Python)</option>
                                                 <option value="multiple_choice">Multiple Choice</option>
                                                 <option value="essay">Essay</option>
+                                                <option value="file">Upload File</option>
                                             </select>
                                         </div>
                                         <div>
@@ -363,6 +372,19 @@ export default function QuestionIndex() {
                     </div>
                 </div>
             </div>
+
+            {/* Custom Neo-Brutalist Confirmation Modal */}
+            <ConfirmModal
+                isOpen={confirmDeleteId !== null}
+                title="Delete Question"
+                message="Are you sure you want to delete this question?"
+                submessage="This action cannot be undone. The question will be permanently removed."
+                confirmText="Yes, Delete"
+                cancelText="Cancel"
+                isLoading={processing}
+                onConfirm={confirmDestroy}
+                onClose={() => setConfirmDeleteId(null)}
+            />
         </>
     );
 }

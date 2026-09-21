@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAppearance } from '@/hooks/use-appearance';
 import DynamicAtom from '@/components/dynamic-atom';
 import ComicsBrand from '@/components/comics-brand';
+import LottieAnimation from '@/components/lottie-animation';
 
 type WelcomeProps = {
     auth: any;
@@ -110,12 +111,6 @@ export default function Welcome({
                                 className="h-9 md:h-11 w-auto object-contain select-none dark:brightness-125 transition-all"
                             />
                         </Link>
-                        <nav className="hidden lg:flex gap-8 items-center text-on-background font-label font-bold text-lg">
-                            <a className="hover:text-tertiary-fixed transition-colors" href="#">Home</a>
-                            <a className="hover:text-tertiary-fixed transition-colors" href="#">About</a>
-                            <a className="hover:text-tertiary-fixed transition-colors" href="#">News</a>
-                            <a className="hover:text-tertiary-fixed transition-colors" href="#">Community</a>
-                        </nav>
                         <div className="flex gap-4 items-center">
                             <button
                                 onClick={() => updateAppearance(resolvedAppearance === 'dark' ? 'light' : 'dark')}
@@ -126,20 +121,13 @@ export default function Welcome({
                                     {resolvedAppearance === 'dark' ? 'light_mode' : 'dark_mode'}
                                 </span>
                             </button>
-                            {auth.user ? (
+                            {auth.user && (
                                 <Link
                                     href={dashboardUrl}
                                     className="hidden md:flex items-center gap-2 font-label font-bold text-lg px-6 py-2.5 bg-transparent text-on-background rounded-full border-[3px] border-primary hover:bg-primary hover:text-on-primary transition-all shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_rgba(255,255,255,1)]"
                                 >
                                     Dashboard
                                 </Link>
-                            ) : (
-                                <button
-                                    onClick={() => { setAuthMode('login'); setIsModalOpen(true); }}
-                                    className="hidden md:flex items-center gap-2 font-label font-bold text-lg px-6 py-2.5 bg-transparent text-on-background rounded-full border-[3px] border-primary hover:bg-primary hover:text-on-primary transition-all shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_rgba(255,255,255,1)]"
-                                >
-                                    Login
-                                </button>
                             )}
                         </div>
                     </div>
@@ -216,200 +204,229 @@ export default function Welcome({
                             </button>
                         )}
                     </div>
-
-                    {/* Bottom Arrow Indicator */}
-                    <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-                        <div className="w-14 h-14 bg-surface-bright rounded-full flex items-center justify-center neo-shadow neo-border animate-bounce">
-                            <span className="material-symbols-outlined text-primary text-3xl font-bold">arrow_downward</span>
-                        </div>
-                    </div>
                 </main>
             </div>
 
             {/* Login / Register Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
                     {/* Backdrop */}
                     <div 
-                        className="absolute inset-0 bg-primary/80 backdrop-blur-sm" 
+                        className="fixed inset-0 bg-primary/80 backdrop-blur-sm" 
                         onClick={() => setIsModalOpen(false)}
                     ></div>
                     
-                    {/* Modal Content */}
-                    <div className="bg-surface-bright rounded-2xl p-8 max-w-md w-full mx-4 relative z-10 border-[4px] border-primary shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_rgba(255,255,255,1)] max-h-[90vh] overflow-y-auto">
+                    {/* Modal Content - 1x2 Column Layout */}
+                    <div className="bg-surface-bright rounded-3xl w-full max-w-4xl lg:max-w-5xl relative z-10 border-[4px] border-primary shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_rgba(255,255,255,1)] max-h-[92vh] overflow-hidden flex flex-col md:flex-row my-auto">
+                        {/* Close Button - positioned cleanly inside the card */}
                         <button 
-                            className="absolute -top-4 -right-4 w-12 h-12 flex items-center justify-center bg-error-container text-error rounded-full border-[3px] border-primary hover-neo shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] z-20 transition-transform" 
+                            className="absolute top-4 right-4 sm:top-5 sm:right-5 w-11 h-11 flex items-center justify-center bg-error-container text-error rounded-full border-[3px] border-primary hover-neo shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] z-30 transition-transform cursor-pointer" 
                             onClick={() => setIsModalOpen(false)}
+                            aria-label="Close modal"
                         >
                             <span className="material-symbols-outlined font-black text-2xl">close</span>
                         </button>
-                        
-                        <h2 className="font-headline text-4xl font-black text-primary mb-6 text-center">
-                            {authMode === 'login' ? 'Portal Login' : 'Register'}
-                        </h2>
-                        
-                        {/* Role Toggle */}
-                        <div className="flex p-1.5 bg-surface-variant rounded-xl border-[3px] border-primary mb-8 shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[inset_2px_2px_0px_0px_rgba(255,255,255,0.1)]">
-                            <button 
-                                className={`flex-1 py-2.5 font-label font-black rounded-lg transition-all ${
-                                    role === 'praktikan' 
-                                        ? 'bg-tertiary-fixed border-2 border-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black'
-                                        : 'text-on-surface-variant hover:text-primary border-2 border-transparent'
-                                }`}
-                                onClick={() => handleSetRole('praktikan')}
-                                type="button"
-                            >
-                                Praktikan
-                            </button>
-                            <button 
-                                className={`flex-1 py-2.5 font-label font-bold transition-all rounded-lg ${
-                                    role === 'asisten' 
-                                        ? 'bg-secondary-fixed border-2 border-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black'
-                                        : 'text-on-surface-variant hover:text-primary border-2 border-transparent'
-                                }`}
-                                onClick={() => handleSetRole('asisten')}
-                                type="button"
-                            >
-                                Asisten
-                            </button>
-                        </div>
-                        
-                        {isPraktikanRegistrationBlocked ? (
-                            <div className="p-6 bg-rose-100 border-[3px] border-rose-800 text-rose-950 rounded-2xl text-center space-y-2 neo-shadow-sm my-4">
-                                <span className="material-symbols-outlined text-4xl text-rose-800 block mx-auto">lock</span>
-                                <h3 className="font-headline font-black text-xl uppercase tracking-tight">
-                                    Registrasi Akun Saat Ini Telah Ditutup
-                                </h3>
-                                <p className="font-body text-xs font-semibold text-rose-900 leading-relaxed">
-                                    Pendaftaran akun praktikan baru sedang dinonaktifkan oleh asisten laboratorium.
+
+                        {/* Column 1: Input Form */}
+                        <div className="flex-1 p-6 sm:p-8 lg:p-10 overflow-y-auto max-h-[92vh]">
+                            <div className="pr-12 md:pr-0 mb-6">
+                                <h2 className="font-headline text-3xl sm:text-4xl font-black text-primary">
+                                    {authMode === 'login' ? 'Portal Login' : 'Register'}
+                                </h2>
+                                <p className="font-body text-sm font-medium text-on-surface-variant mt-1">
+                                    {authMode === 'login'
+                                        ? 'Enter your credentials to access the laboratory workspace.'
+                                        : 'Create your account to join laboratory practicum sessions.'}
                                 </p>
-                                {registration?.start_at_formatted && (
-                                    <p className="font-mono text-[11px] font-bold text-rose-800 mt-2 bg-rose-200 py-1 px-2 rounded-lg border border-rose-800 inline-block">
-                                        Periode: {registration.start_at_formatted} s/d {registration.end_at_formatted || 'Selesai'}
-                                    </p>
-                                )}
                             </div>
-                        ) : (
-                            /* Form */
-                            <form className="space-y-4" onSubmit={submit}>
-                                {/* Validation Errors Global or Fallback */}
-                                {Object.keys(errors).length > 0 && !errors.email && !errors.name && !errors.password && !errors.identity_number && (
-                                    <div className="p-3 bg-error-container text-on-error-container border-2 border-error rounded-xl font-label text-sm font-bold">
-                                        Please check your input and try again.
+                            
+                            {/* Role Toggle */}
+                            <div className="flex p-1.5 bg-surface-variant rounded-xl border-[3px] border-primary mb-6 shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[inset_2px_2px_0px_0px_rgba(255,255,255,0.1)]">
+                                <button 
+                                    className={`flex-1 py-2.5 font-label font-black rounded-lg transition-all ${
+                                        role === 'praktikan' 
+                                            ? 'bg-tertiary-fixed border-2 border-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black'
+                                            : 'text-on-surface-variant hover:text-primary border-2 border-transparent'
+                                    }`}
+                                    onClick={() => handleSetRole('praktikan')}
+                                    type="button"
+                                >
+                                    Praktikan
+                                </button>
+                                <button 
+                                    className={`flex-1 py-2.5 font-label font-bold transition-all rounded-lg ${
+                                        role === 'asisten' 
+                                            ? 'bg-secondary-fixed border-2 border-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black'
+                                            : 'text-on-surface-variant hover:text-primary border-2 border-transparent'
+                                    }`}
+                                    onClick={() => handleSetRole('asisten')}
+                                    type="button"
+                                >
+                                    Asisten
+                                </button>
+                            </div>
+                            
+                            {isPraktikanRegistrationBlocked ? (
+                                <div className="p-6 bg-rose-100 border-[3px] border-rose-800 text-rose-950 rounded-2xl text-center space-y-2 neo-shadow-sm my-4">
+                                    <span className="material-symbols-outlined text-4xl text-rose-800 block mx-auto">lock</span>
+                                    <h3 className="font-headline font-black text-xl uppercase tracking-tight">
+                                        Registrasi Akun Saat Ini Telah Ditutup
+                                    </h3>
+                                    <p className="font-body text-xs font-semibold text-rose-900 leading-relaxed">
+                                        Pendaftaran akun praktikan baru sedang dinonaktifkan oleh asisten laboratorium.
+                                    </p>
+                                    {registration?.start_at_formatted && (
+                                        <p className="font-mono text-[11px] font-bold text-rose-800 mt-2 bg-rose-200 py-1 px-2 rounded-lg border border-rose-800 inline-block">
+                                            Periode: {registration.start_at_formatted} s/d {registration.end_at_formatted || 'Selesai'}
+                                        </p>
+                                    )}
+                                </div>
+                            ) : (
+                                /* Form */
+                                <form className="space-y-4" onSubmit={submit}>
+                                    {/* Validation Errors Global or Fallback */}
+                                    {Object.keys(errors).length > 0 && !errors.email && !errors.name && !errors.password && !errors.identity_number && (
+                                        <div className="p-3 bg-error-container text-on-error-container border-2 border-error rounded-xl font-label text-sm font-bold">
+                                            Please check your input and try again.
+                                        </div>
+                                    )}
+
+                                {authMode === 'register' && (
+                                    <div>
+                                        <label className="block font-label font-bold text-primary mb-2 text-lg">Full Name</label>
+                                        <input 
+                                            className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] placeholder-outline transition-colors" 
+                                            placeholder="Isaac Newton" 
+                                            type="text"
+                                            value={data.name}
+                                            onChange={e => setData('name', e.target.value)}
+                                            required
+                                            autoFocus
+                                        />
+                                        {errors.name && <p className="text-error text-sm mt-1">{errors.name}</p>}
                                     </div>
                                 )}
 
-                            {authMode === 'register' && (
+                                {authMode === 'register' && (
+                                    <div>
+                                        <label className="block font-label font-bold text-primary mb-2 text-lg">Email Address</label>
+                                        <input 
+                                            className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] placeholder-outline transition-colors" 
+                                            placeholder="physicist@university.edu" 
+                                            type="email"
+                                            value={data.email}
+                                            onChange={e => setData('email', e.target.value)}
+                                            required
+                                        />
+                                        {errors.email && <p className="text-error text-sm mt-1">{errors.email}</p>}
+                                    </div>
+                                )}
+
                                 <div>
-                                    <label className="block font-label font-bold text-primary mb-2 text-lg">Full Name</label>
+                                    <label className="block font-label font-bold text-primary mb-2 text-lg">
+                                        {role === 'asisten' ? 'Kode Asisten' : 'NIM'}
+                                    </label>
                                     <input 
                                         className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] placeholder-outline transition-colors" 
-                                        placeholder="Isaac Newton" 
+                                        placeholder={role === 'asisten' ? 'Masukkan kode asisten' : 'Masukkan NIM'} 
                                         type="text"
-                                        value={data.name}
-                                        onChange={e => setData('name', e.target.value)}
+                                        value={data.identity_number}
+                                        onChange={e => setData('identity_number', e.target.value)}
                                         required
-                                        autoFocus
+                                        autoFocus={authMode === 'login'}
                                     />
-                                    {errors.name && <p className="text-error text-sm mt-1">{errors.name}</p>}
+                                    {errors.identity_number && <p className="text-error text-sm mt-1">{errors.identity_number}</p>}
                                 </div>
-                            )}
-
-                            {authMode === 'register' && (
+                                
                                 <div>
-                                    <label className="block font-label font-bold text-primary mb-2 text-lg">Email Address</label>
-                                    <input 
-                                        className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] placeholder-outline transition-colors" 
-                                        placeholder="physicist@university.edu" 
-                                        type="email"
-                                        value={data.email}
-                                        onChange={e => setData('email', e.target.value)}
-                                        required
-                                    />
-                                    {errors.email && <p className="text-error text-sm mt-1">{errors.email}</p>}
-                                </div>
-                            )}
-
-                            <div>
-                                <label className="block font-label font-bold text-primary mb-2 text-lg">
-                                    {role === 'asisten' ? 'Kode Asisten' : 'NIM'}
-                                </label>
-                                <input 
-                                    className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] placeholder-outline transition-colors" 
-                                    placeholder={role === 'asisten' ? 'Masukkan kode asisten' : 'Masukkan NIM'} 
-                                    type="text"
-                                    value={data.identity_number}
-                                    onChange={e => setData('identity_number', e.target.value)}
-                                    required
-                                    autoFocus={authMode === 'login'}
-                                />
-                                {errors.identity_number && <p className="text-error text-sm mt-1">{errors.identity_number}</p>}
-                            </div>
-                            
-                            <div>
-                                <label className="block font-label font-bold text-primary mb-2 text-lg">Password</label>
-                                <input 
-                                    className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] placeholder-outline transition-colors" 
-                                    placeholder="••••••••" 
-                                    type="password"
-                                    value={data.password}
-                                    onChange={e => setData('password', e.target.value)}
-                                    required
-                                />
-                                {errors.password && <p className="text-error text-sm mt-1">{errors.password}</p>}
-                            </div>
-
-                            {authMode === 'register' && (
-                                <div>
-                                    <label className="block font-label font-bold text-primary mb-2 text-lg">Confirm Password</label>
+                                    <label className="block font-label font-bold text-primary mb-2 text-lg">Password</label>
                                     <input 
                                         className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] placeholder-outline transition-colors" 
                                         placeholder="••••••••" 
                                         type="password"
-                                        value={data.password_confirmation}
-                                        onChange={e => setData('password_confirmation', e.target.value)}
+                                        value={data.password}
+                                        onChange={e => setData('password', e.target.value)}
                                         required
                                     />
+                                    {errors.password && <p className="text-error text-sm mt-1">{errors.password}</p>}
                                 </div>
-                            )}
-                            
-                            <button 
-                                className="w-full py-4 mt-8 bg-primary text-on-primary font-label font-black text-2xl rounded-xl border-[3px] border-primary hover:-translate-y-1 active:translate-y-1 transition-transform shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2" 
-                                type="submit"
-                                disabled={processing}
-                            >
-                                {authMode === 'login' ? "Let's Go!" : "Sign Up"}
-                                <span className="material-symbols-outlined font-bold">
-                                    {authMode === 'login' ? 'arrow_forward' : 'person_add'}
-                                </span>
-                            </button>
-                        </form>
-                        )}
 
-                        <div className="mt-6 text-center font-body text-sm font-medium text-on-surface-variant">
-                            {authMode === 'login' ? (
-                                <>
-                                    Don't have an account?{' '}
-                                    <button 
-                                        type="button"
-                                        onClick={toggleMode}
-                                        className="text-primary font-bold hover:underline"
-                                    >
-                                        Register here
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    Already have an account?{' '}
-                                    <button 
-                                        type="button"
-                                        onClick={toggleMode}
-                                        className="text-primary font-bold hover:underline"
-                                    >
-                                        Login here
-                                    </button>
-                                </>
+                                {authMode === 'register' && (
+                                    <div>
+                                        <label className="block font-label font-bold text-primary mb-2 text-lg">Confirm Password</label>
+                                        <input 
+                                            className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] placeholder-outline transition-colors" 
+                                            placeholder="••••••••" 
+                                            type="password"
+                                            value={data.password_confirmation}
+                                            onChange={e => setData('password_confirmation', e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                )}
+                                
+                                <button 
+                                    className="w-full py-4 mt-8 bg-primary text-on-primary font-label font-black text-2xl rounded-xl border-[3px] border-primary hover:-translate-y-1 active:translate-y-1 transition-transform shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2" 
+                                    type="submit"
+                                    disabled={processing}
+                                >
+                                    {authMode === 'login' ? "Let's Go!" : "Sign Up"}
+                                    <span className="material-symbols-outlined font-bold">
+                                        {authMode === 'login' ? 'arrow_forward' : 'person_add'}
+                                    </span>
+                                </button>
+                            </form>
                             )}
+
+                            <div className="mt-6 text-center font-body text-sm font-medium text-on-surface-variant">
+                                {authMode === 'login' ? (
+                                    <>
+                                        Don't have an account?{' '}
+                                        <button 
+                                            type="button"
+                                            onClick={toggleMode}
+                                            className="text-primary font-bold hover:underline"
+                                        >
+                                            Register here
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        Already have an account?{' '}
+                                        <button 
+                                            type="button"
+                                            onClick={toggleMode}
+                                            className="text-primary font-bold hover:underline"
+                                        >
+                                            Login here
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Column 2: Lottie Animation */}
+                        <div className="hidden md:flex md:w-[45%] lg:w-[48%] bg-surface-variant/40 dark:bg-surface-container/30 border-t-[4px] md:border-t-0 md:border-l-[4px] border-primary flex-col items-center justify-center p-6 lg:p-8 relative select-none overflow-hidden">
+
+                            {/* Lottie Animation Display */}
+                            <div className="w-full max-w-[300px] lg:max-w-[340px] aspect-square flex items-center justify-center">
+                                <LottieAnimation
+                                    src="/animations/physics-computation.json"
+                                    className="w-full h-full"
+                                    autoplay={true}
+                                    loop={true}
+                                />
+                            </div>
+
+                            {/* Caption */}
+                            <div className="text-center mt-3 px-4 max-w-xs">
+                                <h4 className="font-headline font-black text-lg text-primary">
+                                    Computational Physics Lab
+                                </h4>
+                                <p className="font-body text-xs font-medium text-on-surface-variant mt-1">
+                                    Simulate experiments, manage lab reports, and analyze data in real-time.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

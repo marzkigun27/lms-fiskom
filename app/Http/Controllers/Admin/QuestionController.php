@@ -53,7 +53,8 @@ class QuestionController extends Controller
     {
         $uniqueOrder = Rule::unique('questions', 'order_number')
             ->where('module_id', $request->integer('module_id'))
-            ->where('session_type', $request->string('session_type')->value());
+            ->where('session_type', $request->string('session_type')->value())
+            ->withoutTrashed();
         if ($question) {
             $uniqueOrder = $uniqueOrder->ignore($question->id);
         }
@@ -63,7 +64,7 @@ class QuestionController extends Controller
                 'module_id' => ['required', 'integer', 'exists:modules,id'],
                 'session_type' => ['required', 'in:preliminary,initial_task,journal,independent_task'],
                 'description' => ['required', 'string'],
-                'answer_type' => ['required', 'in:text,code'],
+                'answer_type' => ['required', 'in:text,code,file'],
                 'programming_language' => ['nullable', 'string', 'max:50'],
                 'order_number' => ['required', 'integer', 'min:1', $uniqueOrder],
                 'is_required' => ['required', 'boolean'],

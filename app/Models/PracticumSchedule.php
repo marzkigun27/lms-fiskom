@@ -74,6 +74,12 @@ class PracticumSchedule extends Model
         return $this->hasMany(PracticumSession::class);
     }
 
+    /** @return HasMany<PracticumSession, $this> */
+    public function sessions(): HasMany
+    {
+        return $this->practicumSessions();
+    }
+
     /** @return BelongsTo<User, $this> */
     public function startedBy(): BelongsTo
     {

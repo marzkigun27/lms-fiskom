@@ -157,7 +157,7 @@ return new class extends Migration
             $table->string('title', 255)->nullable();
             $table->longText('description');
             $table->longText('instructions')->nullable();
-            $table->enum('answer_type', ['text', 'code']);
+            $table->enum('answer_type', ['text', 'code', 'file']);
             $table->string('programming_language', 50)->nullable();
             $table->decimal('weight', 8, 2)->default(0);
             $table->integer('order_number');

@@ -64,8 +64,8 @@ class ModuleController extends Controller
             'status' => $status,
         ]);
 
-        $uniqueCode = Rule::unique('modules', 'code')->where('semester_id', $semesterId);
-        $uniqueOrder = Rule::unique('modules', 'order_number')->where('semester_id', $semesterId);
+        $uniqueCode = Rule::unique('modules', 'code')->where('semester_id', $semesterId)->withoutTrashed();
+        $uniqueOrder = Rule::unique('modules', 'order_number')->where('semester_id', $semesterId)->withoutTrashed();
         if ($module) {
             $uniqueCode = $uniqueCode->ignore($module->id);
             $uniqueOrder = $uniqueOrder->ignore($module->id);

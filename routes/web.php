@@ -7,6 +7,7 @@ use App\Http\Controllers\Assistant\PracticumController;
 use App\Http\Controllers\Assistant\QuestionManagementController;
 use App\Http\Controllers\Assistant\WeeklyScheduleController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Participant\AnswerFileController;
 use App\Http\Controllers\Participant\FeedbackController;
 use App\Http\Controllers\Participant\GradesController;
 use App\Http\Controllers\Participant\PreLabController;
@@ -86,10 +87,13 @@ Route::middleware(['auth'])->group(function (): void {
         Route::post('tugas-pendahuluan/{module}/submit', [PreLabController::class, 'submit'])->name('prelab.submit');
         Route::get('feedback', [FeedbackController::class, 'index'])->name('feedback');
         Route::post('feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+        Route::post('jawaban/upload-file', [AnswerFileController::class, 'upload'])->name('answers.upload');
         Route::get('voting', [VotingController::class, 'index'])->name('voting');
         Route::post('voting', [VotingController::class, 'submit'])->name('voting.submit');
         Route::get('profile', [ProfileController::class, 'index'])->name('profile');
     });
+
+    Route::get('praktikan/jawaban/{answer}/file', [AnswerFileController::class, 'show'])->name('participant.answers.file');
 
     Route::prefix('asisten')->name('assistant.')->middleware('role:assistant')->group(function (): void {
         Route::get('/', [App\Http\Controllers\Assistant\DashboardController::class, 'index'])->name('dashboard');
@@ -111,6 +115,7 @@ Route::middleware(['auth'])->group(function (): void {
         Route::resource('praktikum', PracticumController::class)->except(['create', 'show', 'edit']);
         Route::get('nilai', [GradingController::class, 'index'])->name('grading.index');
         Route::post('nilai/{submission}', [GradingController::class, 'store'])->name('grading.store');
+        Route::get('penilaian/submission-answer/{submissionAnswer}/file', [AnswerFileController::class, 'showSubmissionAnswer'])->name('grading.submission_file');
         Route::post('soal/modules', [QuestionManagementController::class, 'moduleStore'])->name('soal.modules.store');
         Route::put('soal/modules/{module}', [QuestionManagementController::class, 'moduleUpdate'])->name('soal.modules.update');
         Route::delete('soal/modules/{module}', [QuestionManagementController::class, 'moduleDestroy'])->name('soal.modules.destroy');

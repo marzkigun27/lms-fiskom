@@ -1,5 +1,6 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import ConfirmModal from '@/components/confirm-modal';
 
 
 
@@ -15,6 +16,7 @@ export default function ModuleIndex() {
     const { modules } = usePage<{ modules: Module[] }>().props;
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [editingModule, setEditingModule] = useState<Module | null>(null);
+    const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
     const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm({
         name: '',
@@ -53,9 +55,14 @@ export default function ModuleIndex() {
     };
 
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this module?')) {
-            destroy(`/asisten/soal/modules/${id}`);
-        }
+        setConfirmDeleteId(id);
+    };
+
+    const confirmDestroy = () => {
+        if (!confirmDeleteId) return;
+        destroy(`/asisten/soal/modules/${confirmDeleteId}`, {
+            onSuccess: () => setConfirmDeleteId(null),
+        });
     };
 
     return (
@@ -234,6 +241,19 @@ export default function ModuleIndex() {
                     </div>
                 </div>
             </div>
+
+            {/* Custom Neo-Brutalist Confirmation Modal */}
+            <ConfirmModal
+                isOpen={confirmDeleteId !== null}
+                title="Delete Module"
+                message="Are you sure you want to delete this module?"
+                submessage="This action cannot be undone. All questions inside this module will be permanently removed."
+                confirmText="Yes, Delete"
+                cancelText="Cancel"
+                isLoading={processing}
+                onConfirm={confirmDestroy}
+                onClose={() => setConfirmDeleteId(null)}
+            />
         </>
     );
 }

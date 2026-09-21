@@ -72,6 +72,98 @@ function initials(name: string): string {
         .slice(0, 2);
 }
 
+function formatFileSize(bytes: number): string {
+    if (!bytes || bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+function AnswerContentDisplay({ text }: { text: string }) {
+    let fileData: {
+        original_name: string;
+        mime_type?: string;
+        size_bytes?: number;
+        url?: string;
+    } | null = null;
+
+    if (text && typeof text === 'string' && text.trim().startsWith('{') && text.trim().endsWith('}')) {
+        try {
+            const parsed = JSON.parse(text);
+            if (parsed && typeof parsed === 'object' && parsed.path && (parsed.url || parsed.original_name)) {
+                fileData = parsed;
+            }
+        } catch {
+            fileData = null;
+        }
+    }
+
+    if (fileData) {
+        const isPdf = fileData.mime_type === 'application/pdf' || fileData.original_name?.toLowerCase().endsWith('.pdf');
+        const isImage = fileData.mime_type?.startsWith('image/') || ['png', 'jpg', 'jpeg'].some(ext => fileData!.original_name?.toLowerCase().endsWith(ext));
+
+        return (
+            <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container p-3 rounded-lg border-[2px] border-primary">
+                    <div className="flex items-center gap-3 overflow-hidden">
+                        <div className={`w-10 h-10 rounded-lg border-2 border-primary flex items-center justify-center shrink-0 ${isPdf ? 'bg-rose-100 text-rose-800' : 'bg-blue-100 text-blue-800'}`}>
+                            <span className="material-symbols-outlined text-2xl">
+                                {isPdf ? 'picture_as_pdf' : 'image'}
+                            </span>
+                        </div>
+                        <div className="min-w-0">
+                            <p className="font-headline font-bold text-sm text-on-surface truncate" title={fileData.original_name}>
+                                {fileData.original_name}
+                            </p>
+                            <p className="font-mono text-xs text-outline font-medium">
+                                {fileData.size_bytes ? formatFileSize(fileData.size_bytes) : ''}
+                            </p>
+                        </div>
+                    </div>
+                    {fileData.url && (
+                        <a
+                            href={fileData.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-primary text-on-primary border-[2px] border-primary px-3 py-1.5 rounded-lg font-label text-xs font-bold uppercase flex items-center justify-center gap-1.5 neo-shadow-sm hover:neo-shadow transition-all shrink-0"
+                        >
+                            <span className="material-symbols-outlined text-sm">open_in_new</span>
+                            Buka Berkas
+                        </a>
+                    )}
+                </div>
+
+                {isImage && fileData.url && (
+                    <div className="overflow-hidden rounded-xl border-[2px] border-primary bg-black/5 flex justify-center p-3">
+                        <img
+                            src={fileData.url}
+                            alt={fileData.original_name}
+                            className="max-h-96 rounded-lg object-contain shadow-sm"
+                        />
+                    </div>
+                )}
+
+                {isPdf && fileData.url && (
+                    <div className="overflow-hidden rounded-xl border-[2px] border-primary h-96 bg-surface-container">
+                        <iframe
+                            src={fileData.url}
+                            title={fileData.original_name}
+                            className="w-full h-full"
+                        />
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    return (
+        <div className="bg-surface-container p-3 rounded-lg border-[2px] border-outline-variant font-mono text-xs leading-relaxed whitespace-pre-wrap">
+            {text}
+        </div>
+    );
+}
+
 const avatarColors = [
     "bg-secondary-container",
     "bg-primary-fixed",
@@ -480,9 +572,7 @@ export default function GradingIndex() {
                                                                         <p className="font-label font-bold mb-1 text-primary">
                                                                             {ans.question_title}
                                                                         </p>
-                                                                        <div className="bg-surface-container p-3 rounded-lg border-[2px] border-outline-variant font-mono text-xs leading-relaxed">
-                                                                            {ans.answer_text}
-                                                                        </div>
+                                                                        <AnswerContentDisplay text={ans.answer_text} />
                                                                     </div>
                                                                 ))
                                                             ) : isLegacyMatch && selectedSubmission.answer_text ? (
@@ -490,9 +580,7 @@ export default function GradingIndex() {
                                                                     <p className="font-label font-bold mb-1 text-primary">
                                                                         {selectedSubmission.question?.title}
                                                                     </p>
-                                                                    <div className="bg-surface-container p-3 rounded-lg border-[2px] border-outline-variant font-mono text-xs leading-relaxed">
-                                                                        {selectedSubmission.answer_text}
-                                                                    </div>
+                                                                    <AnswerContentDisplay text={selectedSubmission.answer_text} />
                                                                 </div>
                                                             ) : (
                                                                 <span className="text-outline italic text-xs">

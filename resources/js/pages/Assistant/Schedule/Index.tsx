@@ -1,5 +1,6 @@
 import { Head, router } from "@inertiajs/react";
 import React, { useState } from "react";
+import ConfirmModal from "@/components/confirm-modal";
 import { schedulePayload, type Assistant, type Participant, type Schedule, type ScheduleGroup } from './form';
 
 type Props = {
@@ -24,6 +25,20 @@ export default function AssistantSchedule({ schedules, assistants, participants,
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [notice, setNotice] = useState('');
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: React.ReactNode;
+        submessage?: React.ReactNode;
+        confirmText?: string;
+        variant?: 'danger' | 'warning';
+        onConfirm: () => void;
+    }>({
+        isOpen: false,
+        title: 'Konfirmasi Hapus',
+        message: '',
+        onConfirm: () => {},
+    });
     const visibleSchedules = schedules.filter(s => s.semester_id === Number(semesterId));
     const selectedParticipantIds = new Set(groups.flatMap(g => g.members.map(m => m.id)));
 
@@ -67,26 +82,59 @@ export default function AssistantSchedule({ schedules, assistants, participants,
     }
 
     function deleteSchedule(schedule: Schedule) {
-        if (processing || !window.confirm(`Hapus jadwal ${schedule.day}, ${schedule.shift}?`)) return;
-        setProcessing(true);
-        setErrors({});
-        setNotice('');
-        router.delete(`/asisten/jadwal/${schedule.id}`, {
-            preserveScroll: true,
-            onSuccess: () => setNotice('Jadwal berhasil dihapus.'),
-            onError: (validationErrors) => setErrors(validationErrors),
-            onFinish: () => setProcessing(false),
+        if (processing) return;
+        setConfirmModal({
+            isOpen: true,
+            title: 'Hapus Jadwal',
+            message: (
+                <span>
+                    Apakah Anda yakin ingin menghapus jadwal{' '}
+                    <span className="text-error font-black">{schedule.day}, {schedule.shift}</span>?
+                </span>
+            ),
+            submessage: 'Tindakan ini tidak dapat dibatalkan. Jadwal dan penugasan terkait akan dihapus secara permanen.',
+            confirmText: 'Ya, Hapus',
+            variant: 'danger',
+            onConfirm: () => {
+                setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                setProcessing(true);
+                setErrors({});
+                setNotice('');
+                router.delete(`/asisten/jadwal/${schedule.id}`, {
+                    preserveScroll: true,
+                    onSuccess: () => setNotice('Jadwal berhasil dihapus.'),
+                    onError: (validationErrors) => setErrors(validationErrors),
+                    onFinish: () => setProcessing(false),
+                });
+            },
         });
     }
 
-    const handleGroupCountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const count = Number(e.target.value);
-        if (count < groups.length && groups.slice(count).some(g => g.members.length) &&
-            !window.confirm('Anggota kelompok yang dikurangi akan dilepas dari form. Lanjutkan?')) return;
+    const applyGroupCountChange = (count: number) => {
         setGroupCount(count);
         setGroups(Array.from({ length: count }, (_, i) => ({
             id: groups[i]?.id ?? -(i + 1), number: i + 1, members: groups[i]?.members ?? [],
         })));
+    };
+
+    const handleGroupCountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const count = Number(e.target.value);
+        if (count < groups.length && groups.slice(count).some(g => g.members.length)) {
+            setConfirmModal({
+                isOpen: true,
+                title: 'Kurangi Kelompok',
+                message: 'Anggota kelompok yang dikurangi akan dilepas dari form jadwal ini.',
+                submessage: 'Data anggota pada kelompok yang dikurangi tidak akan tersimpan.',
+                confirmText: 'Lanjutkan',
+                variant: 'warning',
+                onConfirm: () => {
+                    setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                    applyGroupCountChange(count);
+                },
+            });
+            return;
+        }
+        applyGroupCountChange(count);
     };
     return (
         <>
@@ -605,6 +653,18 @@ export default function AssistantSchedule({ schedules, assistants, participants,
                     )}{" "}
                 </fieldset>{" "}
             </div>{" "}
+
+            {/* Custom Neo-Brutalist Confirmation Modal */}
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                submessage={confirmModal.submessage}
+                confirmText={confirmModal.confirmText}
+                variant={confirmModal.variant}
+                onConfirm={confirmModal.onConfirm}
+                onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+            />
         </>
     );
 }

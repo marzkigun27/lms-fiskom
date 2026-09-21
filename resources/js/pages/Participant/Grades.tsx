@@ -24,7 +24,27 @@ interface ModuleGradeData {
     assistant_name: string;
     assistant_feedback: string | null;
     completed_at: string;
+    is_completed?: boolean;
     sessions: ModuleSession[];
+}
+
+function parseFileAnswer(answerText: string) {
+    if (answerText && typeof answerText === 'string' && answerText.trim().startsWith('{') && answerText.trim().endsWith('}')) {
+        try {
+            const parsed = JSON.parse(answerText);
+            if (parsed && typeof parsed === 'object' && parsed.path && (parsed.url || parsed.original_name)) {
+                return parsed as {
+                    original_name: string;
+                    mime_type?: string;
+                    size_bytes?: number;
+                    url?: string;
+                };
+            }
+        } catch {
+            return null;
+        }
+    }
+    return null;
 }
 
 interface PageProps {
@@ -363,8 +383,18 @@ export default function ParticipantGrades() {
                                                         Riwayat Jawaban
                                                     </h3>
                                                     {selectedModule.sessions.length === 0 ? (
-                                                        <div className="bg-surface-container border-[2px] border-primary border-dashed rounded-[16px] p-6 text-center text-outline font-label font-bold text-sm uppercase">
-                                                            Belum ada pertanyaan atau riwayat jawaban untuk modul ini.
+                                                        <div className="bg-surface-container border-[2px] border-primary border-dashed rounded-[16px] p-8 text-center text-outline neo-shadow-sm flex flex-col items-center justify-center gap-3">
+                                                            <div className="w-12 h-12 rounded-full bg-surface-container-high border-[2px] border-primary flex items-center justify-center text-outline">
+                                                                <span className="material-symbols-outlined text-2xl">lock_clock</span>
+                                                            </div>
+                                                            <div>
+                                                                <p className="font-headline font-bold text-base text-on-surface uppercase">
+                                                                    Sesi Modul Belum Selesai
+                                                                </p>
+                                                                <p className="font-body text-xs text-outline mt-1 max-w-md mx-auto">
+                                                                    Soal-soal dan riwayat jawaban untuk modul ini belum dapat ditampilkan karena sesi belum selesai dilaksanakan.
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     ) : (
                                                         <div className="space-y-6">
@@ -379,28 +409,55 @@ export default function ParticipantGrades() {
                                                                         </h4>
                                                                     </div>
                                                                     <div className="p-5 space-y-5">
-                                                                        {session.questions.map((q, qIdx) => (
-                                                                            <div key={q.id} className="relative">
-                                                                                <div className="flex gap-4">
-                                                                                    <div className="shrink-0 w-8 h-8 rounded-full bg-tertiary-container border-[2px] border-primary flex items-center justify-center font-headline font-black text-sm text-on-tertiary-container mt-1">
-                                                                                        {qIdx + 1}
-                                                                                    </div>
-                                                                                    <div className="flex-1 space-y-2">
-                                                                                        <p className="font-label font-bold text-sm text-on-surface leading-relaxed">
-                                                                                            {q.question}
-                                                                                        </p>
-                                                                                        <div className="bg-surface-container-lowest border-[2px] border-primary rounded-xl p-4 neo-shadow-sm">
-                                                                                            <p className="font-body text-sm text-on-surface-variant leading-relaxed whitespace-pre-line">
-                                                                                                {q.answer}
+                                                                        {session.questions.map((q, qIdx) => {
+                                                                            const fileData = parseFileAnswer(q.answer);
+                                                                            return (
+                                                                                <div key={q.id} className="relative">
+                                                                                    <div className="flex gap-4">
+                                                                                        <div className="shrink-0 w-8 h-8 rounded-full bg-tertiary-container border-[2px] border-primary flex items-center justify-center font-headline font-black text-sm text-on-tertiary-container mt-1">
+                                                                                            {qIdx + 1}
+                                                                                        </div>
+                                                                                        <div className="flex-1 space-y-2">
+                                                                                            <p className="font-label font-bold text-sm text-on-surface leading-relaxed">
+                                                                                                {q.question}
                                                                                             </p>
+                                                                                            <div className="bg-surface-container-lowest border-[2px] border-primary rounded-xl p-4 neo-shadow-sm">
+                                                                                                {fileData ? (
+                                                                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                                                                                        <div className="flex items-center gap-2.5 overflow-hidden">
+                                                                                                            <span className="material-symbols-outlined text-primary text-2xl shrink-0">
+                                                                                                                {fileData.original_name.toLowerCase().endsWith('.pdf') ? 'picture_as_pdf' : 'image'}
+                                                                                                            </span>
+                                                                                                            <span className="font-headline font-bold text-sm text-on-surface truncate max-w-xs md:max-w-md" title={fileData.original_name}>
+                                                                                                                {fileData.original_name}
+                                                                                                            </span>
+                                                                                                        </div>
+                                                                                                        {fileData.url && (
+                                                                                                            <a
+                                                                                                                href={fileData.url}
+                                                                                                                target="_blank"
+                                                                                                                rel="noopener noreferrer"
+                                                                                                                className="bg-primary text-on-primary border-[2px] border-primary px-3 py-1 rounded-lg font-label text-xs font-bold uppercase flex items-center justify-center gap-1 neo-shadow-sm hover:neo-shadow transition-all shrink-0 self-start sm:self-auto"
+                                                                                                            >
+                                                                                                                <span className="material-symbols-outlined text-xs">open_in_new</span>
+                                                                                                                Buka Berkas
+                                                                                                            </a>
+                                                                                                        )}
+                                                                                                    </div>
+                                                                                                ) : (
+                                                                                                    <p className="font-body text-sm text-on-surface-variant leading-relaxed whitespace-pre-line">
+                                                                                                        {q.answer}
+                                                                                                    </p>
+                                                                                                )}
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
+                                                                                    {qIdx < session.questions.length - 1 && (
+                                                                                        <div className="border-t-2 border-dashed border-outline-variant mt-5 ml-12"></div>
+                                                                                    )}
                                                                                 </div>
-                                                                                {qIdx < session.questions.length - 1 && (
-                                                                                    <div className="border-t-2 border-dashed border-outline-variant mt-5 ml-12"></div>
-                                                                                )}
-                                                                            </div>
-                                                                        ))}
+                                                                            );
+                                                                        })}
                                                                     </div>
                                                                 </div>
                                                             ))}
