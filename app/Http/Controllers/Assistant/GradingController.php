@@ -104,7 +104,7 @@ class GradingController extends Controller
         $groupMemberships = DB::table('weekly_schedule_group_member')
             ->join('weekly_schedule_groups', 'weekly_schedule_group_member.weekly_schedule_group_id', '=', 'weekly_schedule_groups.id')
             ->whereIn('weekly_schedule_group_member.participant_id', $guidedParticipantIds)
-            ->select('weekly_schedule_group_member.participant_id as user_id', 'weekly_schedule_groups.weekly_schedule_id')
+            ->select('weekly_schedule_group_member.participant_id as user_id', 'weekly_schedule_groups.weekly_schedule_id', 'weekly_schedule_groups.number as group_number', 'weekly_schedule_groups.code as group_code')
             ->get()
             ->keyBy('user_id');
 
@@ -195,7 +195,9 @@ class GradingController extends Controller
 
             $enrollment = $participant->enrollments->first();
             $shift = $enrollment?->class?->name ?? 'Kelas Default';
-            $kelompok = $enrollment?->group?->name ?? 'Kelompok A';
+            $wsGroup = $groupMemberships->get($participantId);
+            $kelompok = $enrollment?->group?->name
+                ?? ($wsGroup ? ($wsGroup->group_code ? "Kelompok {$wsGroup->group_number} ({$wsGroup->group_code})" : "Kelompok {$wsGroup->group_number}") : 'Kelompok A');
 
             // Build component scores
             $componentScores = $grade?->component_scores ?? [];

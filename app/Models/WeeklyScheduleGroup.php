@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class WeeklyScheduleGroup extends Model
 {
-    protected $fillable = ['weekly_schedule_id', 'number'];
+    protected $fillable = ['weekly_schedule_id', 'number', 'code'];
 
     public function schedule(): BelongsTo
     {

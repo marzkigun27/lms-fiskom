@@ -108,6 +108,7 @@ Route::middleware(['auth'])->group(function (): void {
         Route::delete('jadwal/{schedule}', [WeeklyScheduleController::class, 'destroy'])->middleware(EnsureActiveAssistant::class)->name('schedule.destroy');
         Route::put('jadwal/{schedule}', [WeeklyScheduleController::class, 'update'])->middleware(EnsureActiveAssistant::class)->name('schedule.update');
         Route::post('jadwal', [WeeklyScheduleController::class, 'store'])->middleware(EnsureActiveAssistant::class)->name('schedule.store');
+        Route::patch('jadwal/{schedule}/groups', [WeeklyScheduleController::class, 'updateGroupCodes'])->middleware(EnsureActiveAssistant::class)->name('schedule.groups.update');
         Route::get('jadwal', [WeeklyScheduleController::class, 'index'])->middleware(EnsureActiveAssistant::class)->name('schedule.index');
         Route::post('praktikum/start', [PracticumController::class, 'startSession'])->name('praktikum.start_session');
         Route::patch('praktikum/session/{session}/phase', [PracticumController::class, 'updateSessionPhase'])->name('praktikum.update_phase');
@@ -121,7 +122,11 @@ Route::middleware(['auth'])->group(function (): void {
         Route::delete('soal/modules/{module}', [QuestionManagementController::class, 'moduleDestroy'])->name('soal.modules.destroy');
         Route::patch('soal/batch', [QuestionManagementController::class, 'batchUpdate'])->name('questions.batch');
         Route::resource('soal', QuestionManagementController::class)->except(['create', 'show', 'edit']);
-        Route::resource('peserta', ParticipantManagementController::class)->except(['create', 'show', 'edit']);
+        Route::post('peserta/bulk', [ParticipantManagementController::class, 'bulkStore'])->name('peserta.bulk');
+        Route::get('peserta/template', [ParticipantManagementController::class, 'downloadTemplate'])->name('peserta.template');
+        Route::resource('peserta', ParticipantManagementController::class)
+            ->parameters(['peserta' => 'peserta'])
+            ->except(['create', 'show', 'edit']);
         Route::get('feedback', [App\Http\Controllers\Assistant\FeedbackController::class, 'index'])->name('feedback.index');
         Route::patch('feedback/{feedback}', [App\Http\Controllers\Assistant\FeedbackController::class, 'update'])->name('feedback.update');
         Route::get('voting', [App\Http\Controllers\Assistant\VotingController::class, 'index'])->name('voting.index');

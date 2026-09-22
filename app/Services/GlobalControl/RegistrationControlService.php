@@ -250,13 +250,14 @@ class RegistrationControlService
             ->toArray();
 
         $shifts = WeeklySchedule::where('semester_id', $semesterId)
-            ->with(['groups:id,weekly_schedule_id,number'])
+            ->with(['groups:id,weekly_schedule_id,number,code'])
             ->get()
             ->map(function (WeeklySchedule $ws): array {
                 $groups = $ws->groups->map(fn ($g): array => [
                     'id' => $g->id,
                     'number' => (int) $g->number,
-                    'name' => 'Kelompok '.$g->number,
+                    'code' => $g->code,
+                    'name' => $g->code ? "{$g->code} (Kelompok {$g->number})" : 'Kelompok '.$g->number,
                 ]);
 
                 // If schedule has no groups initialized in db yet, provide default Kelompok 1 - 5
@@ -264,6 +265,7 @@ class RegistrationControlService
                     $groups = collect(range(1, 5))->map(fn (int $n): array => [
                         'id' => $n,
                         'number' => $n,
+                        'code' => null,
                         'name' => 'Kelompok '.$n,
                     ]);
                 }
@@ -273,6 +275,9 @@ class RegistrationControlService
                     'day' => $ws->day,
                     'shift' => $ws->shift,
                     'label' => "{$ws->day} - {$ws->shift}",
+                    'name' => $ws->shift,
+                    'day_of_week' => $ws->day,
+                    'formatted_time' => $ws->shift,
                     'groups' => $groups->values()->all(),
                 ];
             })

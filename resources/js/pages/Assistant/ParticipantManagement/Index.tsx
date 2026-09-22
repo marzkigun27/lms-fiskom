@@ -27,7 +27,10 @@ const statusColor: Record<string, string> = {
 };
 
 export default function ParticipantManagementIndex() {
-    const { participants } = usePage<{ participants: Participant[] }>().props;
+    const { participants, flash } = usePage<{
+        participants: Participant[];
+        flash?: { success?: string; error?: string };
+    }>().props;
     const [activeTab, setActiveTab] = useState<"participant" | "assistant">(
         "participant",
     );
@@ -43,6 +46,49 @@ export default function ParticipantManagementIndex() {
         participant: null,
         isLoading: false,
     });
+    const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+    const [bulkTab, setBulkTab] = useState<"file" | "text">("file");
+    const [bulkFile, setBulkFile] = useState<File | null>(null);
+    const [bulkRawData, setBulkRawData] = useState("");
+    const [bulkProcessing, setBulkProcessing] = useState(false);
+    const [bulkError, setBulkError] = useState("");
+
+    const handleBulkSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setBulkError("");
+        if (bulkTab === "file" && !bulkFile) {
+            setBulkError("Pilih file CSV terlebih dahulu.");
+            return;
+        }
+        if (bulkTab === "text" && !bulkRawData.trim()) {
+            setBulkError("Masukkan data praktikan terlebih dahulu.");
+            return;
+        }
+
+        setBulkProcessing(true);
+
+        router.post(
+            "/asisten/peserta/bulk",
+            {
+                file: bulkTab === "file" ? bulkFile : null,
+                raw_data: bulkTab === "text" ? bulkRawData : null,
+            },
+            {
+                forceFormData: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    setIsBulkModalOpen(false);
+                    setBulkFile(null);
+                    setBulkRawData("");
+                    router.reload({ only: ["participants"] });
+                },
+                onError: (err) => {
+                    setBulkError(err.raw_data || err.file || Object.values(err)[0] || "Gagal mengunggah data.");
+                },
+                onFinish: () => setBulkProcessing(false),
+            }
+        );
+    };
 
     const {
         data,
@@ -127,7 +173,11 @@ export default function ParticipantManagementIndex() {
         if (!confirmDelete.participant) return;
         setConfirmDelete((prev) => ({ ...prev, isLoading: true }));
         destroy(`/asisten/peserta/${confirmDelete.participant.id}`, {
-            onSuccess: () => setConfirmDelete({ isOpen: false, participant: null, isLoading: false }),
+            preserveScroll: true,
+            onSuccess: () => {
+                setConfirmDelete({ isOpen: false, participant: null, isLoading: false });
+                router.reload({ only: ["participants"] });
+            },
             onError: () => setConfirmDelete((prev) => ({ ...prev, isLoading: false })),
         });
     };
@@ -154,12 +204,24 @@ export default function ParticipantManagementIndex() {
                                 sistem{" "}
                             </p>{" "}
                         </div>{" "}
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-wrap items-center gap-4">
                             {" "}
                             <div className="bg-surface-container-lowest border-[3px] border-primary rounded-xl px-5 py-3 font-label font-bold text-on-surface neo-shadow">
                                 {" "}
                                 Total: {filteredUsers.length} pengguna{" "}
                             </div>{" "}
+                            <button
+                                onClick={() => {
+                                    setBulkError("");
+                                    setIsBulkModalOpen(true);
+                                }}
+                                className="bg-secondary-container text-on-secondary-container border-[3px] border-primary rounded-xl px-5 py-3 font-label font-bold uppercase neo-shadow hover:-translate-x-1 hover:-translate-y-1 hover:neo-shadow-md active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center gap-2"
+                            >
+                                <span className="material-symbols-outlined">
+                                    upload_file
+                                </span>{" "}
+                                Bulk Upload Praktikan
+                            </button>
                             <button
                                 onClick={openAddModal}
                                 className="bg-primary text-on-primary border-[3px] border-primary rounded-xl px-6 py-3 font-label font-bold uppercase neo-shadow hover:-translate-x-1 hover:-translate-y-1 hover:neo-shadow-md active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center gap-2"
@@ -171,6 +233,18 @@ export default function ParticipantManagementIndex() {
                             </button>
                         </div>{" "}
                     </header>{" "}
+                    {flash?.success && (
+                        <div className="bg-tertiary-fixed text-on-tertiary-fixed border-[3px] border-primary rounded-xl p-4 neo-shadow flex items-center gap-3 animate-in fade-in duration-200">
+                            <span className="material-symbols-outlined font-bold text-xl">check_circle</span>
+                            <span className="font-label font-bold text-sm">{flash.success}</span>
+                        </div>
+                    )}
+                    {flash?.error && (
+                        <div className="bg-error-container text-on-error-container border-[3px] border-primary rounded-xl p-4 neo-shadow flex items-center gap-3 animate-in fade-in duration-200">
+                            <span className="material-symbols-outlined font-bold text-xl">error</span>
+                            <span className="font-label font-bold text-sm">{flash.error}</span>
+                        </div>
+                    )}
                     {/* Tabs */}
                     <div className="flex gap-4 border-b-[3px] border-primary pb-0 mb-6">
                         <button
@@ -593,6 +667,164 @@ export default function ParticipantManagementIndex() {
                 onConfirm={confirmDestroy}
                 onClose={() => setConfirmDelete({ isOpen: false, participant: null, isLoading: false })}
             />
+
+            {/* Bulk Upload Praktikan Modal */}
+            {isBulkModalOpen && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-body animate-in fade-in duration-150"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="bulk-modal-title"
+                >
+                    <div
+                        className="w-full max-w-2xl bg-surface-container-lowest border-[4px] border-primary rounded-2xl neo-shadow-lg overflow-hidden animate-in zoom-in-95 duration-150"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="bg-secondary-container border-b-[3px] border-primary px-6 py-4 flex justify-between items-center text-on-secondary-container">
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-2xl font-bold">
+                                    upload_file
+                                </span>
+                                <div>
+                                    <h3 id="bulk-modal-title" className="font-headline font-black text-xl uppercase">
+                                        Bulk Upload Akun Praktikan
+                                    </h3>
+                                    <p className="font-label text-xs font-bold opacity-85 mt-0.5">
+                                        Username & Password otomatis menggunakan NIM • Email dikosongkan
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsBulkModalOpen(false)}
+                                className="w-8 h-8 rounded-full border-2 border-primary flex items-center justify-center bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-sm font-bold">close</span>
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleBulkSubmit}>
+                            <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+                                <div className="bg-surface-container p-4 rounded-xl border-2 border-primary space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-headline font-black text-sm uppercase text-on-surface flex items-center gap-1.5">
+                                            <span className="material-symbols-outlined text-base">info</span>
+                                            Format Kolom yang Diperlukan:
+                                        </span>
+                                        <a
+                                            href="/asisten/peserta/template"
+                                            download
+                                            className="inline-flex items-center gap-1 text-primary hover:underline font-label font-bold text-xs bg-primary-fixed/40 px-2.5 py-1 rounded border border-primary/30"
+                                        >
+                                            <span className="material-symbols-outlined text-sm">download</span>
+                                            Unduh Template CSV
+                                        </a>
+                                    </div>
+                                    <p className="font-mono text-xs text-on-surface font-semibold bg-surface-container-lowest p-2 rounded border border-primary/20">
+                                        nama,nim,kelas,shift,kelompok
+                                    </p>
+                                    <p className="font-body text-xs text-on-surface-variant leading-relaxed">
+                                        Kolom <code className="font-bold text-primary">kelas</code> bersifat <strong>opsional</strong> (bisa dikosongkan jika belum ada kelas). Contoh: <code className="font-bold text-primary">Ahmad Dahlan,1301210001,,Senin - Shift 1,K-01</code>.
+                                        Sistem otomatis membuat akun dan memploting ke shift serta kelompok terkait.
+                                    </p>
+                                    <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-400/40 rounded-lg p-2.5 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2">
+                                        <span className="material-symbols-outlined text-sm font-bold mt-0.5 text-amber-600">lightbulb</span>
+                                        <span>
+                                            <strong>Tips Excel:</strong> Jika membuka / menyimpan file di Excel, pastikan kolom <strong>NIM</strong> berformat <strong>Text</strong> agar digit NIM tidak terpotong menjadi notasi ilmiah (seperti <code>1.01042E+11</code>).
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {bulkError && (
+                                    <div className="p-3 bg-red-100 border-2 border-red-600 rounded-xl text-red-700 font-label font-bold text-sm">
+                                        {bulkError}
+                                    </div>
+                                )}
+
+                                {/* Method Switch Tabs */}
+                                <div className="flex border-b-2 border-primary gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setBulkTab("file")}
+                                        className={`px-4 py-2 font-headline font-bold text-sm uppercase rounded-t-lg border-2 border-b-0 border-primary transition-all ${
+                                            bulkTab === "file"
+                                                ? "bg-primary text-on-primary"
+                                                : "bg-surface-container-low text-on-surface hover:bg-surface-container"
+                                        }`}
+                                    >
+                                        Upload File CSV / TXT
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setBulkTab("text")}
+                                        className={`px-4 py-2 font-headline font-bold text-sm uppercase rounded-t-lg border-2 border-b-0 border-primary transition-all ${
+                                            bulkTab === "text"
+                                                ? "bg-primary text-on-primary"
+                                                : "bg-surface-container-low text-on-surface hover:bg-surface-container"
+                                        }`}
+                                    >
+                                        Paste Teks / Baris Data
+                                    </button>
+                                </div>
+
+                                {bulkTab === "file" ? (
+                                    <div className="space-y-3">
+                                        <label className="block font-label font-bold text-xs uppercase text-on-surface-variant">
+                                            Pilih File CSV atau TXT
+                                        </label>
+                                        <div className="border-2 border-dashed border-primary rounded-xl p-6 text-center bg-surface-container-lowest hover:bg-surface-container transition-colors">
+                                            <input
+                                                type="file"
+                                                accept=".csv,.txt"
+                                                onChange={(e) => setBulkFile(e.target.files?.[0] ?? null)}
+                                                className="block w-full text-sm font-label font-bold text-on-surface file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-2 file:border-primary file:text-xs file:font-headline file:font-black file:uppercase file:bg-tertiary-fixed file:text-on-tertiary-fixed cursor-pointer"
+                                            />
+                                            {bulkFile && (
+                                                <p className="mt-3 font-label font-bold text-xs text-primary flex items-center justify-center gap-1">
+                                                    <span className="material-symbols-outlined text-sm">check_circle</span>
+                                                    File terpilih: {bulkFile.name} ({(bulkFile.size / 1024).toFixed(1)} KB)
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        <label className="block font-label font-bold text-xs uppercase text-on-surface-variant">
+                                            Paste Data Praktikan (Format: nama,nim,kelas,shift,kelompok)
+                                        </label>
+                                        <textarea
+                                            rows={7}
+                                            value={bulkRawData}
+                                            onChange={(e) => setBulkRawData(e.target.value)}
+                                            placeholder={`nama,nim,kelas,shift,kelompok\nAhmad Dahlan,1301210001,PHY-101,Senin - Shift 1 (06:30 - 09:30),K-01\nBudi Santoso,1301210002,PHY-101,Senin - Shift 1 (06:30 - 09:30),K-01`}
+                                            className="w-full font-mono text-xs bg-surface-container-lowest border-2 border-primary rounded-xl p-3 text-on-surface focus:outline-none focus:ring-0 focus:border-primary"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="p-4 border-t-[3px] border-primary bg-surface-container flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    disabled={bulkProcessing}
+                                    onClick={() => setIsBulkModalOpen(false)}
+                                    className="px-5 py-2 rounded-xl border-2 border-primary font-label font-bold text-sm uppercase bg-surface-container-lowest hover:bg-surface-container"
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={bulkProcessing}
+                                    className="px-6 py-2 rounded-xl border-2 border-primary font-headline font-black text-sm uppercase bg-primary text-on-primary neo-shadow-sm hover:-translate-y-0.5 transition-transform flex items-center gap-2 disabled:opacity-50"
+                                >
+                                    <span className="material-symbols-outlined text-base">cloud_upload</span>
+                                    {bulkProcessing ? "Mengunggah..." : "Import Praktikan"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

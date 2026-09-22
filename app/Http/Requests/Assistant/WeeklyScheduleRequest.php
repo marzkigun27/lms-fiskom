@@ -27,8 +27,9 @@ class WeeklyScheduleRequest extends FormRequest
             'assistant_ids' => ['required', 'array', 'min:1', 'max:5'],
             'assistant_ids.*' => ['required', 'integer', 'distinct', $user('assistant')],
             'groups' => ['required', 'array', 'min:1', 'max:5'],
-            'groups.*' => ['required', 'array:number,participant_ids'],
+            'groups.*' => ['required', 'array:number,code,participant_ids'],
             'groups.*.number' => ['required', 'integer', 'between:1,5', 'distinct'],
+            'groups.*.code' => ['nullable', 'string', 'max:50'],
             'groups.*.participant_ids' => ['required', 'array', 'min:3', 'max:4'],
             'groups.*.participant_ids.*' => ['required', 'integer', 'distinct', $user('participant')],
         ];

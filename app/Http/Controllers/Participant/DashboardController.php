@@ -45,7 +45,8 @@ class DashboardController extends Controller
                 'weekly_schedules.id as weekly_schedule_id',
                 'weekly_schedules.day',
                 'weekly_schedules.shift',
-                'weekly_schedule_groups.number as group_number'
+                'weekly_schedule_groups.number as group_number',
+                'weekly_schedule_groups.code as group_code'
             )
             ->first();
 
@@ -255,7 +256,7 @@ class DashboardController extends Controller
                 'name' => $participant->name,
                 'identity_number' => $participant->identity_number,
                 'class_name' => $enrollment?->class?->name ?? 'Kelas Belum Ditentukan',
-                'group_name' => $enrollment?->group?->name ?? ($weeklyGroup ? 'Kelompok '.$weeklyGroup->group_number : 'Reguler'),
+                'group_name' => $enrollment?->group?->name ?? ($weeklyGroup ? ($weeklyGroup->group_code ? "Kelompok {$weeklyGroup->group_number} ({$weeklyGroup->group_code})" : 'Kelompok '.$weeklyGroup->group_number) : 'Reguler'),
                 'shift' => $weeklyGroup ? ($weeklyGroup->day.', '.$weeklyGroup->shift) : null,
                 'semester_name' => $enrollment?->semester?->name ?? $activeSemester?->name ?? 'Semester Aktif',
             ],

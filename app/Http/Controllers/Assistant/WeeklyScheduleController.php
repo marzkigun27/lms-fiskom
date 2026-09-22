@@ -27,7 +27,7 @@ class WeeklyScheduleController extends Controller
             ->values()->map(fn ($schedule) => [
                 'id' => $schedule->id, 'semester_id' => $schedule->semester_id, 'day' => $schedule->day, 'shift' => $schedule->shift,
                 'assistants' => $schedule->assistants->map($assistant),
-                'groups' => $schedule->groups->map(fn ($group) => ['id' => $group->id, 'number' => $group->number, 'members' => $group->members->map($participant)]),
+                'groups' => $schedule->groups->map(fn ($group) => ['id' => $group->id, 'number' => $group->number, 'code' => $group->code, 'members' => $group->members->map($participant)]),
             ]);
 
         return inertia('Assistant/Schedule/Index', [
@@ -55,6 +55,27 @@ class WeeklyScheduleController extends Controller
 
         return to_route('assistant.schedule.index', ['semester_id' => $request->integer('semester_id')])
             ->with('success', 'Jadwal mingguan berhasil diperbarui.');
+    }
+
+    public function updateGroupCodes(Request $request, WeeklySchedule $schedule): RedirectResponse
+    {
+        $validated = $request->validate([
+            'groups' => ['required', 'array', 'min:1', 'max:100'],
+            'groups.*.number' => ['required', 'integer', 'between:1,255'],
+            'groups.*.code' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        DB::transaction(function () use ($schedule, $validated) {
+            foreach ($validated['groups'] as $groupData) {
+                $code = ! empty($groupData['code']) ? trim($groupData['code']) : null;
+                $schedule->groups()->updateOrCreate(
+                    ['number' => $groupData['number']],
+                    ['code' => $code]
+                );
+            }
+        });
+
+        return back()->with('success', 'Kode kelompok berhasil diperbarui.');
     }
 
     public function destroy(WeeklySchedule $schedule): RedirectResponse
@@ -90,7 +111,10 @@ class WeeklyScheduleController extends Controller
             $schedule->assistants()->sync($data['assistant_ids']);
             $schedule->groups()->delete();
             foreach ($data['groups'] as $group) {
-                $schedule->groups()->create(['number' => $group['number']])->members()->sync($group['participant_ids']);
+                $schedule->groups()->create([
+                    'number' => $group['number'],
+                    'code' => ! empty($group['code']) ? trim($group['code']) : null,
+                ])->members()->sync($group['participant_ids']);
             }
         }, 3);
     }
