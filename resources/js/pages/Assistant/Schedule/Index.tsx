@@ -20,11 +20,22 @@ export default function AssistantSchedule({ schedules, assistants, participants,
     const [shift, setShift] = useState(shifts[0] ?? '');
     const [dutyAssistants, setDutyAssistants] = useState<Assistant[]>([]);
     const [groupCount, setGroupCount] = useState(1);
-    const [groups, setGroups] = useState<ScheduleGroup[]>([{ id: 1, number: 1, members: [] }]);
+    const [groups, setGroups] = useState<ScheduleGroup[]>([{ id: 1, number: 1, code: '', members: [] }]);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [notice, setNotice] = useState('');
+    const [editGroupModal, setEditGroupModal] = useState<{
+        isOpen: boolean;
+        schedule: Schedule | null;
+        groups: { number: number; code: string }[];
+        isSaving: boolean;
+    }>({
+        isOpen: false,
+        schedule: null,
+        groups: [],
+        isSaving: false,
+    });
     const [confirmModal, setConfirmModal] = useState<{
         isOpen: boolean;
         title: string;
@@ -48,7 +59,7 @@ export default function AssistantSchedule({ schedules, assistants, participants,
         setShift(shifts[0] ?? '');
         setDutyAssistants([]);
         setGroupCount(1);
-        setGroups([{ id: 1, number: 1, members: [] }]);
+        setGroups([{ id: 1, number: 1, code: '', members: [] }]);
         setErrors({});
     }
 
@@ -59,10 +70,46 @@ export default function AssistantSchedule({ schedules, assistants, participants,
         setDay(schedule.day);
         setShift(schedule.shift);
         setDutyAssistants(schedule.assistants);
-        setGroups(schedule.groups.map(g => ({ ...g, members: [...g.members] })));
+        setGroups(schedule.groups.map(g => ({ ...g, code: g.code ?? '', members: [...g.members] })));
         setGroupCount(schedule.groups.length);
         setNotice('');
         setActiveTab('add');
+    }
+
+    function openEditGroupCodes(schedule: Schedule) {
+        const groupItems = schedule.groups.length > 0
+            ? schedule.groups.map(g => ({
+                number: g.number,
+                code: g.code ?? '',
+            }))
+            : [{ number: 1, code: '' }];
+
+        setEditGroupModal({
+            isOpen: true,
+            schedule,
+            groups: groupItems,
+            isSaving: false,
+        });
+    }
+
+    function saveGroupCodes() {
+        if (!editGroupModal.schedule || editGroupModal.isSaving) return;
+        setEditGroupModal(prev => ({ ...prev, isSaving: true }));
+        router.patch(`/asisten/jadwal/${editGroupModal.schedule.id}/groups`, {
+            groups: editGroupModal.groups,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setEditGroupModal({ isOpen: false, schedule: null, groups: [], isSaving: false });
+                setNotice('Kode kelompok berhasil diperbarui.');
+            },
+            onError: () => {
+                setEditGroupModal(prev => ({ ...prev, isSaving: false }));
+            },
+            onFinish: () => {
+                setEditGroupModal(prev => ({ ...prev, isSaving: false }));
+            },
+        });
     }
 
     function saveSchedule() {
@@ -113,7 +160,7 @@ export default function AssistantSchedule({ schedules, assistants, participants,
     const applyGroupCountChange = (count: number) => {
         setGroupCount(count);
         setGroups(Array.from({ length: count }, (_, i) => ({
-            id: groups[i]?.id ?? -(i + 1), number: i + 1, members: groups[i]?.members ?? [],
+            id: groups[i]?.id ?? -(i + 1), number: i + 1, code: groups[i]?.code ?? '', members: groups[i]?.members ?? [],
         })));
     };
 
@@ -258,6 +305,16 @@ export default function AssistantSchedule({ schedules, assistants, participants,
                                                                     <div className="flex gap-2">
                                                                         {" "}
                                                                         <button
+                                                                            className="h-8 px-2 flex items-center gap-1 bg-surface-container-lowest border-2 border-primary rounded-lg hover:bg-surface-container neo-shadow-sm transition-transform hover:-translate-y-0.5"
+                                                                            title="Edit Kode Kelompok"
+                                                                            onClick={() => openEditGroupCodes(schedule)}
+                                                                        >
+                                                                            <span className="material-symbols-outlined text-sm font-bold">
+                                                                                tag
+                                                                            </span>
+                                                                            <span className="font-label font-bold text-xs uppercase">Kode</span>
+                                                                        </button>
+                                                                        <button
                                                                             className="w-8 h-8 flex items-center justify-center bg-surface-container-lowest border-2 border-primary rounded-lg hover:bg-surface-container neo-shadow-sm transition-transform hover:-translate-y-0.5"
                                                                             title="Edit"
                                                                             onClick={() => editSchedule(schedule)}
@@ -352,12 +409,17 @@ export default function AssistantSchedule({ schedules, assistants, participants,
                                                                                         className="bg-surface-container-lowest border-2 border-primary rounded-lg p-2 flex flex-col justify-center items-center neo-shadow-sm"
                                                                                     >
                                                                                         {" "}
-                                                                                        <span className="font-headline font-bold text-sm uppercase text-on-surface mb-1">
+                                                                                        <span className="font-headline font-bold text-sm uppercase text-on-surface mb-0.5 text-center">
                                                                                             Klp{" "}
                                                                                             {
                                                                                                 group.number
                                                                                             }
                                                                                         </span>{" "}
+                                                                                        {group.code && (
+                                                                                            <span className="font-mono text-[11px] font-bold text-primary bg-primary-fixed/30 border border-primary/20 px-1.5 py-0.5 rounded mb-1">
+                                                                                                {group.code}
+                                                                                            </span>
+                                                                                        )}
                                                                                         <span className="bg-tertiary-fixed border border-primary text-on-tertiary-fixed text-[10px] font-bold px-2 py-0.5 rounded-md">
                                                                                             {" "}
                                                                                             {
@@ -560,6 +622,21 @@ export default function AssistantSchedule({ schedules, assistants, participants,
                                                         4 Orang{" "}
                                                     </span>{" "}
                                                 </div>{" "}
+                                                <div className="mb-4">
+                                                    <label className="block font-label font-bold text-xs uppercase text-on-surface-variant mb-1">
+                                                        Kode Kelompok (Opsional)
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder={`Contoh: K-0${group.number}, A${group.number}`}
+                                                        value={group.code ?? ''}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value;
+                                                            setGroups(groups.map(g => g.id === group.id ? { ...g, code: val } : g));
+                                                        }}
+                                                        className="w-full bg-background border-[2px] border-primary rounded-lg px-3 py-1.5 font-headline font-bold text-sm text-on-surface focus:outline-none focus:border-primary transition-all"
+                                                    />
+                                                </div>{" "}
                                                 <div className="flex-1 space-y-3 mb-4">
                                                     {" "}
                                                     {group.members.map(
@@ -665,6 +742,87 @@ export default function AssistantSchedule({ schedules, assistants, participants,
                 onConfirm={confirmModal.onConfirm}
                 onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
             />
+
+            {/* Quick Edit Group Codes Modal */}
+            {editGroupModal.isOpen && editGroupModal.schedule && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-body animate-in fade-in duration-150"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-group-title"
+                >
+                    <div
+                        className="w-full max-w-lg bg-surface-container-lowest border-[4px] border-primary rounded-2xl neo-shadow-lg overflow-hidden animate-in zoom-in-95 duration-150"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="bg-primary-fixed border-b-[3px] border-primary px-6 py-4 flex justify-between items-center">
+                            <div>
+                                <h3 id="modal-group-title" className="font-headline font-black text-xl uppercase text-on-surface">
+                                    Edit Kode Kelompok
+                                </h3>
+                                <p className="font-label text-xs text-on-surface-variant font-bold mt-0.5">
+                                    {editGroupModal.schedule.day}, {editGroupModal.schedule.shift}
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setEditGroupModal({ isOpen: false, schedule: null, groups: [], isSaving: false })}
+                                className="w-8 h-8 rounded-full border-2 border-primary flex items-center justify-center bg-surface-container-lowest hover:bg-surface-container transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-sm font-bold">close</span>
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                            <p className="font-body text-sm text-on-surface-variant">
+                                Sesuaikan kode kelompok pada shift ini. Kode ini akan tampil pada formulir registrasi praktikan saat memilih kelompok.
+                            </p>
+                            <div className="space-y-3">
+                                {editGroupModal.groups.map((group, idx) => (
+                                    <div key={group.number} className="flex items-center gap-3 bg-surface-container border-2 border-primary rounded-xl p-3">
+                                        <span className="font-headline font-black text-sm uppercase text-on-surface w-28 shrink-0">
+                                            Kelompok {group.number}
+                                        </span>
+                                        <input
+                                            type="text"
+                                            placeholder={`Contoh: K-0${group.number} atau A${group.number}`}
+                                            value={group.code}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setEditGroupModal(prev => ({
+                                                    ...prev,
+                                                    groups: prev.groups.map((g, i) => i === idx ? { ...g, code: val } : g),
+                                                }));
+                                            }}
+                                            className="flex-1 bg-surface-container-lowest border-[2px] border-primary rounded-lg px-3 py-1.5 font-headline font-bold text-sm text-on-surface focus:outline-none"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="p-4 border-t-[3px] border-primary bg-surface-container flex justify-end gap-3">
+                            <button
+                                type="button"
+                                disabled={editGroupModal.isSaving}
+                                onClick={() => setEditGroupModal({ isOpen: false, schedule: null, groups: [], isSaving: false })}
+                                className="px-5 py-2 rounded-xl border-2 border-primary font-label font-bold text-sm uppercase bg-surface-container-lowest hover:bg-surface-container"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                type="button"
+                                disabled={editGroupModal.isSaving}
+                                onClick={saveGroupCodes}
+                                className="px-6 py-2 rounded-xl border-2 border-primary font-headline font-black text-sm uppercase bg-primary text-on-primary neo-shadow-sm hover:-translate-y-0.5 transition-transform flex items-center gap-1.5 disabled:opacity-50"
+                            >
+                                <span className="material-symbols-outlined text-base">save</span>
+                                {editGroupModal.isSaving ? 'Menyimpan...' : 'Simpan Kode'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

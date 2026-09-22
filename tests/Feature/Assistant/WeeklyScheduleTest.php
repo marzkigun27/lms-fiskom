@@ -167,7 +167,7 @@ it('lists only the selected semester with safe user projections and all day opti
         ->where('schedules.0.day', 'Senin')
         ->where('schedules.0.shift', $payload['shift'])
         ->has('schedules.0.assistants.0', fn (Assert $user) => $user->has('id')->has('name')->missing('email'))
-        ->has('schedules.0.groups.0', fn (Assert $group) => $group->has('id')->where('number', 1)->has('members', 3)
+        ->has('schedules.0.groups.0', fn (Assert $group) => $group->has('id')->where('number', 1)->has('code')->has('members', 3)
             ->has('members.0', fn (Assert $user) => $user->has('id')->has('name')->has('nim')->missing('email')))
         ->has('assistants', 3)->has('participants', 6)->has('semesters', 2)
         ->where('days', ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'])

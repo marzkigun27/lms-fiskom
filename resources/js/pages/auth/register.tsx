@@ -169,7 +169,7 @@ export default function Register({ passwordRules, teamInvitation, register_type 
                                         <option value="">-- Pilih Shift Praktikum --</option>
                                         {shifts.map((s: any) => (
                                             <option key={s.id} value={s.id}>
-                                                {s.name} ({s.day_of_week}, {s.formatted_time})
+                                                {s.label || (s.day && s.shift ? `${s.day} - ${s.shift}` : `${s.name || 'Shift'} (${s.day_of_week || '-'}, ${s.formatted_time || '-'})`)}
                                             </option>
                                         ))}
                                     </select>
@@ -191,7 +191,7 @@ export default function Register({ passwordRules, teamInvitation, register_type 
                                         </option>
                                         {availableGroups.map((g: any) => (
                                             <option key={g.number} value={g.number}>
-                                                Kelompok {g.number} {g.name && g.name !== `Kelompok ${g.number}` ? `(${g.name})` : ''}
+                                                {g.code ? `${g.code} (Kelompok ${g.number})` : `Kelompok ${g.number}`}
                                             </option>
                                         ))}
                                     </select>

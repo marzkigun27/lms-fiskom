@@ -1,6 +1,6 @@
 export type Assistant = { id: number; name: string; avatar?: string };
 export type Participant = { id: number; name: string; nim: string | null };
-export type ScheduleGroup = { id: number; number: number; members: Participant[] };
+export type ScheduleGroup = { id: number; number: number; code?: string | null; members: Participant[] };
 export type Schedule = {
     id: number;
     semester_id: number;
@@ -22,8 +22,9 @@ export function schedulePayload(input: {
         day: input.day,
         shift: input.shift,
         assistant_ids: input.assistants.map(({ id }) => id),
-        groups: input.groups.map(({ number, members }) => ({
+        groups: input.groups.map(({ number, code, members }) => ({
             number,
+            code: code?.trim() || null,
             participant_ids: members.map(({ id }) => id),
         })),
     };

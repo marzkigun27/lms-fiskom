@@ -55,7 +55,7 @@ class CreateNewUser implements CreatesNewUsers
         if ($userType === 'participant') {
             $rules['class_id'] = ['required', 'integer', 'exists:classes,id'];
             $rules['weekly_schedule_id'] = ['required', 'integer', 'exists:weekly_schedules,id'];
-            $rules['group_number'] = ['required', 'integer', 'min:1', 'max:10'];
+            $rules['group_number'] = ['required', 'integer', 'min:1', 'max:255'];
         }
 
         Validator::make($input, $rules)->validate();
@@ -90,8 +90,12 @@ class CreateNewUser implements CreatesNewUsers
                 $semesterId = $weeklySchedule?->semester_id ?? Semester::where('is_active', true)->value('id');
 
                 $classGroup = Group::where('class_id', $classId)
-                    ->where(function ($q) use ($groupNumber) {
-                        $q->where('code', (string) $groupNumber)
+                    ->where(function ($q) use ($groupNumber, $weeklyGroup) {
+                        if ($weeklyGroup->code) {
+                            $q->where('code', $weeklyGroup->code)
+                                ->orWhere('name', 'like', '%'.$weeklyGroup->code.'%');
+                        }
+                        $q->orWhere('code', (string) $groupNumber)
                             ->orWhere('code', 'K'.$groupNumber)
                             ->orWhere('name', 'like', '%Kelompok '.$groupNumber.'%');
                     })->first();
