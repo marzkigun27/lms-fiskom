@@ -129,6 +129,7 @@ test('it allows non-overlapping preliminary task schedules', function () {
 
 test('assistant can toggle registration settings and audit log is recorded', function () {
     $response = $this->actingAs($this->assistant)->post(route('assistant.global_control.registration.update'), [
+        'role' => 'participant',
         'is_enabled' => false,
         'start_at' => null,
         'end_at' => null,
@@ -137,13 +138,32 @@ test('assistant can toggle registration settings and audit log is recorded', fun
     $response->assertSessionHasNoErrors();
 
     $this->assertDatabaseHas('system_settings', [
-        'key' => 'registration_is_enabled',
+        'key' => 'registration_participant_is_enabled',
         'value' => '0',
     ]);
 
     $this->assertDatabaseHas('audit_logs', [
         'actor_id' => $this->assistant->id,
-        'action' => 'registration.settings_updated',
+        'action' => 'registration.participant_settings_updated',
+    ]);
+
+    $responseAssistant = $this->actingAs($this->assistant)->post(route('assistant.global_control.registration.update'), [
+        'role' => 'assistant',
+        'is_enabled' => false,
+        'start_at' => null,
+        'end_at' => null,
+    ]);
+
+    $responseAssistant->assertSessionHasNoErrors();
+
+    $this->assertDatabaseHas('system_settings', [
+        'key' => 'registration_assistant_is_enabled',
+        'value' => '0',
+    ]);
+
+    $this->assertDatabaseHas('audit_logs', [
+        'actor_id' => $this->assistant->id,
+        'action' => 'registration.assistant_settings_updated',
     ]);
 });
 

@@ -105,19 +105,25 @@ class GlobalControlController extends Controller
     public function updateRegistration(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'role' => ['nullable', 'string', 'in:participant,assistant,asisten,praktikan'],
             'is_enabled' => ['required', 'boolean'],
             'start_at' => ['nullable', 'date'],
             'end_at' => ['nullable', 'date'],
         ]);
 
+        $role = $validated['role'] ?? 'participant';
+
         $this->registrationControlService->updateSettings(
+            $role,
             (bool) $validated['is_enabled'],
             $validated['start_at'] ? Carbon::parse($validated['start_at']) : null,
             $validated['end_at'] ? Carbon::parse($validated['end_at']) : null,
             $request->user()->id
         );
 
-        return redirect()->back()->with('success', 'Pengaturan registrasi akun berhasil diperbarui.');
+        $roleLabel = ($role === 'assistant' || $role === 'asisten') ? 'asisten' : 'praktikan';
+
+        return redirect()->back()->with('success', "Pengaturan registrasi {$roleLabel} berhasil diperbarui.");
     }
 
     public function updateVotingPeriod(Request $request): RedirectResponse

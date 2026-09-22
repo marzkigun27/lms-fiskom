@@ -95,7 +95,8 @@ export default function AssistantDashboard({
     return (
         <>
             <Head title="Dashboard Asisten" />
-            <div className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full space-y-8">
+            <div className="flex-1 min-h-0 h-full overflow-y-auto p-6 md:p-10 bg-background">
+                <div className="max-w-7xl mx-auto w-full space-y-8 pb-12">
                 {/* Greetings Section */}
                 <header className="relative flex flex-col justify-center min-h-[220px] bg-primary-container p-6 md:p-10 rounded-2xl border-4 border-primary neo-shadow-lg overflow-hidden">
                     <div className="relative z-10 flex-1 flex flex-col justify-between gap-4">
@@ -114,7 +115,7 @@ export default function AssistantDashboard({
                             <h1 className="font-headline text-3xl md:text-5xl text-white font-black leading-tight">
                                 {greeting}, {firstName}!
                             </h1>
-                            <p className="font-body text-base md:text-xl text-primary-fixed-dim mt-2 max-w-2xl">
+                            <p className="font-body text-base md:text-xl text-black font-medium mt-2 max-w-2xl">
                                 Kelola sesi praktikum, pantau antrean penilaian praktikan, dan atur aktivitas laboratorium dengan mudah.
                             </p>
                         </div>
@@ -422,6 +423,7 @@ export default function AssistantDashboard({
                             </section>
                         )}
                     </div>
+                </div>
                 </div>
             </div>
         </>

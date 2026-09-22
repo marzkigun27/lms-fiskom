@@ -29,7 +29,7 @@ interface PrelabModule {
     };
 }
 
-interface RegistrationState {
+interface RegistrationItemState {
     status: 'not_started' | 'open' | 'closed';
     status_label: string;
     is_allowed: boolean;
@@ -38,6 +38,11 @@ interface RegistrationState {
     end_at: string | null;
     start_at_formatted: string | null;
     end_at_formatted: string | null;
+}
+
+interface RegistrationState extends RegistrationItemState {
+    participant?: RegistrationItemState;
+    assistant?: RegistrationItemState;
 }
 
 interface VoteCategory {
@@ -123,10 +128,16 @@ export default function GlobalControlIndex({ prelab, registration, voting, audit
         deadline_at: '',
     });
 
+    const participantReg = registration.participant ?? registration;
+    const assistantReg = registration.assistant ?? registration;
+
+    const [regModalRole, setRegModalRole] = useState<'participant' | 'assistant'>('participant');
+
     const regForm = useForm({
-        is_enabled: registration.is_enabled,
-        start_at: registration.start_at ? registration.start_at.substring(0, 16) : '',
-        end_at: registration.end_at ? registration.end_at.substring(0, 16) : '',
+        role: 'participant',
+        is_enabled: participantReg.is_enabled,
+        start_at: participantReg.start_at ? participantReg.start_at.substring(0, 16) : '',
+        end_at: participantReg.end_at ? participantReg.end_at.substring(0, 16) : '',
     });
 
     const votingForm = useForm({
@@ -215,21 +226,37 @@ export default function GlobalControlIndex({ prelab, registration, voting, audit
         });
     };
 
-    // Quick toggle Registration
-    const toggleRegistration = () => {
-        const nextState = !registration.is_enabled;
+    // Open Registration Modal for specified role
+    const openRegModal = (role: 'participant' | 'assistant') => {
+        setRegModalRole(role);
+        const target = role === 'assistant' ? assistantReg : participantReg;
+        regForm.setData({
+            role: role,
+            is_enabled: target.is_enabled,
+            start_at: target.start_at ? target.start_at.substring(0, 16) : '',
+            end_at: target.end_at ? target.end_at.substring(0, 16) : '',
+        });
+        setIsRegModalOpen(true);
+    };
+
+    // Quick toggle Registration for role
+    const toggleRegistration = (role: 'participant' | 'assistant') => {
+        const target = role === 'assistant' ? assistantReg : participantReg;
+        const roleLabel = role === 'assistant' ? 'Asisten' : 'Praktikan';
+        const nextState = !target.is_enabled;
         setConfirmModal({
             isOpen: true,
-            title: nextState ? 'Buka Registrasi Akun?' : 'Tutup Registrasi Akun?',
+            title: nextState ? `Buka Registrasi ${roleLabel}?` : `Tutup Registrasi ${roleLabel}?`,
             message: nextState
-                ? 'Praktikan baru akan dapat membuat akun di sistem.'
-                : 'Pembuatan akun baru akan segera ditolak oleh sistem untuk semua praktikan.',
+                ? `Akun ${roleLabel} baru akan dapat melakukan registrasi di sistem.`
+                : `Pembuatan akun ${roleLabel} baru akan segera ditolak oleh sistem.`,
             variant: nextState ? 'warning' : 'danger',
             onConfirm: () => {
                 router.post('/asisten/global-control/registration', {
+                    role: role,
                     is_enabled: nextState,
-                    start_at: registration.start_at,
-                    end_at: registration.end_at,
+                    start_at: target.start_at,
+                    end_at: target.end_at,
                 });
                 setConfirmModal((prev) => ({ ...prev, isOpen: false }));
             },
@@ -538,89 +565,191 @@ export default function GlobalControlIndex({ prelab, registration, voting, audit
                         </div>
                     </section>
 
-                    {/* SECTION 2: REGISTRASI AKUN */}
+                    {/* SECTION 2: REGISTRASI AKUN (PRAKTIKAN & ASISTEN TERPISAH) */}
                     <section className="bg-surface-container-lowest border-[4px] border-black dark:border-white rounded-2xl p-6 md:p-8 neo-shadow-lg space-y-6">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-primary/20 pb-4">
+                        <div className="border-b-2 border-primary/20 pb-4">
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 rounded-xl bg-secondary-fixed border-[3px] border-black flex items-center justify-center neo-shadow-sm text-black">
                                     <span className="material-symbols-outlined text-2xl font-black">person_add</span>
                                 </div>
                                 <div>
                                     <h2 className="font-headline text-2xl font-black uppercase text-on-surface">
-                                        2. Registrasi Akun Praktikan
+                                        2. Manajemen Jadwal Registrasi Akun
                                     </h2>
                                     <p className="font-body text-xs text-outline font-semibold">
-                                        Kontrol pembukaan pendaftaran akun baru • Blokir pendaftaran otomatis jika ditutup
+                                        Kontrol pembukaan registrasi terpisah antara akun Praktikan dan akun Asisten
                                     </p>
                                 </div>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={toggleRegistration}
-                                    className={`px-5 py-2.5 font-label font-black text-sm uppercase rounded-xl border-[3px] border-black neo-shadow hover:-translate-x-0.5 hover:-translate-y-0.5 hover:neo-shadow-md transition-all flex items-center gap-2 ${
-                                        registration.is_enabled
-                                            ? 'bg-rose-400 text-black'
-                                            : 'bg-emerald-400 text-black'
-                                    }`}
-                                >
-                                    <span className="material-symbols-outlined text-lg">
-                                        {registration.is_enabled ? 'lock' : 'lock_open'}
-                                    </span>
-                                    {registration.is_enabled ? 'Tutup Registrasi' : 'Buka Registrasi'}
-                                </button>
-                                <button
-                                    onClick={() => setIsRegModalOpen(true)}
-                                    className="bg-surface-container text-on-surface font-label font-black text-sm uppercase px-4 py-2.5 rounded-xl border-[3px] border-black neo-shadow hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex items-center gap-1.5"
-                                >
-                                    <span className="material-symbols-outlined text-lg">date_range</span>
-                                    Jadwal
-                                </button>
                             </div>
                         </div>
 
-                        {/* Registration Status Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-surface-container border-[3px] border-black rounded-xl p-5 neo-shadow-sm space-y-2">
-                                <span className="font-label font-bold text-xs uppercase text-outline block">
-                                    Status Otorisasi Backend
-                                </span>
-                                <div className="flex items-center gap-2">
-                                    <span className={`w-3.5 h-3.5 rounded-full border-2 border-black ${registration.is_allowed ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                                    <span className="font-headline font-black text-xl uppercase text-on-surface">
-                                        {registration.status_label}
-                                    </span>
-                                </div>
-                                <p className="text-xs text-outline font-medium">
-                                    {registration.is_allowed
-                                        ? 'Endpoint pendaftaran terbuka dan menerima registrasi praktikan baru.'
-                                        : 'Endpoint pendaftaran terkunci. Percobaan registrasi akan ditolak langsung oleh backend.'}
-                                </p>
-                            </div>
-
-                            <div className="bg-surface-container border-[3px] border-black rounded-xl p-5 neo-shadow-sm space-y-2">
-                                <span className="font-label font-bold text-xs uppercase text-outline block">
-                                    Rentang Waktu Terjadwal
-                                </span>
-                                {registration.start_at || registration.end_at ? (
-                                    <div className="text-sm font-semibold text-on-surface">
-                                        <div>Mulai: {registration.start_at_formatted || 'Langsung Buka'}</div>
-                                        <div>Selesai: {registration.end_at_formatted || 'Tanpa Batas'}</div>
+                        {/* SUB-SECTION 2A: REGISTRASI PRAKTIKAN */}
+                        <div className="bg-surface border-[3px] border-black rounded-2xl p-6 neo-shadow space-y-5">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-black/10 pb-4">
+                                <div>
+                                    <div className="inline-flex items-center gap-2 bg-tertiary-fixed text-black border-2 border-black px-3 py-0.5 rounded-full font-label font-bold text-xs mb-1 neo-shadow-xs">
+                                        Praktikan
                                     </div>
-                                ) : (
-                                    <p className="text-sm font-medium text-outline italic">
-                                        Tidak menggunakan jadwal otomatis (kontrol manual via toggle).
+                                    <h3 className="font-headline text-xl font-black uppercase text-on-surface">
+                                        Registrasi Praktikan (Mahasiswa)
+                                    </h3>
+                                    <p className="text-xs text-outline font-medium">
+                                        Praktikan wajib memilih Kelas dan Shift praktikum yang telah diploting saat mendaftar.
                                     </p>
-                                )}
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => toggleRegistration('participant')}
+                                        className={`px-5 py-2.5 font-label font-black text-sm uppercase rounded-xl border-[3px] border-black neo-shadow hover:-translate-x-0.5 hover:-translate-y-0.5 hover:neo-shadow-md transition-all flex items-center gap-2 ${
+                                            participantReg.is_enabled
+                                                ? 'bg-rose-400 text-black'
+                                                : 'bg-emerald-400 text-black'
+                                        }`}
+                                    >
+                                        <span className="material-symbols-outlined text-lg">
+                                            {participantReg.is_enabled ? 'lock' : 'lock_open'}
+                                        </span>
+                                        {participantReg.is_enabled ? 'Tutup Registrasi' : 'Buka Registrasi'}
+                                    </button>
+                                    <button
+                                        onClick={() => openRegModal('participant')}
+                                        className="bg-surface-container text-on-surface font-label font-black text-sm uppercase px-4 py-2.5 rounded-xl border-[3px] border-black neo-shadow hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex items-center gap-1.5"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">date_range</span>
+                                        Jadwal
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="bg-surface-container border-[3px] border-black rounded-xl p-5 neo-shadow-sm space-y-2">
-                                <span className="font-label font-bold text-xs uppercase text-outline block">
-                                    Pencegahan Akun Ganda
-                                </span>
-                                <p className="text-xs font-semibold text-on-surface leading-relaxed">
-                                    Validasi keunikan NIM dan email tetap dipertahankan secara ketat oleh database pada setiap request.
-                                </p>
+                            {/* Cards Status Praktikan */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="bg-surface-container border-2 border-black rounded-xl p-4 neo-shadow-sm space-y-1.5">
+                                    <span className="font-label font-bold text-[11px] uppercase text-outline block">
+                                        Status Backend
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <span className={`w-3 h-3 rounded-full border-2 border-black ${participantReg.is_allowed ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                                        <span className="font-headline font-black text-base uppercase text-on-surface">
+                                            {participantReg.status_label}
+                                        </span>
+                                    </div>
+                                    <p className="text-[11px] text-outline font-medium">
+                                        {participantReg.is_allowed
+                                            ? 'Pendaftaran praktikan terbuka dan menerima input kelas serta shift.'
+                                            : 'Pendaftaran praktikan terkunci. Pendaftaran baru langsung ditolak.'}
+                                    </p>
+                                </div>
+
+                                <div className="bg-surface-container border-2 border-black rounded-xl p-4 neo-shadow-sm space-y-1.5">
+                                    <span className="font-label font-bold text-[11px] uppercase text-outline block">
+                                        Jadwal Terjadwal
+                                    </span>
+                                    {participantReg.start_at || participantReg.end_at ? (
+                                        <div className="text-xs font-semibold text-on-surface">
+                                            <div>Buka: {participantReg.start_at_formatted || 'Langsung'}</div>
+                                            <div>Tutup: {participantReg.end_at_formatted || 'Tanpa Batas'}</div>
+                                        </div>
+                                    ) : (
+                                        <p className="text-xs font-medium text-outline italic">
+                                            Manual (sesuai switch toggle).
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="bg-surface-container border-2 border-black rounded-xl p-4 neo-shadow-sm space-y-1.5">
+                                    <span className="font-label font-bold text-[11px] uppercase text-outline block">
+                                        Ploting Otomatis
+                                    </span>
+                                    <p className="text-[11px] font-semibold text-on-surface leading-snug">
+                                        Praktikan yang mendaftar langsung terdaftar di kelas dan slot kelompok shift mingguan.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SUB-SECTION 2B: REGISTRASI ASISTEN */}
+                        <div className="bg-surface border-[3px] border-black rounded-2xl p-6 neo-shadow space-y-5">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-black/10 pb-4">
+                                <div>
+                                    <div className="inline-flex items-center gap-2 bg-secondary-fixed text-black border-2 border-black px-3 py-0.5 rounded-full font-label font-bold text-xs mb-1 neo-shadow-xs">
+                                        Asisten
+                                    </div>
+                                    <h3 className="font-headline text-xl font-black uppercase text-on-surface">
+                                        Registrasi Asisten Laboratorium
+                                    </h3>
+                                    <p className="text-xs text-outline font-medium">
+                                        Pendaftaran akun asisten dengan verifikasi Kode Asisten dan hak akses manajemen.
+                                    </p>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => toggleRegistration('assistant')}
+                                        className={`px-5 py-2.5 font-label font-black text-sm uppercase rounded-xl border-[3px] border-black neo-shadow hover:-translate-x-0.5 hover:-translate-y-0.5 hover:neo-shadow-md transition-all flex items-center gap-2 ${
+                                            assistantReg.is_enabled
+                                                ? 'bg-rose-400 text-black'
+                                                : 'bg-emerald-400 text-black'
+                                        }`}
+                                    >
+                                        <span className="material-symbols-outlined text-lg">
+                                            {assistantReg.is_enabled ? 'lock' : 'lock_open'}
+                                        </span>
+                                        {assistantReg.is_enabled ? 'Tutup Registrasi' : 'Buka Registrasi'}
+                                    </button>
+                                    <button
+                                        onClick={() => openRegModal('assistant')}
+                                        className="bg-surface-container text-on-surface font-label font-black text-sm uppercase px-4 py-2.5 rounded-xl border-[3px] border-black neo-shadow hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex items-center gap-1.5"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">date_range</span>
+                                        Jadwal
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Cards Status Asisten */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="bg-surface-container border-2 border-black rounded-xl p-4 neo-shadow-sm space-y-1.5">
+                                    <span className="font-label font-bold text-[11px] uppercase text-outline block">
+                                        Status Backend
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <span className={`w-3 h-3 rounded-full border-2 border-black ${assistantReg.is_allowed ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                                        <span className="font-headline font-black text-base uppercase text-on-surface">
+                                            {assistantReg.status_label}
+                                        </span>
+                                    </div>
+                                    <p className="text-[11px] text-outline font-medium">
+                                        {assistantReg.is_allowed
+                                            ? 'Pendaftaran asisten terbuka.'
+                                            : 'Pendaftaran asisten terkunci. Pendaftaran asisten baru ditolak oleh backend.'}
+                                    </p>
+                                </div>
+
+                                <div className="bg-surface-container border-2 border-black rounded-xl p-4 neo-shadow-sm space-y-1.5">
+                                    <span className="font-label font-bold text-[11px] uppercase text-outline block">
+                                        Jadwal Terjadwal
+                                    </span>
+                                    {assistantReg.start_at || assistantReg.end_at ? (
+                                        <div className="text-xs font-semibold text-on-surface">
+                                            <div>Buka: {assistantReg.start_at_formatted || 'Langsung'}</div>
+                                            <div>Tutup: {assistantReg.end_at_formatted || 'Tanpa Batas'}</div>
+                                        </div>
+                                    ) : (
+                                        <p className="text-xs font-medium text-outline italic">
+                                            Manual (sesuai switch toggle).
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="bg-surface-container border-2 border-black rounded-xl p-4 neo-shadow-sm space-y-1.5">
+                                    <span className="font-label font-bold text-[11px] uppercase text-outline block">
+                                        Otorisasi Peran
+                                    </span>
+                                    <p className="text-[11px] font-semibold text-on-surface leading-snug">
+                                        Akun yang terdaftar sebagai asisten otomatis mendapatkan hak akses modul asisten laboratorium.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -945,7 +1074,7 @@ export default function GlobalControlIndex({ prelab, registration, voting, audit
                     <div className="bg-surface-container-lowest border-[4px] border-black rounded-2xl max-w-md w-full p-6 neo-shadow-xl space-y-6">
                         <div className="flex items-center justify-between border-b-2 border-black pb-3">
                             <h3 className="font-headline font-black text-xl uppercase text-on-surface">
-                                Atur Periode Registrasi
+                                Atur Periode Registrasi {regModalRole === 'assistant' ? 'Asisten' : 'Praktikan'}
                             </h3>
                             <button
                                 onClick={() => setIsRegModalOpen(false)}
