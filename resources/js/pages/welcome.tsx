@@ -34,7 +34,21 @@ export default function Welcome({
 
     const page = usePage();
     const registration = (page.props as any).registration;
-    const isPraktikanRegistrationBlocked = authMode === 'register' && role === 'praktikan' && registration && !registration.is_allowed;
+    const participantRegistration = registration?.participant;
+    const assistantRegistration = registration?.assistant;
+
+    const isPraktikanRegistrationBlocked = authMode === 'register' && role === 'praktikan' && (
+        participantRegistration ? !participantRegistration.is_allowed : (registration && !registration.is_allowed)
+    );
+
+    const isAsistenRegistrationBlocked = authMode === 'register' && role === 'asisten' && (
+        assistantRegistration ? !assistantRegistration.is_allowed : false
+    );
+
+    const isRegistrationBlocked = isPraktikanRegistrationBlocked || isAsistenRegistrationBlocked;
+
+    const classes = registration?.options?.classes || [];
+    const shifts = registration?.options?.shifts || [];
 
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         name: '',
@@ -45,7 +59,21 @@ export default function Welcome({
         remember: false,
         login_type: defaultRole,
         register_type: defaultRole,
+        class_id: '',
+        weekly_schedule_id: '',
+        group_number: '',
     });
+
+    const selectedShift = shifts.find((s: any) => String(s.id) === String(data.weekly_schedule_id));
+    const availableGroups = selectedShift?.groups || [];
+
+    const handleShiftChange = (shiftId: string) => {
+        setData((prev) => ({
+            ...prev,
+            weekly_schedule_id: shiftId,
+            group_number: '',
+        }));
+    };
 
     const handleSetRole = (newRole: 'praktikan' | 'asisten') => {
         setRole(newRole);
@@ -69,7 +97,7 @@ export default function Welcome({
     const toggleMode = () => {
         setAuthMode(prev => prev === 'login' ? 'register' : 'login');
         clearErrors();
-        reset('name', 'email', 'identity_number', 'password', 'password_confirmation');
+        reset('name', 'email', 'identity_number', 'password', 'password_confirmation', 'class_id', 'weekly_schedule_id', 'group_number');
     };
 
     return (
@@ -266,18 +294,20 @@ export default function Welcome({
                                 </button>
                             </div>
                             
-                            {isPraktikanRegistrationBlocked ? (
+                            {isRegistrationBlocked ? (
                                 <div className="p-6 bg-rose-100 border-[3px] border-rose-800 text-rose-950 rounded-2xl text-center space-y-2 neo-shadow-sm my-4">
                                     <span className="material-symbols-outlined text-4xl text-rose-800 block mx-auto">lock</span>
                                     <h3 className="font-headline font-black text-xl uppercase tracking-tight">
-                                        Registrasi Akun Saat Ini Telah Ditutup
+                                        Registrasi {role === 'asisten' ? 'Asisten' : 'Praktikan'} Ditutup
                                     </h3>
                                     <p className="font-body text-xs font-semibold text-rose-900 leading-relaxed">
-                                        Pendaftaran akun praktikan baru sedang dinonaktifkan oleh asisten laboratorium.
+                                        {role === 'asisten'
+                                            ? 'Pendaftaran akun asisten laboratorium saat ini sedang dinonaktifkan.'
+                                            : 'Pendaftaran akun praktikan baru sedang dinonaktifkan oleh asisten laboratorium.'}
                                     </p>
-                                    {registration?.start_at_formatted && (
+                                    {((role === 'asisten' ? assistantRegistration?.start_at_formatted : participantRegistration?.start_at_formatted) || registration?.start_at_formatted) && (
                                         <p className="font-mono text-[11px] font-bold text-rose-800 mt-2 bg-rose-200 py-1 px-2 rounded-lg border border-rose-800 inline-block">
-                                            Periode: {registration.start_at_formatted} s/d {registration.end_at_formatted || 'Selesai'}
+                                            Periode: {(role === 'asisten' ? assistantRegistration?.start_at_formatted : participantRegistration?.start_at_formatted) || registration?.start_at_formatted} s/d {(role === 'asisten' ? assistantRegistration?.end_at_formatted : participantRegistration?.end_at_formatted) || registration?.end_at_formatted || 'Selesai'}
                                         </p>
                                     )}
                                 </div>
@@ -285,7 +315,7 @@ export default function Welcome({
                                 /* Form */
                                 <form className="space-y-4" onSubmit={submit}>
                                     {/* Validation Errors Global or Fallback */}
-                                    {Object.keys(errors).length > 0 && !errors.email && !errors.name && !errors.password && !errors.identity_number && (
+                                    {Object.keys(errors).length > 0 && !errors.email && !errors.name && !errors.password && !errors.identity_number && !errors.class_id && !errors.weekly_schedule_id && !errors.group_number && (
                                         <div className="p-3 bg-error-container text-on-error-container border-2 border-error rounded-xl font-label text-sm font-bold">
                                             Please check your input and try again.
                                         </div>
@@ -337,6 +367,73 @@ export default function Welcome({
                                     />
                                     {errors.identity_number && <p className="text-error text-sm mt-1">{errors.identity_number}</p>}
                                 </div>
+
+                                {authMode === 'register' && role === 'praktikan' && (
+                                    <>
+                                        <div>
+                                            <label className="block font-label font-bold text-primary mb-2 text-lg">
+                                                Kelas Praktikum
+                                            </label>
+                                            <select
+                                                className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] transition-colors cursor-pointer"
+                                                value={data.class_id}
+                                                onChange={(e) => setData('class_id', e.target.value)}
+                                                required
+                                            >
+                                                <option value="">-- Pilih Kelas --</option>
+                                                {classes.map((c: any) => (
+                                                    <option key={c.id} value={c.id}>
+                                                        {c.name} ({c.code})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {errors.class_id && <p className="text-error text-sm mt-1">{errors.class_id}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label className="block font-label font-bold text-primary mb-2 text-lg">
+                                                Shift Praktikum
+                                            </label>
+                                            <select
+                                                className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] transition-colors cursor-pointer"
+                                                value={data.weekly_schedule_id}
+                                                onChange={(e) => handleShiftChange(e.target.value)}
+                                                required
+                                            >
+                                                <option value="">-- Pilih Shift Praktikum --</option>
+                                                {shifts.map((s: any) => (
+                                                    <option key={s.id} value={s.id}>
+                                                        {s.name} ({s.day_of_week}, {s.formatted_time})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {errors.weekly_schedule_id && <p className="text-error text-sm mt-1">{errors.weekly_schedule_id}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label className="block font-label font-bold text-primary mb-2 text-lg">
+                                                Kode Kelompok
+                                            </label>
+                                            <select
+                                                className="w-full px-4 py-3 bg-surface rounded-xl border-[3px] border-primary focus:outline-none focus:border-tertiary-fixed focus:ring-0 font-body text-primary font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                                value={data.group_number}
+                                                onChange={(e) => setData('group_number', e.target.value)}
+                                                required
+                                                disabled={!data.weekly_schedule_id}
+                                            >
+                                                <option value="">
+                                                    {!data.weekly_schedule_id ? '-- Pilih Shift Terlebih Dahulu --' : '-- Pilih Kelompok --'}
+                                                </option>
+                                                {availableGroups.map((g: any) => (
+                                                    <option key={g.number} value={g.number}>
+                                                        Kelompok {g.number} {g.name && g.name !== `Kelompok ${g.number}` ? `(${g.name})` : ''}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {errors.group_number && <p className="text-error text-sm mt-1">{errors.group_number}</p>}
+                                        </div>
+                                    </>
+                                )}
                                 
                                 <div>
                                     <label className="block font-label font-bold text-primary mb-2 text-lg">Password</label>

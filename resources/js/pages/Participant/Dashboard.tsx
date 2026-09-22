@@ -106,7 +106,7 @@ export default function ParticipantDashboard({
     return (
         <>
             <Head title="Dashboard Praktikan" />
-            <div className="flex-1 overflow-y-auto p-6 bg-surface dark:bg-surface">
+            <div className="flex-1 min-h-0 h-full overflow-y-auto p-6 bg-surface dark:bg-surface">
                 <div className="max-w-6xl mx-auto space-y-6 pb-12">
                     {/* ── ROW 1: Welcome + Performance ── */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
