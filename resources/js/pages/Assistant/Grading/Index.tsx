@@ -569,7 +569,7 @@ export default function GradingIndex() {
                                                             {answersForSession.length > 0 ? (
                                                                 answersForSession.map((ans, i) => (
                                                                     <div key={i} className="mb-4 last:mb-0">
-                                                                        <p className="font-label font-bold mb-1 text-primary">
+                                                                        <p className="font-label font-bold mb-1 text-primary whitespace-pre-wrap break-words">
                                                                             {ans.question_title}
                                                                         </p>
                                                                         <AnswerContentDisplay text={ans.answer_text} />
@@ -577,7 +577,7 @@ export default function GradingIndex() {
                                                                 ))
                                                             ) : isLegacyMatch && selectedSubmission.answer_text ? (
                                                                 <div>
-                                                                    <p className="font-label font-bold mb-1 text-primary">
+                                                                    <p className="font-label font-bold mb-1 text-primary whitespace-pre-wrap break-words">
                                                                         {selectedSubmission.question?.title}
                                                                     </p>
                                                                     <AnswerContentDisplay text={selectedSubmission.answer_text} />

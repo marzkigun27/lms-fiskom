@@ -190,7 +190,7 @@ const mockQuestions = [
                                 </div>{" "}
                                 <div className="pt-10 space-y-4">
                                     {" "}
-                                    <p className="font-body text-lg font-bold text-on-surface leading-relaxed">
+                                    <p className="font-body text-lg font-bold text-on-surface leading-relaxed whitespace-pre-wrap break-words">
                                         {" "}
                                         {q.text}{" "}
                                     </p>{" "}

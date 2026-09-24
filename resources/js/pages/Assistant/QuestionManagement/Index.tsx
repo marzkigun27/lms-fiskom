@@ -2,6 +2,7 @@ import { Head, router, useForm, usePage } from "@inertiajs/react";
 import { useMemo, useState } from "react";
 import ConfirmModal from "@/components/confirm-modal";
 import AlertModal from "@/components/alert-modal";
+import QuestionPreviewModal, { QuestionPreviewData } from "@/components/question-preview-modal";
 type SessionType =
     "preliminary" | "initial_task" | "journal" | "independent_task";
 type AnswerType = "text" | "code" | "file";
@@ -163,9 +164,20 @@ export default function QuestionManagementIndex() {
         message: "",
     });
 
+    const [previewModal, setPreviewModal] = useState<{
+        isOpen: boolean;
+        question: QuestionPreviewData | null;
+        defaultMode?: 'prelab' | 'practicum';
+    }>({
+        isOpen: false,
+        question: null,
+    });
+    const [formEditorTab, setFormEditorTab] = useState<'editor' | 'preview'>('editor');
+
     const close = () => {
         setOpen(false);
         setEditing(null);
+        setFormEditorTab('editor');
         form.reset();
     };
     const closeModule = () => {
@@ -218,6 +230,7 @@ export default function QuestionManagementIndex() {
     };
     const edit = (question: Question) => {
         setEditing(question);
+        setFormEditorTab('editor');
         setOpen(true);
         form.setData({
             module_id: question.module_id,
@@ -376,6 +389,7 @@ export default function QuestionManagementIndex() {
         );
 
         setEditing(null);
+        setFormEditorTab('editor');
         form.setData({
             module_id: selectedModule,
             description: "",
@@ -717,26 +731,112 @@ export default function QuestionManagementIndex() {
                                                     </p>
                                                 )}
                                             </label>
-                                            <label className="md:col-span-2 flex flex-col gap-2 font-label font-bold text-sm text-on-surface">
-                                                Isi Soal
-                                                <textarea
-                                                    className="min-h-32 bg-surface-container-lowest border-[3px] border-primary rounded-lg p-3 font-body text-base text-on-surface focus:outline-none focus:ring-4 focus:ring-primary-fixed/50 transition-all neo-shadow-sm"
-                                                    required
-                                                    value={form.data.description}
-                                                    onChange={(e) =>
-                                                        form.setData(
-                                                            "description",
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    placeholder="Tuliskan isi pertanyaan / soal secara lengkap di sini..."
-                                                />
+                                            <div className="md:col-span-2 flex flex-col gap-2">
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                                    <label className="font-label font-bold text-sm text-on-surface">
+                                                        Isi Soal
+                                                    </label>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="inline-flex rounded-lg p-0.5 bg-surface-container border-[2px] border-primary neo-shadow-sm">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setFormEditorTab('editor')}
+                                                                className={`px-3 py-1 text-xs font-label font-bold rounded-md transition-all flex items-center gap-1 ${
+                                                                    formEditorTab === 'editor'
+                                                                        ? 'bg-secondary-fixed text-black border border-primary neo-shadow-sm'
+                                                                        : 'text-on-surface hover:text-primary'
+                                                                }`}
+                                                            >
+                                                                <span className="material-symbols-outlined text-sm leading-none">edit_note</span>
+                                                                Editor
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setFormEditorTab('preview')}
+                                                                className={`px-3 py-1 text-xs font-label font-bold rounded-md transition-all flex items-center gap-1 ${
+                                                                    formEditorTab === 'preview'
+                                                                        ? 'bg-secondary-fixed text-black border border-primary neo-shadow-sm'
+                                                                        : 'text-on-surface hover:text-primary'
+                                                                }`}
+                                                            >
+                                                                <span className="material-symbols-outlined text-sm leading-none">visibility</span>
+                                                                Pratinjau Praktikan
+                                                            </button>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const currentMod = modules.find((m) => m.id === form.data.module_id);
+                                                                setPreviewModal({
+                                                                    isOpen: true,
+                                                                    question: {
+                                                                        order_number: form.data.order_number,
+                                                                        description: form.data.description,
+                                                                        answer_type: form.data.answer_type,
+                                                                        programming_language: form.data.programming_language,
+                                                                        session_type: form.data.session_type,
+                                                                        is_required: form.data.is_required,
+                                                                        module_title: currentMod ? `${currentMod.code} - ${currentMod.title}` : undefined,
+                                                                    },
+                                                                    defaultMode: form.data.session_type === 'preliminary' ? 'prelab' : 'practicum',
+                                                                });
+                                                            }}
+                                                            className="px-2.5 py-1 text-xs font-label font-bold rounded-lg border-[2px] border-primary bg-surface-container hover:bg-secondary-fixed text-on-surface hover:text-black transition-all neo-shadow-sm flex items-center gap-1"
+                                                            title="Buka Pratinjau Layar Penuh"
+                                                        >
+                                                            <span className="material-symbols-outlined text-sm leading-none">open_in_full</span>
+                                                            Layar Penuh
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                {formEditorTab === 'editor' ? (
+                                                    <>
+                                                        <textarea
+                                                            className="min-h-36 bg-surface-container-lowest border-[3px] border-primary rounded-lg p-3 font-body text-base text-on-surface focus:outline-none focus:ring-4 focus:ring-primary-fixed/50 transition-all neo-shadow-sm"
+                                                            required
+                                                            value={form.data.description}
+                                                            onChange={(e) =>
+                                                                form.setData(
+                                                                    "description",
+                                                                    e.target.value,
+                                                                )
+                                                            }
+                                                            placeholder="Tuliskan isi pertanyaan / soal secara lengkap di sini. Tekan Enter untuk membuat baris baru..."
+                                                        />
+                                                        <p className="font-body text-[11px] text-outline flex items-center gap-1">
+                                                            <span className="material-symbols-outlined text-xs">info</span>
+                                                            Gunakan tombol Enter untuk jeda baris/paragraf. Teks akan tampil sesuai format baris baru di layar praktikan.
+                                                        </p>
+                                                    </>
+                                                ) : (
+                                                    <div className="bg-surface border-[3px] border-primary rounded-xl p-4 md:p-6 neo-shadow-sm space-y-4">
+                                                        <div className="flex items-center justify-between border-b-2 border-primary/20 pb-2">
+                                                            <span className="font-headline font-black text-xs uppercase px-2.5 py-1 bg-surface-container rounded-lg border border-primary">
+                                                                Soal #{form.data.order_number}
+                                                            </span>
+                                                            <span className="text-xs font-label font-bold uppercase px-2 py-0.5 bg-primary-fixed text-on-primary-fixed rounded border border-primary">
+                                                                {form.data.answer_type === 'code' ? `Code (${form.data.programming_language || 'General'})` : form.data.answer_type === 'file' ? 'Upload Berkas' : 'Uraian Teks'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="font-headline font-bold text-base md:text-lg text-on-surface leading-relaxed whitespace-pre-wrap break-words min-h-[80px]">
+                                                            {form.data.description ? (
+                                                                form.data.description
+                                                            ) : (
+                                                                <span className="text-outline italic text-sm font-normal">
+                                                                    Belum ada isi soal. Tuliskan teks soal di tab Editor untuk melihat pratinjau tampilan di sini.
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
+
                                                 {form.errors.description && (
                                                     <p className="text-error text-xs font-bold">
                                                         {form.errors.description}
                                                     </p>
                                                 )}
-                                            </label>
+                                            </div>
                                             <label className="flex flex-col gap-2 font-label font-bold text-sm text-on-surface">
                                                 Tipe Jawaban
                                                 <select
@@ -934,17 +1034,44 @@ export default function QuestionManagementIndex() {
                                                                                     </span>
                                                                                 )}
                                                                             </div>
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() => removeBatchRow(rowKey)}
-                                                                                className="text-error hover:bg-error-container font-label font-bold text-xs px-2.5 py-1.5 rounded-lg border border-transparent hover:border-primary transition-all flex items-center gap-1"
-                                                                                title="Hapus baris ini dari batch"
-                                                                            >
-                                                                                <span className="material-symbols-outlined text-base">
-                                                                                    delete
-                                                                                </span>
-                                                                                Hapus Baris
-                                                                            </button>
+                                                                            <div className="flex items-center gap-2">
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => {
+                                                                                        const currentMod = modules.find((m) => m.id === selectedModule);
+                                                                                        setPreviewModal({
+                                                                                            isOpen: true,
+                                                                                            question: {
+                                                                                                id: q.id,
+                                                                                                order_number: q.order_number,
+                                                                                                description: q.description,
+                                                                                                answer_type: q.answer_type,
+                                                                                                programming_language: q.programming_language,
+                                                                                                session_type: q.session_type,
+                                                                                                is_required: q.is_required,
+                                                                                                module_title: currentMod ? `${currentMod.code} - ${currentMod.title}` : undefined,
+                                                                                            },
+                                                                                            defaultMode: q.session_type === 'preliminary' ? 'prelab' : 'practicum',
+                                                                                        });
+                                                                                    }}
+                                                                                    className="bg-surface-container hover:bg-secondary-fixed text-on-surface hover:text-black font-label font-bold text-xs px-2.5 py-1.5 rounded-lg border border-primary transition-all flex items-center gap-1 neo-shadow-sm"
+                                                                                    title="Pratinjau tampilan soal ini di praktikan"
+                                                                                >
+                                                                                    <span className="material-symbols-outlined text-base">visibility</span>
+                                                                                    Pratinjau
+                                                                                </button>
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => removeBatchRow(rowKey)}
+                                                                                    className="text-error hover:bg-error-container font-label font-bold text-xs px-2.5 py-1.5 rounded-lg border border-transparent hover:border-primary transition-all flex items-center gap-1"
+                                                                                    title="Hapus baris ini dari batch"
+                                                                                >
+                                                                                    <span className="material-symbols-outlined text-base">
+                                                                                        delete
+                                                                                    </span>
+                                                                                    Hapus Baris
+                                                                                </button>
+                                                                            </div>
                                                                         </div>
 
                                                                         <div className="space-y-4">
@@ -1196,18 +1323,45 @@ export default function QuestionManagementIndex() {
                                                                         {q.description}
                                                                     </p>
                                                                 </div>
-                                                                <div className="flex gap-3 mt-5">
+                                                                <div className="flex gap-2 mt-5">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            const currentMod = modules.find((m) => m.id === selectedModule);
+                                                                            setPreviewModal({
+                                                                                isOpen: true,
+                                                                                question: {
+                                                                                    id: q.id,
+                                                                                    order_number: q.order_number,
+                                                                                    description: q.description,
+                                                                                    answer_type: q.answer_type,
+                                                                                    programming_language: q.programming_language,
+                                                                                    session_type: q.session_type,
+                                                                                    is_required: q.is_required,
+                                                                                    module_title: currentMod ? `${currentMod.code} - ${currentMod.title}` : undefined,
+                                                                                },
+                                                                                defaultMode: q.session_type === 'preliminary' ? 'prelab' : 'practicum',
+                                                                            });
+                                                                        }}
+                                                                        className="flex-1 bg-secondary-fixed hover:bg-secondary-fixed-dim text-black transition-colors border-[2px] border-primary rounded-lg py-2 font-label font-bold text-xs md:text-sm neo-shadow-sm flex items-center justify-center gap-1.5"
+                                                                        title="Lihat Pratinjau Tampilan Praktikan"
+                                                                    >
+                                                                        <span className="material-symbols-outlined text-base">visibility</span>
+                                                                        Pratinjau
+                                                                    </button>
                                                                     <button
                                                                         onClick={() => edit(q)}
-                                                                        className="flex-1 bg-surface-container hover:bg-secondary-fixed text-on-surface hover:text-black transition-colors border-[2px] border-primary rounded-lg py-2 font-label font-bold neo-shadow-sm"
+                                                                        className="flex-1 bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors border-[2px] border-primary rounded-lg py-2 font-label font-bold text-xs md:text-sm neo-shadow-sm flex items-center justify-center gap-1"
                                                                     >
+                                                                        <span className="material-symbols-outlined text-base">edit</span>
                                                                         Edit
                                                                     </button>
                                                                     <button
                                                                         onClick={() => remove(q.id)}
-                                                                        className="flex-1 bg-surface-container hover:bg-error-container text-error hover:text-error transition-colors border-[2px] border-primary rounded-lg py-2 font-label font-bold neo-shadow-sm"
+                                                                        className="bg-surface-container hover:bg-error-container text-error hover:text-error transition-colors border-[2px] border-primary rounded-lg px-3 py-2 font-label font-bold text-xs md:text-sm neo-shadow-sm flex items-center justify-center"
+                                                                        title="Hapus Soal"
                                                                     >
-                                                                        Hapus
+                                                                        <span className="material-symbols-outlined text-base">delete</span>
                                                                     </button>
                                                                 </div>
                                                             </article>
@@ -1243,6 +1397,14 @@ export default function QuestionManagementIndex() {
                 message={alertModal.message}
                 variant={alertModal.variant}
                 onClose={() => setAlertModal((prev) => ({ ...prev, isOpen: false }))}
+            />
+
+            {/* Question Preview Modal */}
+            <QuestionPreviewModal
+                isOpen={previewModal.isOpen}
+                question={previewModal.question}
+                defaultMode={previewModal.defaultMode}
+                onClose={() => setPreviewModal((prev) => ({ ...prev, isOpen: false }))}
             />
         </>
     );

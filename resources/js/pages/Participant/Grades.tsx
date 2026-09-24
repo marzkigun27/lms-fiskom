@@ -418,7 +418,7 @@ export default function ParticipantGrades() {
                                                                                             {qIdx + 1}
                                                                                         </div>
                                                                                         <div className="flex-1 space-y-2">
-                                                                                            <p className="font-label font-bold text-sm text-on-surface leading-relaxed">
+                                                                                            <p className="font-label font-bold text-sm text-on-surface leading-relaxed whitespace-pre-wrap break-words">
                                                                                                 {q.question}
                                                                                             </p>
                                                                                             <div className="bg-surface-container-lowest border-[2px] border-primary rounded-xl p-4 neo-shadow-sm">
