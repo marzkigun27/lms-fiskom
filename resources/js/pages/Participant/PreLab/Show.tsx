@@ -64,6 +64,7 @@ export default function ParticipantPreLabShow({
 
     const [isConfirmSubmitOpen, setIsConfirmSubmitOpen] = useState(false);
     const [secondsLeft, setSecondsLeft] = useState(Math.floor(initialRemainingSeconds));
+    const [isBarCollapsed, setIsBarCollapsed] = useState(false);
 
     // Live countdown timer
     useEffect(() => {
@@ -120,7 +121,10 @@ export default function ParticipantPreLabShow({
         <>
             <Head title={`Tugas Pendahuluan - ${module.title}`} />
 
-            <div className="h-full overflow-y-auto bg-background p-6 md:p-10 relative font-body pb-36">
+            <div
+                className={`h-full overflow-y-auto bg-background p-6 md:p-10 relative font-body transition-[padding] duration-300 ${isBarCollapsed ? 'pb-16' : 'pb-44'
+                    }`}
+            >
                 <div className="max-w-4xl mx-auto space-y-8">
                     {/* Top navigation */}
                     <div>
@@ -234,12 +238,12 @@ export default function ParticipantPreLabShow({
                                     </div>
 
                                     {/* Question Text */}
-                                    <div className="font-headline font-bold text-lg text-on-surface leading-relaxed">
+                                    <div className="font-headline font-bold text-lg text-on-surface leading-relaxed whitespace-pre-wrap break-words">
                                         {q.description}
                                     </div>
 
                                     {q.instructions && (
-                                        <p className="font-body text-xs text-outline italic bg-surface-container p-3 rounded-xl border border-black/20">
+                                        <p className="font-body text-xs text-outline italic bg-surface-container p-3 rounded-xl border border-black/20 whitespace-pre-wrap break-words">
                                             Petunjuk: {q.instructions}
                                         </p>
                                     )}
@@ -293,40 +297,89 @@ export default function ParticipantPreLabShow({
 
             {/* Bottom Floating Action Bar for Draft & Submit */}
             {!is_readonly && questions.length > 0 && (
-                <div className="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t-[4px] border-black dark:border-white p-4 md:p-6 z-40 neo-shadow-lg">
-                    <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-3 text-xs font-bold text-on-surface">
-                            <span className="bg-surface-container px-3 py-1.5 rounded-lg border-2 border-black">
-                                Terjawab: {answeredCount} dari {questions.length} Soal
-                            </span>
-                            <span className="text-outline hidden md:inline">
-                                Draft disimpan sementara, Submit untuk finalisasi
-                            </span>
+                <>
+                    {/* Collapsed floating restore button */}
+                    {isBarCollapsed && (
+                        <div className="fixed bottom-5 right-5 sm:right-8 z-40 animate-in fade-in slide-in-from-bottom-3 duration-200">
+                            <button
+                                type="button"
+                                onClick={() => setIsBarCollapsed(false)}
+                                className="bg-tertiary-fixed text-black border-[3px] border-black rounded-xl px-4 py-3 font-headline font-black text-xs md:text-sm uppercase neo-shadow-md hover:neo-shadow-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all flex items-center gap-2 group"
+                                title="Buka kembali menu aksi (Simpan Draft & Kumpulkan)"
+                            >
+                                <span className="material-symbols-outlined text-lg group-hover:-translate-y-0.5 transition-transform">
+                                    keyboard_arrow_up
+                                </span>
+                                <span> Kumpulkan/Simpan({answeredCount}/{questions.length} Terjawab)</span>
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Bottom Action Bar */}
+                    <div
+                        className={`fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t-[4px] border-black dark:border-white p-4 md:p-6 z-40 neo-shadow-lg transition-transform duration-300 ease-in-out ${isBarCollapsed ? 'translate-y-full pointer-events-none' : 'translate-y-0'
+                            }`}
+                    >
+                        {/* Tab toggle at the top border */}
+                        <div className="max-w-4xl mx-auto relative pointer-events-auto">
+                            <div className="absolute -top-10 md:-top-12 right-0">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsBarCollapsed(true)}
+                                    className="bg-surface-container-lowest text-on-surface border-[3px] border-b-0 border-black rounded-t-xl px-3 py-1 font-label font-bold text-[11px] uppercase flex items-center gap-1 hover:bg-secondary-fixed transition-colors neo-shadow-sm"
+                                    title="Sembunyikan menu aksi agar konten di belakang tidak terhalangi"
+                                >
+                                    <span className="material-symbols-outlined text-base leading-none">
+                                        keyboard_arrow_down
+                                    </span>
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="flex items-center gap-3 w-full sm:w-auto">
-                            <button
-                                type="button"
-                                onClick={handleSaveDraft}
-                                disabled={processing}
-                                className="flex-1 sm:flex-initial px-5 py-3 bg-surface-container text-on-surface font-headline font-bold text-xs uppercase rounded-xl border-[3px] border-black neo-shadow hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
-                            >
-                                <span className="material-symbols-outlined text-base">save</span>
-                                {processing ? 'Menyimpan...' : 'Simpan Draft'}
-                            </button>
+                        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="flex items-center gap-3 text-xs font-bold text-on-surface">
+                                <span className="bg-surface-container px-3 py-1.5 rounded-lg border-2 border-black">
+                                    Terjawab: {answeredCount} dari {questions.length} Soal
+                                </span>
+                                <span className="text-outline hidden md:inline">
+                                    Draft disimpan sementara, Submit untuk finalisasi
+                                </span>
+                            </div>
 
-                            <button
-                                type="button"
-                                onClick={() => setIsConfirmSubmitOpen(true)}
-                                disabled={processing}
-                                className="flex-1 sm:flex-initial px-8 py-3 bg-tertiary-fixed text-black font-headline font-black text-sm uppercase rounded-xl border-[3px] border-black neo-shadow-md hover:-translate-x-0.5 hover:-translate-y-0.5 hover:neo-shadow-lg transition-all flex items-center justify-center gap-2"
-                            >
-                                <span className="material-symbols-outlined text-lg">send</span>
-                                Kumpulkan Jawaban
-                            </button>
+                            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                                <button
+                                    type="button"
+                                    onClick={handleSaveDraft}
+                                    disabled={processing}
+                                    className="flex-1 sm:flex-initial px-4 sm:px-5 py-3 bg-surface-container text-on-surface font-headline font-bold text-xs uppercase rounded-xl border-[3px] border-black neo-shadow hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <span className="material-symbols-outlined text-base">save</span>
+                                    {processing ? 'Menyimpan...' : 'Simpan Draft'}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setIsConfirmSubmitOpen(true)}
+                                    disabled={processing}
+                                    className="flex-1 sm:flex-initial px-6 sm:px-8 py-3 bg-tertiary-fixed text-black font-headline font-black text-sm uppercase rounded-xl border-[3px] border-black neo-shadow-md hover:-translate-x-0.5 hover:-translate-y-0.5 hover:neo-shadow-lg transition-all flex items-center justify-center gap-2"
+                                >
+                                    <span className="material-symbols-outlined text-lg">send</span>
+                                    Kumpulkan Jawaban
+                                </button>
+
+                                {/* <button
+                                    type="button"
+                                    onClick={() => setIsBarCollapsed(true)}
+                                    className="p-3 bg-surface-container text-on-surface hover:bg-error-container hover:text-error font-headline font-bold text-xs uppercase rounded-xl border-[3px] border-black neo-shadow hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex items-center justify-center shrink-0"
+                                    title="Tutup menu ini agar konten di belakang tidak terhalangi"
+                                    aria-label="Tutup menu aksi"
+                                >
+                                    <span className="material-symbols-outlined text-xl">close</span>
+                                </button> */}
+                            </div>
                         </div>
                     </div>
-                </div>
+                </>
             )}
 
             {/* CONFIRMATION MODAL BEFORE FINAL SUBMIT */}

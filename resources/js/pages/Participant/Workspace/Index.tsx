@@ -44,7 +44,7 @@ const QuestionCell = ({
                     <h2 className="font-headline text-on-surface text-3xl font-bold">
                         Task {index + 1}
                     </h2>{' '}
-                    <div className="font-body text-outline mt-2 text-lg leading-relaxed whitespace-pre-wrap">
+                    <div className="font-body text-outline mt-2 text-lg leading-relaxed whitespace-pre-wrap break-words">
                         {' '}
                         {title}{' '}
                     </div>{' '}
