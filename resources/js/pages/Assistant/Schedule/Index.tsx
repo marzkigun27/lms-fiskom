@@ -159,9 +159,16 @@ export default function AssistantSchedule({ schedules, assistants, participants,
 
     const applyGroupCountChange = (count: number) => {
         setGroupCount(count);
-        setGroups(Array.from({ length: count }, (_, i) => ({
-            id: groups[i]?.id ?? -(i + 1), number: i + 1, code: groups[i]?.code ?? '', members: groups[i]?.members ?? [],
-        })));
+        setGroups(Array.from({ length: count }, (_, i) => {
+            const existing = groups[i];
+            const prevNumber = i > 0 ? (groups[i - 1]?.number ?? i) : 0;
+            return {
+                id: existing?.id ?? -(i + 1),
+                number: existing?.number ?? (prevNumber + 1),
+                code: existing?.code ?? '',
+                members: existing?.members ?? [],
+            };
+        }));
     };
 
     const handleGroupCountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -611,16 +618,28 @@ export default function AssistantSchedule({ schedules, assistants, participants,
                                             >
                                                 {" "}
                                                 <div className="flex justify-between items-center border-b-2 border-primary pb-3 mb-4">
-                                                    {" "}
-                                                    <h4 className="font-headline font-black text-lg uppercase text-on-surface">
-                                                        {" "}
-                                                        Kelompok {group.number}{" "}
-                                                    </h4>{" "}
+                                                    <div className="flex items-center gap-2">
+                                                        <label htmlFor={`group-number-${group.id}`} className="font-headline font-black text-lg uppercase text-on-surface">
+                                                            Kelompok
+                                                        </label>
+                                                        <input
+                                                            id={`group-number-${group.id}`}
+                                                            type="number"
+                                                            min={1}
+                                                            max={255}
+                                                            value={group.number}
+                                                            onChange={(e) => {
+                                                                const val = parseInt(e.target.value, 10);
+                                                                setGroups(groups.map(g => g.id === group.id ? { ...g, number: isNaN(val) ? 1 : Math.max(1, Math.min(255, val)) } : g));
+                                                            }}
+                                                            className="w-16 bg-background border-[2px] border-primary rounded-lg px-2 py-0.5 font-headline font-black text-base text-on-surface focus:outline-none focus:border-primary transition-all text-center"
+                                                            title="Nomor Kelompok"
+                                                        />
+                                                    </div>
                                                     <span className="bg-primary-fixed border-2 border-primary text-on-primary-fixed font-label font-bold text-xs px-2 py-1 rounded-lg">
-                                                        {" "}
                                                         {group.members.length} /
-                                                        4 Orang{" "}
-                                                    </span>{" "}
+                                                        4 Orang
+                                                    </span>
                                                 </div>{" "}
                                                 <div className="mb-4">
                                                     <label className="block font-label font-bold text-xs uppercase text-on-surface-variant mb-1">

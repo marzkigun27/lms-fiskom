@@ -28,10 +28,36 @@ class WeeklyScheduleRequest extends FormRequest
             'assistant_ids.*' => ['required', 'integer', 'distinct', $user('assistant')],
             'groups' => ['required', 'array', 'min:1', 'max:5'],
             'groups.*' => ['required', 'array:number,code,participant_ids'],
-            'groups.*.number' => ['required', 'integer', 'between:1,5', 'distinct'],
+            'groups.*.number' => ['required', 'integer', 'between:1,255', 'distinct'],
             'groups.*.code' => ['nullable', 'string', 'max:50'],
             'groups.*.participant_ids' => ['required', 'array', 'min:3', 'max:4'],
             'groups.*.participant_ids.*' => ['required', 'integer', 'distinct', $user('participant')],
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'semester_id' => 'semester',
+            'day' => 'hari',
+            'shift' => 'shift',
+            'assistant_ids' => 'asisten jaga',
+            'assistant_ids.*' => 'asisten',
+            'groups' => 'kelompok',
+            'groups.*.number' => 'nomor kelompok',
+            'groups.*.code' => 'kode kelompok',
+            'groups.*.participant_ids' => 'anggota kelompok',
+            'groups.*.participant_ids.*' => 'praktikan',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'groups.*.number.between' => 'Nomor kelompok harus antara :min dan :max.',
+            'groups.*.number.distinct' => 'Nomor kelompok tidak boleh duplikat pada satu jadwal.',
+            'groups.*.participant_ids.min' => 'Setiap kelompok harus memiliki minimal :min praktikan.',
+            'groups.*.participant_ids.max' => 'Setiap kelompok maksimal memiliki :max praktikan.',
         ];
     }
 }
