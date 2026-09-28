@@ -58,7 +58,8 @@ it('validates the complete weekly payload before persisting any rows', function 
     }, 'assistant_ids.0'],
     'no groups' => [fn ($p) => array_replace($p, ['groups' => []]), 'groups'],
     'six groups' => [fn ($p) => array_replace($p, ['groups' => array_fill(0, 6, $p['groups'][0])]), 'groups'],
-    'invalid number' => [fn ($p) => array_replace($p, ['groups' => [['number' => 6, 'participant_ids' => $p['groups'][0]['participant_ids']]]]), 'groups.0.number'],
+    'invalid number zero' => [fn ($p) => array_replace($p, ['groups' => [['number' => 0, 'participant_ids' => $p['groups'][0]['participant_ids']]]]), 'groups.0.number'],
+    'invalid number above 255' => [fn ($p) => array_replace($p, ['groups' => [['number' => 256, 'participant_ids' => $p['groups'][0]['participant_ids']]]]), 'groups.0.number'],
     'duplicate numbers' => [fn ($p) => array_replace($p, ['groups' => [$p['groups'][0], $p['groups'][0]]]), 'groups.0.number'],
     'too few members' => [fn ($p) => array_replace($p, ['groups' => [['number' => 1, 'participant_ids' => array_slice($p['groups'][0]['participant_ids'], 0, 2)]]]), 'groups.0.participant_ids'],
     'too many members' => [fn ($p) => array_replace($p, ['groups' => [['number' => 1, 'participant_ids' => User::factory()->count(5)->create(['user_type' => 'participant', 'status' => 'active'])->modelKeys()]]]), 'groups.0.participant_ids'],
@@ -227,4 +228,25 @@ it('enforces the semester day shift uniqueness at database level', function () {
     $semester = weeklySemester();
     WeeklySchedule::create(['semester_id' => $semester->id, 'day' => 'Senin', 'shift' => 'Shift 1 (06:30 - 09:30)']);
     expect(fn () => WeeklySchedule::create(['semester_id' => $semester->id, 'day' => 'Senin', 'shift' => 'Shift 1 (06:30 - 09:30)']))->toThrow(UniqueConstraintViolationException::class);
+});
+
+it('accepts and updates schedules with group numbers above 5 up to 255', function () {
+    $semester = weeklySemester();
+    $payload = weeklyPayload($semester);
+    $payload['groups'] = [
+        ['number' => 4, 'code' => 'PS-04', 'participant_ids' => User::factory()->count(3)->create(['user_type' => 'participant', 'status' => 'active'])->modelKeys()],
+        ['number' => 5, 'code' => 'PS-05', 'participant_ids' => User::factory()->count(3)->create(['user_type' => 'participant', 'status' => 'active'])->modelKeys()],
+        ['number' => 6, 'code' => 'PS-06', 'participant_ids' => User::factory()->count(3)->create(['user_type' => 'participant', 'status' => 'active'])->modelKeys()],
+        ['number' => 7, 'code' => 'PS-07', 'participant_ids' => User::factory()->count(3)->create(['user_type' => 'participant', 'status' => 'active'])->modelKeys()],
+    ];
+
+    $this->post('/asisten/jadwal', $payload)->assertRedirect();
+    $schedule = WeeklySchedule::sole();
+    expect($schedule->groups->pluck('number')->all())->toBe([4, 5, 6, 7]);
+
+    $updatePayload = $payload;
+    $updatePayload['groups'][2]['number'] = 24;
+    $updatePayload['groups'][3]['number'] = 25;
+    $this->put('/asisten/jadwal/'.$schedule->id, $updatePayload)->assertRedirect();
+    expect($schedule->fresh()->groups->pluck('number')->all())->toBe([4, 5, 24, 25]);
 });
